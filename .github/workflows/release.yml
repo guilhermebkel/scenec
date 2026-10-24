@@ -43,13 +43,18 @@ jobs:
           fi
           VERSION=$(node -p 'require("./package.json").version')
           if git rev-parse -q --verify "refs/tags/v$VERSION" > /dev/null; then
-            echo "v$VERSION is already released; pick patch, minor or major." >&2
-            exit 1
+            if [ "$BUMP" != "none" ]; then
+              echo "v$VERSION is already released; pick patch, minor or major." >&2
+              exit 1
+            fi
+            echo "v$VERSION is already tagged; resuming: the tag and push are skipped."
+            echo "IS_TAGGED=true" >> "$GITHUB_ENV"
           fi
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
       - name: Check everything the release ships
         run: pnpm check
       - name: Commit, tag and push
+        if: env.IS_TAGGED != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -69,4 +74,9 @@ jobs:
       - name: Publish the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "v$VERSION" --title "v$VERSION" --generate-notes --verify-tag
+        run: |
+          if gh release view "v$VERSION" > /dev/null 2>&1; then
+            echo "The GitHub Release v$VERSION already exists; skipping."
+          else
+            gh release create "v$VERSION" --title "v$VERSION" --generate-notes --verify-tag
+          fi

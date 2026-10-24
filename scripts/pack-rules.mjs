@@ -15,3 +15,7 @@ export function findPackProblems(paths, sizeBytes) {
   }
   return problems;
 }
+
+export function findManifestWarnings(stderr) {
+  return stderr.includes("auto-corrected") ? ["npm auto-corrected package.json; run `npm pkg fix` and commit the result"] : [];
+}
