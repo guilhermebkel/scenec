@@ -42,7 +42,7 @@ describe("SanitizeUtil.sanitizeSvg()", () => {
   it("refuses an entity declaration", () => {
     const svg = "<!DOCTYPE svg [<!ENTITY boom \"boom\">]><svg>&boom;</svg>";
 
-    expect(() => SanitizeUtil.sanitizeSvg(svg)).toThrow(new UnsafeSvgError("declarações <!ENTITY> não são permitidas em SVG importado"));
+    expect(() => SanitizeUtil.sanitizeSvg(svg)).toThrow(new UnsafeSvgError("<!ENTITY> declarations are not allowed in imported SVG"));
   });
 
   it("drops an attribute that uses an entity other than the standard ones", () => {

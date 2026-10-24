@@ -14,7 +14,7 @@ describe("CompileService.compile()", () => {
     const result = CompileService.compile({ canvas: FRAME, objects: { arvore: { asset: "tree", at: "center" } } });
 
     expect([result.description, result.layout]).toStrictEqual([
-      "arvore (tree): x=50%, base=92%, 20%×70% do quadro, near",
+      "arvore (tree): x=50%, base=92%, 20%×70% of the frame, near",
       [{ id: "arvore", asset: "tree", x: 50, base: 92, w: 19.6, h: 69.7 }],
     ]);
   });
@@ -22,33 +22,33 @@ describe("CompileService.compile()", () => {
   it("suggests close asset names when the asset does not exist", () => {
     const result = CompileService.compile({ objects: { a: { asset: "tre" } } });
 
-    expect(result.warnings).toStrictEqual(["asset 'tre' (em 'a') não existe; você quis dizer: tree, tv, figurine?"]);
+    expect(result.warnings).toStrictEqual(["asset 'tre' (in 'a') does not exist; did you mean: tree, tv, figurine?"]);
   });
 
   it("warns when an object goes out of the frame", () => {
     const result = CompileService.compile({ canvas: FRAME, objects: { casa: { asset: "house", at: 0.98 } } });
 
-    expect(result.warnings).toStrictEqual(["'casa' está 43% fora do quadro"]);
+    expect(result.warnings).toStrictEqual(["'casa' is 43% outside the frame"]);
   });
 
   it("warns when text has too little contrast against the background", () => {
     const result = CompileService.compile({ canvas: { theme: "night" }, text: [{ content: "Oi", color: "ink" }] });
 
-    expect(result.warnings).toStrictEqual(["texto \"Oi\" com contraste 1.1:1 (mín. 4.5); troque 'color' ou use 'box'"]);
+    expect(result.warnings).toStrictEqual(["text \"Oi\" has contrast 1.1:1 (min. 4.5); change 'color' or use 'box'"]);
   });
 
   it("warns about a reference to an object that does not exist", () => {
     const result = CompileService.compile({ objects: { b: { asset: "tree", left_of: "zz" } } });
 
-    expect(result.warnings).toStrictEqual(["'b' referencia 'zz', que não existe na cena"]);
+    expect(result.warnings).toStrictEqual(["'b' references 'zz', which does not exist in the scene"]);
   });
 
   it("puts unknown-field warnings before the compile warnings", () => {
     const result = CompileService.compile({ objects: { b: { asset: "tre", siz: 1 } } });
 
     expect(result.warnings).toStrictEqual([
-      "campo 'siz' desconhecido em objects.b; você quis dizer 'size'?",
-      "asset 'tre' (em 'b') não existe; você quis dizer: tree, tv, figurine?",
+      "unknown field 'siz' in objects.b; did you mean 'size'?",
+      "asset 'tre' (in 'b') does not exist; did you mean: tree, tv, figurine?",
     ]);
   });
 
@@ -62,7 +62,7 @@ describe("CompileService.compile()", () => {
     it("warns when the focus does not exist", () => {
       const scene = { canvas: { ...FRAME, shot: "close", focus: "nobody" }, objects: { p: { asset: "person" } } };
 
-      expect(CompileService.compile(scene).warnings).toStrictEqual(["focus 'nobody' não existe na cena"]);
+      expect(CompileService.compile(scene).warnings).toStrictEqual(["focus 'nobody' does not exist in the scene"]);
     });
   });
 
@@ -71,8 +71,8 @@ describe("CompileService.compile()", () => {
       const scene = { assets: { logo: { svg: "logo.svg", kind: "wall" } }, objects: { logo: { at: "center" } } };
 
       expect(CompileService.compile(scene).warnings).toStrictEqual([
-        "asset custom 'logo': esta chamada não lê arquivos; passe o SVG inline ou use a CLI",
-        "'logo' foi ignorado porque o asset custom 'logo' não carregou",
+        "custom asset 'logo': this call does not read files; pass the SVG inline or use the CLI",
+        "'logo' was ignored because custom asset 'logo' failed to load",
       ]);
     });
 

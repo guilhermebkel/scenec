@@ -10,7 +10,7 @@ export class GroupService {
   static readonly GROUPS: Record<string, any> = {
     // canto de trabalho: mesa, cadeira, pessoa digitando, tela, luminária, caneca e planta
     workspace: {
-      anchor: "mesa", desc: "mesa de trabalho com pessoa digitando, tela, luminária, caneca e planta",
+      anchor: "mesa", desc: "work desk with a person typing, screen, lamp, mug and plant",
       build: (g: any) => ({
         mesa: { asset: "desk", at: g.at, color: g.color },
         cadeira: { asset: "chair", left_of: "mesa", gap: -0.04, facing: "right" },
@@ -23,7 +23,7 @@ export class GroupService {
     },
     // canto de leitura: sofá, pessoa lendo, abajur de chão e prateleira acima
     reading_corner: {
-      anchor: "sofa", desc: "sofá com pessoa lendo, abajur de chão e prateleira",
+      anchor: "sofa", desc: "sofa with a person reading, floor lamp and shelf",
       build: (g: any) => ({
         sofa: { asset: "sofa", at: g.at, color: g.color || "secondary" },
         pessoa: { asset: "person", pose: "reading", on: "sofa", align: "left", facing: "right", pants: "metal", ...g.person },
@@ -33,7 +33,7 @@ export class GroupService {
     },
     // mesa de refeição: duas pessoas sentadas frente a frente, olhando uma para a outra
     dining: {
-      anchor: "mesa", desc: "mesa com duas pessoas sentadas conversando, comida e bebidas",
+      anchor: "mesa", desc: "table with two seated people talking, food and drinks",
       build: (g: any) => {
         const [a = {}, b = {}] = g.people || [];
         return {
@@ -49,7 +49,7 @@ export class GroupService {
     },
     // conversa em pé: um fala (apresentando), o outro escuta; os dois se olham
     conversation: {
-      anchor: "pessoa1", desc: "duas pessoas em pé conversando, olhando uma para a outra",
+      anchor: "pessoa1", desc: "two standing people talking, looking at each other",
       build: (g: any) => {
         const [a = {}, b = {}] = g.people || [];
         return {
@@ -60,7 +60,7 @@ export class GroupService {
     },
     // banco de praça: banco, árvore, pessoa sentada lendo e cachorro
     park_bench: {
-      anchor: "banco", desc: "banco de praça com árvore, pessoa sentada e cachorro",
+      anchor: "banco", desc: "park bench with a tree, a seated person and a dog",
       build: (g: any) => ({
         banco: { asset: "bench", at: g.at, color: g.color },
         arvore: { asset: "tree", right_of: "banco", gap: -0.02, depth: "mid" },
@@ -70,7 +70,7 @@ export class GroupService {
     },
     // comemoração: mesa com bolo, balões e duas pessoas festejando
     celebration: {
-      anchor: "mesa", desc: "mesa com bolo, balões e duas pessoas comemorando",
+      anchor: "mesa", desc: "table with cake, balloons and two people celebrating",
       build: (g: any) => {
         const [a = {}, b = {}] = g.people || [];
         return {
@@ -84,7 +84,7 @@ export class GroupService {
     },
     // reunião: quadro na parede, uma pessoa apresenta e duas assistem sentadas
     meeting: {
-      anchor: "mesa", desc: "mesa de reunião com quadro, uma pessoa apresentando e duas sentadas",
+      anchor: "mesa", desc: "meeting table with a board, one person presenting and two seated",
       build: (g: any) => {
         const [a = {}, b = {}, c = {}] = g.people || [];
         return {
@@ -110,7 +110,7 @@ export class GroupService {
     for (const [id, o] of Object.entries(objs || {})) {
       if (!o?.group) { out[id] = o; continue; }
       const G = GroupService.GROUPS[o.group];
-      if (!G) { warnings.push(`grupo '${o.group}' (em '${id}') não existe; disponíveis: ${Object.keys(GroupService.GROUPS).join(", ")}`); continue; }
+      if (!G) { warnings.push(`group '${o.group}' (in '${id}') does not exist; available: ${Object.keys(GroupService.GROUPS).join(", ")}`); continue; }
       const parts = G.build({ ...o, at: o.at ?? 0.5 });
       const removed = new Set();
       for (const [k, v] of Object.entries(o.parts || {})) {

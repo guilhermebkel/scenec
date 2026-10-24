@@ -7,7 +7,7 @@ export class FileReaderAdapter {
     const resolveInside = (file: string): string => {
       const full = path.resolve(root, file);
       if (path.isAbsolute(file) || (full !== root && !full.startsWith(root + path.sep))) {
-        throw new Error(`caminho '${file}' fora da pasta da cena; use um caminho relativo dentro dela`);
+        throw new Error(`path '${file}' is outside the scene folder; use a relative path inside it`);
       }
       return full;
     };

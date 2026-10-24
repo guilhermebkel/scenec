@@ -91,8 +91,8 @@
   ],
   "warnings": [],
   "art": [
-    "arte: 'arvore' some contra o fundo na parte de baixo (71% desse contorno sem contraste): a cor #2D2638 está próxima demais; mude a cor de um dos dois",
-    "arte: 'arvore' e 'cerca' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
-    "arte: 'pinho' e 'joao' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+    "art: 'arvore' blends into the background in the bottom part (71% of this outline has no contrast): the color #2D2638 is too close; change the color of one of the two",
+    "art: 'arvore' and 'cerca' almost touch (tangency); move them apart a little or overlap them on purpose",
+    "art: 'pinho' and 'joao' almost touch (tangency); move them apart a little or overlap them on purpose"
   ]
 }

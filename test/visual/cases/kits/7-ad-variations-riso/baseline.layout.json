@@ -27,6 +27,6 @@
   ],
   "warnings": [],
   "art": [
-    "arte: 'cafe' some contra o fundo na parte de baixo (100% desse contorno sem contraste): a cor #FFFEFB está próxima demais; mude a cor de um dos dois"
+    "art: 'cafe' blends into the background in the bottom part (100% of this outline has no contrast): the color #FFFEFB is too close; change the color of one of the two"
   ]
 }

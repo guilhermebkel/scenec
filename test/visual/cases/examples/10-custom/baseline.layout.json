@@ -66,8 +66,8 @@
     }
   ],
   "warnings": [
-    "asset custom 'vaso_raro': arquivo 'custom/nao-existe.svg' não encontrado (caminho relativo ao arquivo da cena)",
-    "'extra' foi ignorado porque o asset custom 'vaso_raro' não carregou"
+    "custom asset 'vaso_raro': file 'custom/nao-existe.svg' not found (path is relative to the scene file)",
+    "'extra' was ignored because custom asset 'vaso_raro' failed to load"
   ],
   "art": []
 }

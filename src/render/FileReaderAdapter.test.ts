@@ -29,14 +29,14 @@ describe("FileReaderAdapter.createFileReader()", () => {
   it("refuses a path that climbs out of the scene folder", () => {
     const reader = FileReaderAdapter.createFileReader(path.join(root, "scene"));
 
-    expect(() => reader.readText("../secret.txt")).toThrow("caminho '../secret.txt' fora da pasta da cena; use um caminho relativo dentro dela");
+    expect(() => reader.readText("../secret.txt")).toThrow("path '../secret.txt' is outside the scene folder; use a relative path inside it");
   });
 
   it("refuses an absolute path", () => {
     const reader = FileReaderAdapter.createFileReader(path.join(root, "scene"));
     const absolute = path.join(root, "secret.txt");
 
-    expect(() => reader.readText(absolute)).toThrow(`caminho '${absolute}' fora da pasta da cena; use um caminho relativo dentro dela`);
+    expect(() => reader.readText(absolute)).toThrow(`path '${absolute}' is outside the scene folder; use a relative path inside it`);
   });
 
   it("reports a missing file with the ENOENT code", () => {

@@ -35,6 +35,6 @@
   ],
   "warnings": [],
   "art": [
-    "arte: 'canto_abajur' some contra o fundo na parte de baixo (41% desse contorno sem contraste): a cor #0E122A está próxima demais; mude a cor de um dos dois"
+    "art: 'canto_abajur' blends into the background in the bottom part (41% of this outline has no contrast): the color #0E122A is too close; change the color of one of the two"
   ]
 }

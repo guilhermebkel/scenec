@@ -6,27 +6,27 @@ export class KitUtil {
 // filtro de cena inteira e textura por cima (abaixo do texto). Tudo SVG puro, renderizável no resvg.
 
   static readonly KITS: Record<string, any> = {
-    flat: { desc: "vetor chapado com luz suave (padrão)" },
+    flat: { desc: "flat vector with soft light (default)" },
     outline: {
-      desc: "contorno de desenho animado: borda grossa na silhueta e traço fino por dentro",
+      desc: "cartoon outline: thick border on the silhouette and a thin line inside",
       outline: { w: 2.6, inner: 0.9 }, light: { strength: 0.45 },
     },
     hatch: {
-      desc: "gravura/HQ: contorno a nanquim, sombras em hachura em vez de gradiente, papel claro",
+      desc: "engraving/comics: ink outline, hatched shadows instead of gradients, light paper",
       outline: { w: 2.4, inner: 1.0 }, light: { mode: "hatch" }, texture: "paper",
       colors: { shadow: "rgba(40,30,30,0.18)" },
     },
     riso: {
-      desc: "risografia: poucas tintas vivas, granulado de impressão e registro levemente desalinhado",
+      desc: "risograph: few vivid inks, print grain and slightly misaligned registration",
       colors: { primary: "#0078BF", accent: "#FF48B0", secondary: "#1F3A93", paper: "#FFF8EC", text: "#1A1F4A", ink: "#1A1F4A" },
       light: { mode: "none" }, scene: "riso",
     },
     paper: {
-      desc: "recorte de papel: cada peça com sombra própria e textura de fibra",
+      desc: "paper cut-out: each piece with its own shadow and fiber texture",
       light: { strength: 0.18, casts: false }, drop: true, texture: "fiber",
     },
     sketch: {
-      desc: "esboço: cores lavadas como aquarela e linhas de lápis nas bordas",
+      desc: "sketch: watercolor-washed colors and pencil lines on the edges",
       light: { mode: "none" }, scene: "sketch", texture: "paper",
     },
   };

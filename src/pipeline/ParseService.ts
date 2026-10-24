@@ -22,8 +22,8 @@ export class ParseService {
     return Object.keys(value).filter((key) => !known.includes(key)).map((key) => {
       const [first] = SuggestUtil.closest(key, known, 1);
       return first
-        ? `campo '${key}' desconhecido em ${where}; você quis dizer '${first}'?`
-        : `campo '${key}' desconhecido em ${where}; ele será ignorado`;
+        ? `unknown field '${key}' in ${where}; did you mean '${first}'?`
+        : `unknown field '${key}' in ${where}; it will be ignored`;
     });
   }
 
@@ -55,10 +55,10 @@ export class ParseService {
   }
 
   private static describeIssue(path: PropertyKey[], message: string, values?: readonly unknown[], received?: unknown): string {
-    const where = path.length ? path.map(String).join(".") : "(cena)";
+    const where = path.length ? path.map(String).join(".") : "(scene)";
     const options = values?.map(String) ?? [];
     const [suggestion] = typeof received === "string" ? SuggestUtil.closest(received, options, 1) : [];
-    const hint = suggestion ? `; você quis dizer '${suggestion}'?` : options.length ? `; valores aceitos: ${options.join(", ")}` : "";
+    const hint = suggestion ? `; did you mean '${suggestion}'?` : options.length ? `; accepted values: ${options.join(", ")}` : "";
     return `${where}: ${message}${hint}`;
   }
 
@@ -68,10 +68,10 @@ export class ParseService {
       try {
         raw = yaml.load(input);
       } catch (error) {
-        throw new SceneError([`YAML inválido: ${error instanceof Error ? error.message : String(error)}`]);
+        throw new SceneError([`invalid YAML: ${error instanceof Error ? error.message : String(error)}`]);
       }
     }
-    const result = sceneSchema.safeParse(raw, { error: z.locales.pt().localeError });
+    const result = sceneSchema.safeParse(raw, { error: z.locales.en().localeError });
     if (!result.success) {
       throw new SceneError(result.error.issues.map((issue) => {
         const field = String(issue.path.at(-1));
@@ -81,7 +81,7 @@ export class ParseService {
     }
     const count = Object.keys(result.data.objects ?? {}).length;
     if (count > MAX_OBJECTS) {
-      throw new SceneError([`objects: ${count} objetos; o limite é ${MAX_OBJECTS}`]);
+      throw new SceneError([`objects: ${count} objects; the limit is ${MAX_OBJECTS}`]);
     }
     return { scene: result.data, warnings: ParseService.checkKnownKeys(result.data) };
   }

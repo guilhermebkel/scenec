@@ -115,9 +115,9 @@
   ],
   "warnings": [],
   "art": [
-    "arte: peso visual pende para a direita (centro de massa em 66% da largura); aproxime 'estante' do centro ou ponha algo do lado esquerdo",
-    "arte: 'janela' some contra o fundo na parte de cima (86% desse contorno sem contraste): a cor #F8F0E4 está próxima demais; mude a cor de um dos dois",
-    "arte: 'pizza' some contra o fundo na parte de cima (47% desse contorno sem contraste): a cor #DF9C62 está próxima demais; mude a cor de um dos dois",
-    "arte: 'c1' e 'burger' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+    "art: visual weight leans right (center of mass at 66% of the width); move 'estante' toward the center or put something on the left side",
+    "art: 'janela' blends into the background in the top part (86% of this outline has no contrast): the color #F8F0E4 is too close; change the color of one of the two",
+    "art: 'pizza' blends into the background in the top part (47% of this outline has no contrast): the color #DF9C62 is too close; change the color of one of the two",
+    "art: 'c1' and 'burger' almost touch (tangency); move them apart a little or overlap them on purpose"
   ]
 }

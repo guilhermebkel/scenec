@@ -59,6 +59,6 @@
   ],
   "warnings": [],
   "art": [
-    "arte: 'canto_tela' some contra o fundo na parte do meio (50% desse contorno sem contraste): a cor #93AAC2 está próxima demais; mude a cor de um dos dois"
+    "art: 'canto_tela' blends into the background in the middle part (50% of this outline has no contrast): the color #93AAC2 is too close; change the color of one of the two"
   ]
 }

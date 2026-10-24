@@ -29,12 +29,12 @@ export class CustomAssetService {
   }
 
   private static readText(io: CompileOptions, file: string): string {
-    if (!io.files) throw new Error("esta chamada não lê arquivos; passe o SVG inline ou use a CLI");
+    if (!io.files) throw new Error("this call does not read files; pass the SVG inline or use the CLI");
     return io.files.readText(file);
   }
 
   private static readBytes(io: CompileOptions, file: string): Uint8Array {
-    if (!io.files) throw new Error("esta chamada não lê arquivos; passe a imagem por um leitor de arquivos ou use a CLI");
+    if (!io.files) throw new Error("this call does not read files; pass the image through a file reader or use the CLI");
     return io.files.readBytes(file);
   }
 
@@ -60,7 +60,7 @@ export class CustomAssetService {
     for (const [id, d] of Object.entries(defs)) {
       n++;
       const kind = d.kind || "any";
-      if (!CustomAssetService.KINDS.includes(kind)) { warnings.push(`asset custom '${id}': kind '${kind}' inválido (use ${CustomAssetService.KINDS.join(", ")})`); continue; }
+      if (!CustomAssetService.KINDS.includes(kind)) { warnings.push(`custom asset '${id}': kind '${kind}' is invalid (use ${CustomAssetService.KINDS.join(", ")})`); continue; }
       const height = d.height ?? CustomAssetService.DEFAULT_H[kind];
       let inner: string, box: BBox;
       try {
@@ -68,7 +68,7 @@ export class CustomAssetService {
           let src = d.svg.trim().startsWith("<") ? d.svg : CustomAssetService.readText(io, d.svg);
           src = SanitizeUtil.sanitizeSvg(src);
           const open = src.match(/<svg[^>]*>/i);
-          if (!open) throw new Error("não parece um SVG");
+          if (!open) throw new Error("does not look like an SVG");
           const vb = open[0].match(/viewBox="([^"]+)"/i);
           const wAttr = open[0].match(/\swidth="([\d.]+)/), hAttr = open[0].match(/\sheight="([\d.]+)/);
           const view = vb ? vb[1].split(/[\s,]+/).map(Number) : [0, 0, +(wAttr?.[1] || 100), +(hAttr?.[1] || 100)];
@@ -81,17 +81,17 @@ export class CustomAssetService {
           const ext = CustomAssetService.extname(d.image);
           const buf = CustomAssetService.readBytes(io, d.image);
           const mime = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp" }[ext];
-          if (!mime) throw new Error(`formato ${ext} não suportado (use png, jpg ou webp)`);
+          if (!mime) throw new Error(`format ${ext} is not supported (use png, jpg or webp)`);
           const size = (d.size_px && [d.size_px[0], d.size_px[1]]) || CustomAssetService.rasterSize(buf, ext);
-          if (!size) throw new Error("não consegui ler as dimensões; informe size_px: [largura, altura]");
+          if (!size) throw new Error("could not read the dimensions; set size_px: [width, height]");
           inner = `<image width="${size[0]}" height="${size[1]}" href="data:${mime};base64,${CustomAssetService.toBase64(buf)}"/>`;
           box = { x: 0, y: 0, width: size[0], height: size[1] };
         } else {
-          warnings.push(`asset custom '${id}': informe 'svg' (arquivo ou inline) ou 'image'`); continue;
+          warnings.push(`custom asset '${id}': informe 'svg' (arquivo ou inline) ou 'image'`); continue;
         }
       } catch (e: any) {
-        const msg = (e as { code?: string }).code === "ENOENT" ? `arquivo '${d.svg || d.image}' não encontrado (caminho relativo ao arquivo da cena)` : e.message;
-        warnings.push(`asset custom '${id}': ${msg}`); failed.add(id); continue;
+        const msg = (e as { code?: string }).code === "ENOENT" ? `file '${d.svg || d.image}' not found (path is relative to the scene file)` : e.message;
+        warnings.push(`custom asset '${id}': ${msg}`); failed.add(id); continue;
       }
       const s = height / box.height;
       const w = box.width * s;

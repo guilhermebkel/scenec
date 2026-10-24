@@ -25,7 +25,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **Booleans (lint).** Start with `is`, `has`, `should`, `can`, `must`, `was` or `did`. Names are affirmative: `isOnGround`, never `isNotFloating`.
 - **Maps and records (lint).** Every `Record` or `Map` is named `keyToValue`: `slotToX`, `kitToRenderer`, `THEME_TO_PALETTE`. A `Record<string, unknown>` is a plain object and is exempt.
 - **Units.** A number with a unit carries it in the name: `widthPx`, `compileMs`, `svgKb`. A fraction of the frame says so: `xFraction`.
-- **English in code.** Identifiers, comments, docs, error messages and warnings are in English (pending for runtime messages, which are still Portuguese: issue #1).
+- **English in code.** Identifiers, comments, docs, error messages and warnings are in English.
 
 ## TypeScript
 

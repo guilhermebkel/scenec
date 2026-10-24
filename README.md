@@ -94,7 +94,7 @@ npx @guilhermebkel/scenec@1 render scene.yaml -o out --png    # out.svg and out.
 
 ## Example
 
-<sub>Real output of a first draft (messages are still in Portuguese, see the FAQ).</sub>
+<sub>Real output of a first draft.</sub>
 
 ```yaml
 canvas: { width: 1000, height: 1000, theme: flat-autumn, setting: outdoor, horizon: 0.6, base: 0.84 }
@@ -108,11 +108,11 @@ objects:
 ```text
 $ npx @guilhermebkel/scenec@1 check scene.yaml
 warnings:
-  'banco' está 10% fora do quadro
-  'rex' sobrepõe 'banco' em 36%; use left_of/right_of ou depth diferente
+  'banco' is 10% outside the frame
+  'rex' overlaps 'banco' by 36%; use left_of/right_of or a different depth
 art:
-  peso visual pende para a esquerda (centro de massa em 35% da largura); aproxime 'arvore' do centro ou ponha algo do lado direito
-  'rex' some contra o fundo na parte do meio (41% desse contorno sem contraste): mude a cor de um dos dois
+  visual weight leans left (center of mass at 35% of the width); move 'arvore' toward the center or put something on the right side
+  'rex' blends into the background in the middle part (41% of this outline has no contrast): the color #c9a27a is too close; change the color of one of the two
 ```
 
 The agent moves the bench in, gives the dog another color, runs `check` again, and renders when the report is empty.
@@ -198,13 +198,6 @@ No. It is plain CPU code: geometry, drawing and a rasterizer. Nothing is downloa
 <summary><b>Can I add my own drawings?</b></summary>
 
 Yes. Under `assets:` a scene can bring an SVG (inline or a file next to the scene) or an image. Custom SVG goes through the sanitizer.
-
-</details>
-
-<details>
-<summary><b>The messages are in Portuguese. Why?</b></summary>
-
-It is known debt from the prototype and is tracked in [issue #1](https://github.com/guilhermebkel/scenec/issues/1), together with the move to English.
 
 </details>
 

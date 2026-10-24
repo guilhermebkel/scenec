@@ -50,23 +50,23 @@ export class CompileService {
     const warnings: string[] = [];
     const c = scene.canvas || {};
     const W = c.width || 1200, H = c.height || ((c.mode === "2.5d" || c.mode === "board") ? 900 : 630);
-    const baseTheme = ThemeUtil.THEMES[c.theme || "flat-cool"] || (warnings.push(`tema '${c.theme}' não existe; usando 'flat-cool'. Disponíveis: ${Object.keys(ThemeUtil.THEMES).join(", ")}`), ThemeUtil.THEMES["flat-cool"]);
+    const baseTheme = ThemeUtil.THEMES[c.theme || "flat-cool"] || (warnings.push(`theme '${c.theme}' does not exist; using 'flat-cool'. Available: ${Object.keys(ThemeUtil.THEMES).join(", ")}`), ThemeUtil.THEMES["flat-cool"]);
     // `canvas.colors` sobrescreve cores do tema (ex.: wall, floor, wood) para casar com uma referência
     // kit de estilo: muda a linguagem visual (contorno, hachura, risografia...), não só a paleta
-    const KIT = KitUtil.KITS[c.kit || "flat"] || (warnings.push(`kit '${c.kit}' não existe; disponíveis: ${Object.keys(KitUtil.KITS).join(", ")}`), KitUtil.KITS.flat);
+    const KIT = KitUtil.KITS[c.kit || "flat"] || (warnings.push(`kit '${c.kit}' does not exist; available: ${Object.keys(KitUtil.KITS).join(", ")}`), KitUtil.KITS.flat);
     const theme = { ...baseTheme, ...(KIT.colors || {}), ...(c.colors || {}) };
     const setting = c.setting || ((c.mode === "2.5d" || c.mode === "board") ? "outdoor" : "outdoor");
-    const lines = CompileService.layoutLines(setting, H) || (warnings.push(`setting '${setting}' inválido; use outdoor, indoor, beach ou city`), CompileService.layoutLines("outdoor"));
+    const lines = CompileService.layoutLines(setting, H) || (warnings.push(`setting '${setting}' is invalid; use outdoor, indoor, beach or city`), CompileService.layoutLines("outdoor"));
     const U = H * 0.0034 * (c.scale ?? 1); // px por unidade (pessoa = 100 un.)
     if (c.horizon != null) lines.horizon = c.horizon;
     if (c.base != null) { const d = c.base - lines.base.near; lines.base = { near: c.base, mid: lines.base.mid + d * 0.6, far: lines.base.far + d * 0.3 }; }
     const BASE = AssetUtil.ASSETS;
     const FAILED = new Set<string>();
     const CUSTOM = CustomAssetService.loadCustomAssets(scene.assets, opts, warnings, FAILED);
-    for (const id of Object.keys(CUSTOM)) if (BASE[id]) warnings.push(`asset custom '${id}' substitui o asset da biblioteca com o mesmo nome`);
+    for (const id of Object.keys(CUSTOM)) if (BASE[id]) warnings.push(`custom asset '${id}' replaces the library asset with the same name`);
     const LIB = Object.keys(CUSTOM).length ? { ...BASE, ...CUSTOM } : BASE;
     const wholeKit = (r: any) => {
-      if (KIT.outline || KIT.light?.mode === "hatch") r.warnings?.push?.(`no modo ${c.mode}, o kit '${c.kit}' aplica só filtro e textura; contorno e hachura por objeto existem no modo clássico`);
+      if (KIT.outline || KIT.light?.mode === "hatch") r.warnings?.push?.(`in ${c.mode} mode, kit '${c.kit}' applies only filter and texture; per-object outline and hatching exist in classic mode`);
       if (!KIT.scene && !KIT.texture) return r;
       const HH = c.height || 900;
       // texto fica fora do filtro (nítido) e por cima da textura
@@ -85,17 +85,17 @@ export class CompileService {
     const deps = (o: any) => ["left_of", "right_of", "behind", "in_front_of", "on", "under", "above"].map((k) => o[k]).filter(Boolean);
     const order: string[] = [], seen = new Set<string>(), visiting = new Set<string>();
     const visit = (id: any) => {
-      if (seen.has(id)) return; if (visiting.has(id)) { warnings.push(`dependência circular envolvendo '${id}'`); return; }
+      if (seen.has(id)) return; if (visiting.has(id)) { warnings.push(`circular dependency involving '${id}'`); return; }
       visiting.add(id);
       const o = objs[id]; if (!o) return;
-      for (const d of deps(o)) { if (!objs[d]) warnings.push(`'${id}' referencia '${d}', que não existe na cena`); else visit(d); }
+      for (const d of deps(o)) { if (!objs[d]) warnings.push(`'${id}' references '${d}', which does not exist in the scene`); else visit(d); }
       visiting.delete(id); seen.add(id); order.push(id);
     };
     Object.keys(objs).forEach(visit);
     // quem segura (holds) vem antes do objeto segurado
     const heldBy: Record<string, any> = {};
     for (const [id, o] of Object.entries(objs)) if (o.holds) {
-      if (!objs[o.holds]) warnings.push(`'${id}' segura '${o.holds}', que não existe`); else heldBy[o.holds] = id;
+      if (!objs[o.holds]) warnings.push(`'${id}' holds '${o.holds}', which does not exist`); else heldBy[o.holds] = id;
     }
     const final = order.filter((id) => !heldBy[id]);
     for (const id of order) if (heldBy[id]) final.splice(final.indexOf(heldBy[id]) + 1, 0, id);
@@ -104,10 +104,10 @@ export class CompileService {
     for (const id of final) {
       const o = objs[id];
       const res = AssetUtil.resolveAsset(o.asset || id, LIB);
-      if (!res.id) { if (FAILED.has(o.asset || id)) warnings.push(`'${id}' foi ignorado porque o asset custom '${o.asset || id}' não carregou`); else warnings.push(`asset '${o.asset || id}' (em '${id}') não existe; você quis dizer: ${res.suggest!.join(", ")}?`); continue; }
+      if (!res.id) { if (FAILED.has(o.asset || id)) warnings.push(`'${id}' was ignored because custom asset '${o.asset || id}' failed to load`); else warnings.push(`asset '${o.asset || id}' (in '${id}') does not exist; did you mean: ${res.suggest!.join(", ")}?`); continue; }
       const A = LIB[res.id];
       const dims = A.size ? A.size(o) : { w: A.w, h: A.h };
-      const sizeK = typeof o.size === "number" ? o.size : (CompileService.SIZES[o.size || "medium"] ?? (warnings.push(`size '${o.size}' inválido em '${id}' (use ${Object.keys(CompileService.SIZES).join(", ")})`), 1));
+      const sizeK = typeof o.size === "number" ? o.size : (CompileService.SIZES[o.size || "medium"] ?? (warnings.push(`size '${o.size}' is invalid in '${id}' (use ${Object.keys(CompileService.SIZES).join(", ")})`), 1));
       let depth = o.depth || null, x = null, y = null, scale = null, z = 0;
       const ref = (k: any) => placed[o[k]];
 
@@ -120,7 +120,7 @@ export class CompileService {
         if (res.id === "stars") { x = W / 2; y = H * 0.38; scale = W / 620; }
         z = -900;
       } else if (A.kind === "wall") {
-        if (setting !== "indoor") warnings.push(`'${id}' é de parede, mas o setting é '${setting}'`);
+        if (setting !== "indoor") warnings.push(`'${id}' is a wall object, but the setting is '${setting}'`);
         scale = U * sizeK * 0.85;
         x = (CompileService.SLOTS[o.at] ?? (typeof o.at === "number" ? o.at : 0.5)) * W;
         if (ref("left_of")) x = ref("left_of").bx0 - 0.03 * W - (dims.w * scale) / 2;
@@ -134,10 +134,10 @@ export class CompileService {
         y = (o.hang ?? 95) * U; z = 500;
       } else if (A.kind === "water") {
         scale = U * sizeK * 0.55; x = CompileService.slotX(o.at, 0.7) * W; y = H * ((lines.sea ?? lines.horizon) - 0.035); z = -700;
-        if (!lines.sea) warnings.push(`'${id}' é um objeto de água, mas a cena não tem mar (use setting: beach)`);
+        if (!lines.sea) warnings.push(`'${id}' is a water object, but the scene has no sea (use setting: beach)`);
       } else if (o.on) {
         const p = ref("on");
-        if (!p) { warnings.push(`'${id}' está 'on: ${o.on}', mas '${o.on}' não foi posicionado`); continue; }
+        if (!p) { warnings.push(`'${id}' has 'on: ${o.on}', but '${o.on}' was not positioned`); continue; }
         const PA = LIB[p.asset];
         scale = p.scale * sizeK;
         const SEATED = ["sitting", "typing", "reading", "drinking", "sitting_floor", "hugging_knees"];
@@ -145,7 +145,7 @@ export class CompileService {
           const off = typeof o.align === "number" ? o.align : ({ left: -0.28, right: 0.28, center: 0 } as Record<string, any>)[o.align || "center"] ?? 0;
           const fx = o.facing === "left" ? 1 : -1; // quadril um pouco para trás do centro do assento
           x = p.x + off * p.w + (A.peep ? 0 : fx * 4 * p.scale); y = p.y - PA.seat * p.scale + 45 * (res.id === "person" ? PersonUtil.bodyScale(o).by : 1) * p.scale * sizeK; z = p.z + 0.5;
-        } else if (!(p.top ?? PA.top)) { warnings.push(`'${o.on}' não tem superfície de apoio; '${id}' não pode ficar em cima dele`); x = p.x; y = p.y - p.h; z = p.z + 0.5; } else {
+        } else if (!(p.top ?? PA.top)) { warnings.push(`'${o.on}' has no supporting surface; '${id}' cannot sit on top of it`); x = p.x; y = p.y - p.h; z = p.z + 0.5; } else {
           const off = typeof o.align === "number" ? o.align : ({ left: -0.3, right: 0.3, center: 0, "far-left": -0.42, "far-right": 0.42 } as Record<string, any>)[o.align || "center"] ?? 0;
           x = p.x + off * p.w; y = p.y - (p.top ?? PA.top) * p.scale; z = p.z + 0.5 + (o.layer === "back" ? -0.2 : o.layer === "front" ? 0.2 : 0);
         }
@@ -158,14 +158,14 @@ export class CompileService {
         depth = h.depth;
       } else {
         // objetos de chão
-        if (A.kind === "surface") warnings.push(`'${id}' (${res.id}) costuma ficar sobre uma superfície; adicione 'on: <mesa>'`);
+        if (A.kind === "surface") warnings.push(`'${id}' (${res.id}) usually sits on a surface; add 'on: <table>'`);
         const pref = ref("left_of") || ref("right_of") || ref("behind") || ref("in_front_of") || ref("under");
         if (!depth) {
           if (o.behind && pref) depth = CompileService.DEPTHS[Math.max(0, CompileService.DEPTHS.indexOf(pref.depth) - 1)];
           else if (o.in_front_of && pref) depth = CompileService.DEPTHS[Math.min(2, CompileService.DEPTHS.indexOf(pref.depth) + 1)];
           else depth = (pref?.depth) || "near";
         }
-        if (!CompileService.DEPTHS.includes(depth)) { warnings.push(`depth '${depth}' inválido em '${id}' (use near, mid, far)`); depth = "near"; }
+        if (!CompileService.DEPTHS.includes(depth)) { warnings.push(`depth '${depth}' is invalid in '${id}' (use near, mid, far)`); depth = "near"; }
         scale = U * sizeK * CompileService.DEPTH_SCALE[depth];
         const w = dims.w * scale;
         const gap = (o.gap ?? 0.015) * W;
@@ -194,7 +194,7 @@ export class CompileService {
       const o = objs[p.id];
       if (p.asset !== "person" || typeof o.look !== "string") continue;
       const tg = placed[o.look];
-      if (!tg) { if (!["left", "right", "up", "down", "up-left", "up-right", "down-left", "down-right", "camera", "forward"].includes(o.look)) warnings.push(`'${p.id}' olha para '${o.look}', que não existe na cena`); continue; }
+      if (!tg) { if (!["left", "right", "up", "down", "up-left", "up-right", "down-left", "down-right", "camera", "forward"].includes(o.look)) warnings.push(`'${p.id}' looks at '${o.look}', which does not exist in the scene`); continue; }
       const dx = tg.x - p.x, dy = (tg.y - tg.h / 2) - (p.y - p.h * 0.85), len = Math.hypot(dx, dy) || 1;
       const drawn = LIB.person.draw({ ...o, gaze: [dx / len, dy / len] }, theme);
       p.svg = drawn.svg;
@@ -206,12 +206,12 @@ export class CompileService {
     const cam = { k: 1, tx: 0, ty: 0 };
     if (shot !== "wide") {
       const SHOT = ({ full: { fill: 0.55 }, medium: { show: 0.62, top: 0.12 }, close: { show: 0.3, top: 0.08 } } as Record<string, any>)[shot];
-      if (!SHOT) warnings.push(`shot '${shot}' inválido; use wide, full, medium ou close`);
+      if (!SHOT) warnings.push(`shot '${shot}' is invalid; use wide, full, medium or close`);
       else {
         let ids: any[] = [];
         for (const f of [].concat(c.focus || [])) {
           const m = placed[f] ? [f] : Object.keys(placed).filter((k) => k.startsWith(f + "_"));
-          if (!m.length) warnings.push(`focus '${f}' não existe na cena`); ids.push(...m);
+          if (!m.length) warnings.push(`focus '${f}' does not exist in the scene`); ids.push(...m);
         }
         if (!ids.length) ids = Object.keys(placed).filter((k) => placed[k].asset === "person");
         if (!ids.length) ids = Object.keys(placed).filter((k) => ["ground", "any"].includes(placed[k].kind));
@@ -250,13 +250,13 @@ export class CompileService {
       if (LIB[p.asset].backdrop) continue;
       const ox = Math.max(0, -p.bx0, p.bx1 - W) / p.w, oy = Math.max(0, -p.by0) / p.h;
       if (cam.k > 1) {
-        if (p.focus && p.offView) warnings.push(`'${p.id}' é foco mas ficou fora do enquadramento (shot: ${shot}); mude frame ou focus`);
+        if (p.focus && p.offView) warnings.push(`'${p.id}' is the focus but fell outside the framing (shot: ${shot}); change frame or focus`);
         // lasca: objeto cortado pela borda mostrando tão pouco que vira ruído visual
         const vis = (Math.max(0, Math.min(W, p.bx1) - Math.max(0, p.bx0)) * Math.max(0, Math.min(H, p.by1) - Math.max(0, p.by0))) / Math.max(1, p.w * p.h);
-        if (!p.offView && vis > 0 && vis < 0.18 && !objs[p.id].allow_crop) warnings.push(`'${p.id}' aparece só uma lasca (${Math.round(vis * 100)}%) na borda do enquadramento; remova-o, mova-o ou mostre mais dele`);
+        if (!p.offView && vis > 0 && vis < 0.18 && !objs[p.id].allow_crop) warnings.push(`'${p.id}' shows only a sliver (${Math.round(vis * 100)}%) at the edge of the framing; remove it, move it or show more of it`);
         continue;
       }
-      if ((ox > 0.05 || oy > 0.05) && !objs[p.id].allow_crop) warnings.push(`'${p.id}' está ${Math.round(Math.max(ox, oy) * 100)}% fora do quadro`);
+      if ((ox > 0.05 || oy > 0.05) && !objs[p.id].allow_crop) warnings.push(`'${p.id}' is ${Math.round(Math.max(ox, oy) * 100)}% outside the frame`);
     }
     const blocking = list.filter((p) => ["ground", "any"].includes(p.kind) && !objs[p.id].on && !heldBy[p.id]);
     for (let i = 0; i < list.length; i++) for (let j = i + 1; j < list.length; j++) {
@@ -268,7 +268,7 @@ export class CompileService {
       const ix = Math.max(0, Math.min(a.bx1, b.bx1) - Math.max(a.bx0, b.bx0));
       const iy = Math.max(0, Math.min(a.by1, b.by1) - Math.max(a.by0, b.by0));
       const frac = (ix * iy) / Math.min(a.w * a.h, b.w * b.h);
-      if (frac > 0.2) warnings.push(`'${a.id}' sobrepõe '${b.id}' em ${Math.round(frac * 100)}%; use left_of/right_of ou depth diferente`);
+      if (frac > 0.2) warnings.push(`'${a.id}' overlaps '${b.id}' by ${Math.round(frac * 100)}%; use left_of/right_of or a different depth`);
     }
 
     // ---- fundo ----
@@ -341,11 +341,11 @@ export class CompileService {
         ratio = ColorUtil.contrast(color, bfill);
         textSvg += `<rect x="${(x0 - pad).toFixed(1)}" y="${(yy - fs * 1.05 - pad * 0.3).toFixed(1)}" width="${(estW + pad * 2).toFixed(1)}" height="${(blockH + fs * 0.45 + pad * 0.6).toFixed(1)}" rx="${(tx.radius ?? 0.35) * fs}" fill="${bfill}"/>`;
       }
-      if (ratio < 4.5) warnings.push(`texto "${lines[0]}" com contraste ${ratio.toFixed(1)}:1 (mín. 4.5); troque 'color' ou use 'box'`);
+      if (ratio < 4.5) warnings.push(`text "${lines[0]}" has contrast ${ratio.toFixed(1)}:1 (min. 4.5); change 'color' or use 'box'`);
       for (const p of list) {
         if (LIB[p.asset].backdrop) continue;
         const ix = Math.max(0, Math.min(p.bx1, x0 + estW) - Math.max(p.bx0, x0)), iy = Math.max(0, Math.min(p.by1, yy + blockH - fs + fs * 0.25) - Math.max(p.by0, yy - fs));
-        if (ix * iy > 0.06 * estW * blockH || ix * iy > 0.12 * p.w * p.h) warnings.push(`texto "${lines[0]}" cobre '${p.id}'`);
+        if (ix * iy > 0.06 * estW * blockH || ix * iy > 0.12 * p.w * p.h) warnings.push(`text "${lines[0]}" covers '${p.id}'`);
       }
       const weight = tx.weight || (role === "title" ? 700 : role === "body" ? 400 : 500);
       const esc = (v: any) => v.replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -456,7 +456,7 @@ export class CompileService {
           objects: list.filter((p: any) => !p.offView).map((p: any) => ({ id: p.id, asset: p.asset, kind: p.kind, z: p.z, body: SvgUtil.flattenOpacity(p.bodySvg), related: p.related, ignore: !!(LIB[p.asset].backdrop || objs[p.id].critique === false) })) };
 
     const description = list.map((p) => `${p.id} (${p.asset}): x=${Math.round((p.x / W) * 100)}%, base=${Math.round((p.y / H) * 100)}%, ` +
-      `${Math.round((p.w / W) * 100)}%×${Math.round((p.h / H) * 100)}% do quadro${p.depth ? ", " + p.depth : ""}`).join("\n");
+      `${Math.round((p.w / W) * 100)}%×${Math.round((p.h / H) * 100)}% of the frame${p.depth ? ", " + p.depth : ""}`).join("\n");
     const pct = (v: any, d: any) => +((v / d) * 100).toFixed(1);
     const layout = list.map((p) => ({ id: p.id, asset: p.asset, x: pct(p.x, W), base: pct(p.y, H), w: pct(p.w, W), h: pct(p.h, H) }));
     return { svg, warnings: [...new Set(warnings)], description, layout, critiqueInput };

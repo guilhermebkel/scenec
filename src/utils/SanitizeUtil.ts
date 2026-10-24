@@ -121,7 +121,7 @@ export class SanitizeUtil {
 
   static sanitizeSvg(source: string): string {
     if (/<!ENTITY/i.test(source)) {
-      throw new UnsafeSvgError("declarações <!ENTITY> não são permitidas em SVG importado");
+      throw new UnsafeSvgError("<!ENTITY> declarations are not allowed in imported SVG");
     }
     const output: string[] = [];
     const openElements: { name: string; isAllowed: boolean }[] = [];

@@ -64,7 +64,7 @@ export class CriticService {
     objCov /= N;
     if (objCov < 0.05 && objs.length) {
       const sug = Math.min(2.5, scale * Math.sqrt(0.08 / Math.max(objCov, 0.01)));
-      out.push(`cena vazia: os objetos ocupam só ${pct(objCov)} do quadro; aproxime a câmera (canvas.scale ≈ ${sug.toFixed(2)}) ou use objetos maiores`);
+      out.push(`empty scene: objects cover only ${pct(objCov)} of the frame; move the camera closer (canvas.scale ≈ ${sug.toFixed(2)}) or use larger objects`);
     }
     let run = 0, best = 0, bestEnd = 0;
     for (let y = 0; y < Rh; y++) {
@@ -73,7 +73,7 @@ export class CriticService {
     }
     if (best > Rh * 0.3) {
       const a = (bestEnd - best + 1) / Rh, b = (bestEnd + 1) / Rh;
-      out.push(`faixa vazia de ${pct(best / Rh)} da altura (de y=${pct(a)} a y=${pct(b)}); suba o grupo principal, aumente a escala ou ocupe a faixa (texto, objeto de parede, elemento de céu)`);
+      out.push(`empty band of ${pct(best / Rh)} of the height (from y=${pct(a)} to y=${pct(b)}); raise the main group, increase the scale or fill the band (text, wall object, sky element)`);
     }
 
     // 2) equilíbrio de peso visual (o que difere do fundo, ponderado pela diferença de cor)
@@ -91,8 +91,8 @@ export class CriticService {
       if (Math.abs(cx - 0.5) > 0.15) {
         const left = cx < 0.5;
         const side = objs.map((o: any, k: any) => ({ o, w: perObj[k] })).filter(({ o }: any) => left ? (o.bb[0] + o.bb[2]) / 2 < Rw / 2 : (o.bb[0] + o.bb[2]) / 2 > Rw / 2).sort((a: any, b: any) => b.w - a.w)[0];
-        out.push(`peso visual pende para a ${left ? "esquerda" : "direita"} (centro de massa em ${pct(cx)} da largura); ` +
-          (side ? `aproxime '${side.o.id}' do centro ou ` : "") + `ponha algo do lado ${left ? "direito" : "esquerdo"}`);
+        out.push(`visual weight leans ${left ? "left" : "right"} (center of mass at ${pct(cx)} of the width); ` +
+          (side ? `move '${side.o.id}' toward the center or ` : "") + `put something on the ${left ? "right" : "left"} side`);
       }
     }
 
@@ -120,7 +120,7 @@ export class CriticService {
           const t3 = Math.min(2, Math.floor(((y - o.bb[1]) / hh) * 3));
           T[t3]++;
           if (dE(FL, i, FL, j) < 0.06) {
-            Lz[t3]++; const key = ob >= 0 ? objs[ob].id : "(fundo)"; NB[t3][key] = (NB[t3][key] || 0) + 1;
+            Lz[t3]++; const key = ob >= 0 ? objs[ob].id : "(background)"; NB[t3][key] = (NB[t3][key] || 0) + 1;
             RGB[t3][0] += full[i * 4]; RGB[t3][1] += full[i * 4 + 1]; RGB[t3][2] += full[i * 4 + 2];
           }
           break;
@@ -133,9 +133,9 @@ export class CriticService {
       if (!((lost / total >= 0.3 && lost >= 12) || (partFrac >= 0.4 && Lz[t3] >= 10))) return;
       const who = Object.entries(NB[t3]).sort((a, b) => b[1] - a[1])[0][0];
       const c = RGB[t3].map((v: any) => v / Lz[t3]), tk = tokenOf(c);
-      const part = ["de cima", "do meio", "de baixo"][t3];
-      out.push(`'${o.id}' some contra ${who === "(fundo)" ? "o fundo" : `'${who}'`} na parte ${part} (${pct(partFrac)} desse contorno sem contraste): ` +
-        `a cor ${CriticService.hex(c[0], c[1], c[2])}${tk ? ` (${tk})` : ""} está próxima demais; mude a cor de um dos dois`);
+      const part = ["top", "middle", "bottom"][t3];
+      out.push(`'${o.id}' blends into ${who === "(background)" ? "the background" : `'${who}'`} in the ${part} part (${pct(partFrac)} of this outline has no contrast): ` +
+        `the color ${CriticService.hex(c[0], c[1], c[2])}${tk ? ` (${tk})` : ""} is too close; change the color of one of the two`);
     });
 
     // 4) tangências: contornos que quase se tocam sem se sobrepor (criam tensão visual)
@@ -154,14 +154,14 @@ export class CriticService {
       let near = 0, over = 0;
       for (let i = 0; i < N; i++) { if (B.alpha[i] > 128) { if (A.alpha[i] > 128) over++; else if (A.dil[i]) near++; } }
       if (near >= 4 && over <= Math.max(2, 0.01 * Math.min(A.area, B.area)))
-        out.push(`'${A.id}' e '${B.id}' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito`);
+        out.push(`'${A.id}' and '${B.id}' almost touch (tangency); move them apart a little or overlap them on purpose`);
     }
     for (const o of cand) {
       if (o.kind === "sky" && o.area < 30) continue;
       const [x0, y0, x1] = o.bb;
       const gaps = [["esquerda", x0], ["direita", Rw - 1 - x1], ["topo", y0]];
-      for (const [side, g] of gaps) if (g > 0 && g <= 2) out.push(`'${o.id}' encosta na borda (${side}); afaste da borda ou deixe cortar de propósito`);
+      for (const [side, g] of gaps) if (g > 0 && g <= 2) out.push(`'${o.id}' touches the edge (${side}); move it away from the edge or let it crop on purpose`);
     }
-    return out.map((m) => "arte: " + m);
+    return out.map((m) => "art: " + m);
   }
 }

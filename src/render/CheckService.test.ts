@@ -13,7 +13,7 @@ describe("CheckService.check()", () => {
     const result = CheckService.check({ canvas: FRAME, objects: { a: { asset: "tree", at: "far-left" } } });
 
     expect(result.art).toStrictEqual([
-      "arte: peso visual pende para a esquerda (centro de massa em 15% da largura); aproxime 'a' do centro ou ponha algo do lado direito",
+      "art: visual weight leans left (center of mass at 15% of the width); move 'a' toward the center or put something on the right side",
     ]);
   });
 
@@ -21,8 +21,8 @@ describe("CheckService.check()", () => {
     const result = CheckService.check({ canvas: FRAME, objects: { a: { asset: "cup", at: "center", on: "table" }, table: { asset: "table", at: "center", size: "tiny" } } });
 
     expect(result.art).toStrictEqual([
-      "arte: cena vazia: os objetos ocupam só 0% do quadro; aproxime a câmera (canvas.scale ≈ 2.50) ou use objetos maiores",
-      "arte: faixa vazia de 84% da altura (de y=0% a y=84%); suba o grupo principal, aumente a escala ou ocupe a faixa (texto, objeto de parede, elemento de céu)",
+      "art: empty scene: objects cover only 0% of the frame; move the camera closer (canvas.scale ≈ 2.50) or use larger objects",
+      "art: empty band of 84% of the height (from y=0% to y=84%); raise the main group, increase the scale or fill the band (text, wall object, sky element)",
     ]);
   });
 
@@ -30,7 +30,7 @@ describe("CheckService.check()", () => {
     const result = CheckService.check({ canvas: FRAME, objects: { a: { asset: "tree", at: 0.4 }, b: { asset: "house", at: 0.62 } } });
 
     expect(result.art).toStrictEqual([
-      "arte: 'a' e 'b' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+      "art: 'a' and 'b' almost touch (tangency); move them apart a little or overlap them on purpose",
     ]);
   });
 

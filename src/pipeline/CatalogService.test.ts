@@ -4,12 +4,12 @@ import { CatalogService } from "@/pipeline/CatalogService.ts";
 describe("CatalogService.catalog()", () => {
   it("lists the kits with their description", () => {
     expect(CatalogService.catalog("kits")).toStrictEqual([
-      { id: "flat", description: "vetor chapado com luz suave (padrão)" },
-      { id: "outline", description: "contorno de desenho animado: borda grossa na silhueta e traço fino por dentro" },
-      { id: "hatch", description: "gravura/HQ: contorno a nanquim, sombras em hachura em vez de gradiente, papel claro" },
-      { id: "riso", description: "risografia: poucas tintas vivas, granulado de impressão e registro levemente desalinhado" },
-      { id: "paper", description: "recorte de papel: cada peça com sombra própria e textura de fibra" },
-      { id: "sketch", description: "esboço: cores lavadas como aquarela e linhas de lápis nas bordas" },
+      { id: "flat", description: "flat vector with soft light (default)" },
+      { id: "outline", description: "cartoon outline: thick border on the silhouette and a thin line inside" },
+      { id: "hatch", description: "engraving/comics: ink outline, hatched shadows instead of gradients, light paper" },
+      { id: "riso", description: "risograph: few vivid inks, print grain and slightly misaligned registration" },
+      { id: "paper", description: "paper cut-out: each piece with its own shadow and fiber texture" },
+      { id: "sketch", description: "sketch: watercolor-washed colors and pencil lines on the edges" },
     ]);
   });
 

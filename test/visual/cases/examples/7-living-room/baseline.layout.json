@@ -99,9 +99,9 @@
   ],
   "warnings": [],
   "art": [
-    "arte: 'janela' some contra o fundo na parte de baixo (42% desse contorno sem contraste): a cor #DDD5CC está próxima demais; mude a cor de um dos dois",
-    "arte: 'rack' some contra o fundo na parte de cima (93% desse contorno sem contraste): a cor #8B6249 está próxima demais; mude a cor de um dos dois",
-    "arte: 'planta' some contra o fundo na parte de baixo (78% desse contorno sem contraste): a cor #92553B está próxima demais; mude a cor de um dos dois",
-    "arte: 'ana' some contra 'sofa' na parte de baixo (52% desse contorno sem contraste): a cor #2E4135 está próxima demais; mude a cor de um dos dois"
+    "art: 'janela' blends into the background in the bottom part (42% of this outline has no contrast): the color #DDD5CC is too close; change the color of one of the two",
+    "art: 'rack' blends into the background in the top part (93% of this outline has no contrast): the color #8B6249 is too close; change the color of one of the two",
+    "art: 'planta' blends into the background in the bottom part (78% of this outline has no contrast): the color #92553B is too close; change the color of one of the two",
+    "art: 'ana' blends into 'sofa' in the bottom part (52% of this outline has no contrast): the color #2E4135 is too close; change the color of one of the two"
   ]
 }

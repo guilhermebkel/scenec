@@ -13,7 +13,7 @@ const slot = z.union([
   z.number(),
   z.enum([...SLOT_NAMES, ...SLOT_NAMES.map((name) => `top-${name}` as const), ...SLOT_NAMES.map((name) => `sky-${name}` as const)]),
   z.tuple([z.number(), z.number()]),
-], { error: `use um nome de posição (${SLOT_NAMES.join(", ")}), um número de 0 a 1 ou [x, z] no modo 2.5d` });
+], { error: `use a position name (${SLOT_NAMES.join(", ")}), a number from 0 to 1 or [x, z] in 2.5d mode` });
 const MIN_CANVAS_PX = 16;
 const MAX_SCALE = 4;
 const pixels = z.number().int().min(MIN_CANVAS_PX).max(MAX_CANVAS_PX);
@@ -68,7 +68,7 @@ export const objectSchema = z.looseObject({
   above: z.string().optional(),
   holds: z.string().optional(),
   gap: z.number().optional(),
-  offset: z.union([z.number(), z.tuple([z.number(), z.number()])], { error: "use um número ou [x, z]" }).optional(),
+  offset: z.union([z.number(), z.tuple([z.number(), z.number()])], { error: "use a number or [x, z]" }).optional(),
   align: z.union([z.number(), z.string()]).optional(),
   layer: z.enum(["back", "front"]).optional(),
   altitude: z.number().optional(),

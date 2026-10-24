@@ -115,9 +115,9 @@
   ],
   "warnings": [],
   "art": [
-    "arte: 'flores' some contra 'casa' na parte de baixo (41% desse contorno sem contraste): a cor #AF522C está próxima demais; mude a cor de um dos dois",
-    "arte: 'sol' e 'monte' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
-    "arte: 'arvore' e 'cerca' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
-    "arte: 'pinho' e 'joao' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+    "art: 'flores' blends into 'casa' in the bottom part (41% of this outline has no contrast): the color #AF522C is too close; change the color of one of the two",
+    "art: 'sol' and 'monte' almost touch (tangency); move them apart a little or overlap them on purpose",
+    "art: 'arvore' and 'cerca' almost touch (tangency); move them apart a little or overlap them on purpose",
+    "art: 'pinho' and 'joao' almost touch (tangency); move them apart a little or overlap them on purpose"
   ]
 }

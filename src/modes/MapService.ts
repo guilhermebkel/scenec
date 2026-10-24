@@ -70,21 +70,21 @@ export class MapService {
     for (const [i, item] of (scene.route || []).entries()) {
       if (item.by) {
         const by = MapService.TRANSPORT_ALIAS[MapService.norm(item.by)] || item.by;
-        if (!MapService.ICON[by]) warnings.push(`meio de transporte '${item.by}' desconhecido (use avião, trem, carro, ônibus ou barco)`);
+        if (!MapService.ICON[by]) warnings.push(`transport '${item.by}' is unknown (use plane, train, car, bus or boat)`);
         pendingBy = by; continue;
       }
       const key = MapService.norm(item.city || "");
       const g = item.at ? [item.at[0], item.at[1], item.city] : MapService.CITIES[key.replace(/\s+/g, "")];
-      if (!g) { warnings.push(`cidade '${item.city}' não está no dicionário; informe 'at: [lon, lat]'`); continue; }
+      if (!g) { warnings.push(`city '${item.city}' is not in the dictionary; set 'at: [lon, lat]'`); continue; }
       const country = item.country ? MapService.byPt[MapService.norm(item.country)] : null;
-      if (item.country && !country) warnings.push(`país '${item.country}' não encontrado no mapa`);
+      if (item.country && !country) warnings.push(`country '${item.country}' not found on the map`);
       const stop = { i, lon: g[0], lat: g[1], city: item.label || g[2] || item.city, country, note: item.note };
       if (stops.length) legs.push({ a: stops[stops.length - 1], b: stop, by: pendingBy || "car" });
-      if (stops.length && !pendingBy) warnings.push(`trecho até '${stop.city}' sem meio de transporte; usei carro (adicione '- {by: ...}')`);
+      if (stops.length && !pendingBy) warnings.push(`leg to '${stop.city}' has no transport; used car (add '- {by: ...}')`);
       pendingBy = null;
       stops.push(stop);
     }
-    if (stops.length < 2) warnings.push("a rota precisa de pelo menos 2 cidades");
+    if (stops.length < 2) warnings.push("the route needs at least 2 cities");
 
     // ---------- projeção e enquadramento ----------
     const lon0 = m.center?.[0] ?? (stops.reduce((s, p) => s + p.lon, 0) / (stops.length || 1));
@@ -217,7 +217,7 @@ export class MapService {
         for (const o of occupied) sc += ov(b, o) * (o.kind === "city" ? 6 : o.kind === "pin" ? 5 : o.kind === "badge" ? 4 : o.kind === "line" ? 3 : o.visited ? 1.5 : 0.6);
         if (sc < bs) { bs = sc; best = b; }
       }
-      if (bs > 0.12 * w * h) warnings.push(`rótulo da cidade '${name}' com sobreposição (${Math.round(bs / (w * h) * 100)}%); ajuste 'padding' do mapa ou use 'label_side'`);
+      if (bs > 0.12 * w * h) warnings.push(`label of city '${name}' overlaps (${Math.round(bs / (w * h) * 100)}%); adjust the map 'padding' or use 'label_side'`);
       best.kind = "city"; best.name = name; best.sub = sub; best.g = g;
       occupied.push(best); cityLabels.push(best);
     }
@@ -304,9 +304,9 @@ export class MapService {
     const source = `<text x="${MapService.f1(area.x0 + 4)}" y="${MapService.f1(H - 8)}" font-family="${MapService.FONT}" font-size="10" fill="${ColorUtil.sh(sea, -0.45)}">Contornos: Natural Earth (domínio público)</text>`;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">\n${mapSvg}\n${countryLabels}\n${legSvg.join("\n")}\n${badgeSvg}\n${pinSvg}\n${cityLabelSvg}\n${panel}\n${source}\n</svg>`;
     const description = [
-      ...stops.map((s, n) => `${n + 1}. ${s.city}${s.country ? " (" + s.country.pt + ")" : ""}: tela (${Math.round(s.x / W * 100)}%, ${Math.round(s.y / H * 100)}%)`),
-      ...legs.map((l) => `${l.a.city} → ${l.b.city}: ${MapService.TRANSPORT_PT[l.by] || l.by}`),
-      `países destacados: ${visited.map((v) => v.pt).join(", ")}`,
+      ...stops.map((s, n) => `${n + 1}. ${s.city}${s.country ? " (" + s.country.pt + ")" : ""}: screen (${Math.round(s.x / W * 100)}%, ${Math.round(s.y / H * 100)}%)`),
+      ...legs.map((l) => `${l.a.city} → ${l.b.city}: ${l.by}`),
+      `highlighted countries: ${visited.map((v) => v.pt).join(", ")}`,
     ].join("\n");
     return { svg, warnings: [...new Set(warnings)], description };
   }

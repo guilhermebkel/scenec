@@ -100,7 +100,7 @@ function main(argv: string[]): number {
       return 0;
     }
     if (!CATALOG_KINDS.includes(kind)) {
-      print({ schemaVersion: SCHEMA_VERSION, errors: [`catalog '${kind}' não existe; use ${CATALOG_KINDS.join(", ")}`] });
+      print({ schemaVersion: SCHEMA_VERSION, errors: [`catalog '${kind}' does not exist; use ${CATALOG_KINDS.join(", ")}`] });
       return EXIT_INVALID;
     }
     print(catalog(kind));

@@ -86,9 +86,9 @@ export class PlaneService {
     const cpR = pathDef?.checkpoint_size ?? 0.042;
     if (pathDef) {
       const pts = (pathDef.points || []).map((p: any, i: any) => ({ ...p, id: p.id || `ponto${i + 1}`, i }));
-      if (pts.length < 2) warnings.push("path precisa de pelo menos 2 pontos");
+      if (pts.length < 2) warnings.push("path needs at least 2 points");
       for (const p of pts) {
-        if (!Array.isArray(p.at) || p.at.length !== 2) { warnings.push(`ponto '${p.id}' do caminho sem 'at: [x, z]'`); p.at = [0.5, 0.5]; }
+        if (!Array.isArray(p.at) || p.at.length !== 2) { warnings.push(`path point '${p.id}' has no 'at: [x, z]'`); p.at = [0.5, 0.5]; }
         anchors[p.id] = p.at;
       }
       samples = PlaneService.catmull(pts.map((p: any) => p.at), 40);
@@ -146,7 +146,7 @@ export class PlaneService {
     // ---------- adicionar sprite ----------
     const addSprite = (id: any, o: any, x: any, z: any, opts: any = {}) => {
       const res = resolveAsset(o.asset || id, LIB);
-      if (!res.id) { warnings.push(`asset '${o.asset || id}' (em '${id}') não existe; você quis dizer: ${res.suggest.join(", ")}?`); return null; }
+      if (!res.id) { warnings.push(`asset '${o.asset || id}' (in '${id}') does not exist; did you mean: ${res.suggest.join(", ")}?`); return null; }
       const A = LIB[res.id];
       const k = typeof o.size === "number" ? o.size : (PlaneService.SIZES[o.size || "medium"] ?? 1);
       const ppu = pxPerUnit(z, k);
@@ -170,7 +170,7 @@ export class PlaneService {
     for (const cp of cps) {
       if (!cp.zone) continue;
       const Z = zoneDefs[cp.zone];
-      if (!Z) { warnings.push(`zona '${cp.zone}' (ponto '${cp.id}') não existe; disponíveis: ${Object.keys(zoneDefs).join(", ")}`); continue; }
+      if (!Z) { warnings.push(`zone '${cp.zone}' (point '${cp.id}') does not exist; available: ${Object.keys(zoneDefs).join(", ")}`); continue; }
       const tint = typeof Z.tint === "function" ? Z.tint(t) : (t[Z.tint] || Z.tint || ColorUtil.sh(t.ground, 0.3));
       tints.push({ x: cp.at[0], z: cp.at[1], r: Z.radius ?? 0.24, color: tint });
       cp.tint = tint;
@@ -179,18 +179,18 @@ export class PlaneService {
     // ---------- caixas com volume (móveis, bancadas, construções) ----------
     const boxes: any[] = [];
     for (const [id, b] of Object.entries<any>(scene.boxes || {})) {
-      if (!Array.isArray(b.from) || !Array.isArray(b.to)) { warnings.push(`caixa '${id}' precisa de from: [x, z] e to: [x, z]`); continue; }
+      if (!Array.isArray(b.from) || !Array.isArray(b.to)) { warnings.push(`box '${id}' needs from: [x, z] and to: [x, z]`); continue; }
       const x0 = Math.min(b.from[0], b.to[0]), x1 = Math.max(b.from[0], b.to[0]);
       const z0 = Math.min(b.from[1], b.to[1]), z1 = Math.max(b.from[1], b.to[1]);
       const h = b.height ?? 40, e = b.elevation ?? (b.thickness ? h - b.thickness : 0);
-      if (e >= h) { warnings.push(`caixa '${id}': elevation (${e}) deve ser menor que height (${h})`); continue; }
+      if (e >= h) { warnings.push(`box '${id}': elevation (${e}) must be less than height (${h})`); continue; }
       boxes.push({ id, x0, x1, z0, z1, e, h, b, color: t[b.color] || b.color || t.wood });
       anchors[id] = [(x0 + x1) / 2, (z0 + z1) / 2];
     }
     for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
       const a = boxes[i], q = boxes[j];
       const ix = Math.min(a.x1, q.x1) - Math.max(a.x0, q.x0), iz = Math.min(a.z1, q.z1) - Math.max(a.z0, q.z0), ih = Math.min(a.h, q.h) - Math.max(a.e, q.e);
-      if (ix > 0.002 && iz > 0.002 && ih > 0.5) warnings.push(`caixas '${a.id}' e '${q.id}' se interpenetram; ajuste from/to ou elevation`);
+      if (ix > 0.002 && iz > 0.002 && ih > 0.5) warnings.push(`boxes '${a.id}' and '${q.id}' interpenetrate; adjust from/to or elevation`);
     }
     const boxById = Object.fromEntries(boxes.map((bx) => [bx.id, bx]));
     // ordem de desenho: caixa embaixo de outra (ex.: gaveteiro sob o tampo) é desenhada antes dela
@@ -211,12 +211,12 @@ export class PlaneService {
       let x, z;
       if (Array.isArray(o.at)) [x, z] = o.at;
       else if (o.along != null) {
-        if (!samples.length) { warnings.push(`'${id}' usa 'along', mas a cena não tem path`); pending.delete(id); continue; }
+        if (!samples.length) { warnings.push(`'${id}' uses 'along', but the scene has no path`); pending.delete(id); continue; }
         const { p, normal } = pointAt(o.along); const side = o.side === "left" ? 1 : o.side === "right" ? -1 : 0;
         const d = o.dist ?? (side ? roadW / 2 + 0.05 : 0);
         [x, z] = [p[0] + normal[0] * d * side, p[1] + normal[1] * d * side];
       } else if (o.near) {
-        if (!anchors[o.near]) { if (pass === 3) { warnings.push(`'${id}' está 'near: ${o.near}', que não existe`); pending.delete(id); } continue; }
+        if (!anchors[o.near]) { if (pass === 3) { warnings.push(`'${id}' has 'near: ${o.near}', which does not exist`); pending.delete(id); } continue; }
         const [ax, az] = anchors[o.near];
         if (o.offset) [x, z] = [ax + o.offset[0], az + o.offset[1]];
         else if ((o.asset || id) === "person" || o.on_spot) [x, z] = [ax, az - 0.005];
@@ -224,11 +224,11 @@ export class PlaneService {
           const res = resolveAsset(o.asset || id, LIB); const A = res.id && LIB[res.id];
           const k = typeof o.size === "number" ? o.size : (PlaneService.SIZES[o.size || "medium"] ?? 1);
           const spot = A && autoPlace(ax, az, (A.size ? A.size(o) : A).w, k);
-          if (!spot) { warnings.push(`não encontrei espaço livre perto de '${o.near}' para '${id}'; use 'offset: [dx, dz]'`); [x, z] = [ax + 0.1, az + 0.1]; } else [x, z] = spot;
+          if (!spot) { warnings.push(`no free space found near '${o.near}' for '${id}'; use 'offset: [dx, dz]'`); [x, z] = [ax + 0.1, az + 0.1]; } else [x, z] = spot;
         }
       } else if (typeof o.at === "string" && LIB[resolveAsset(o.asset || id, LIB).id || ""]?.kind === "sky") {
         [x, z] = [PlaneService.SLOTS[o.at.replace("top-", "")] ?? 0.5, 99];
-      } else { warnings.push(`'${id}' sem posição: use at: [x, z], near, ou along`); pending.delete(id); continue; }
+      } else { warnings.push(`'${id}' has no position: use at: [x, z], near, or along`); pending.delete(id); continue; }
       pending.delete(id);
       if (z === 99) { // objeto de céu
         const res = resolveAsset(o.asset || id, LIB); if (!res.id) continue;
@@ -239,11 +239,11 @@ export class PlaneService {
       let lift;
       if (o.on && boxById[o.on]) {
         const bx = boxById[o.on]; lift = bx.h;
-        if (x < bx.x0 - 0.005 || x > bx.x1 + 0.005 || z < bx.z0 - 0.005 || z > bx.z1 + 0.005) warnings.push(`'${id}' está 'on: ${o.on}', mas a posição [${x}, ${z}] fica fora do topo da caixa`);
-      } else if (o.on) warnings.push(`'${id}' está 'on: ${o.on}', que não é uma caixa`);
+        if (x < bx.x0 - 0.005 || x > bx.x1 + 0.005 || z < bx.z0 - 0.005 || z > bx.z1 + 0.005) warnings.push(`'${id}' has 'on: ${o.on}', but position [${x}, ${z}] is outside the top of the box`);
+      } else if (o.on) warnings.push(`'${id}' has 'on: ${o.on}', which is not a box`);
       const sp = addSprite(id, o, x, z, lift != null ? { lift } : {});
       if (sp) protectedSprites.push(sp);
-      if (sp && samples.length && !sp.person && !["sky"].includes(sp.kind) && o.on_path !== true && distToRoad(x, z) < roadW / 2) warnings.push(`'${id}' está em cima do caminho; mova-o ou use 'on_path: true' se for intencional`);
+      if (sp && samples.length && !sp.person && !["sky"].includes(sp.kind) && o.on_path !== true && distToRoad(x, z) < roadW / 2) warnings.push(`'${id}' is on top of the path; move it or use 'on_path: true' if intended`);
     }
 
     // decoração das zonas (depois dos objetos do autor, para respeitar o espaço deles)
@@ -253,7 +253,7 @@ export class PlaneService {
         const A = LIB[resolveAsset(d.asset, LIB).id || ""]; if (!A) return;
         const k = d.size ?? 1;
         const spot = autoPlace(cp.at[0], cp.at[1], (A.size ? A.size(d) : A).w, k, i === 0 ? { A, o: d } : { A, o: d, dists: [0.1, 0.14, 0.18, 0.22, 0.27] });
-        if (!spot) { if (i === 0) warnings.push(`zona '${cp.zone}': sem espaço livre para '${d.asset}' perto de '${cp.id}'`); return; }
+        if (!spot) { if (i === 0) warnings.push(`zone '${cp.zone}': no free space for '${d.asset}' near '${cp.id}'`); return; }
         const sp = addSprite(`${cp.id}_${d.asset}_${i}`, { ...d, size: k }, spot[0], spot[1], { decor: true });
         if (sp && i === 0) protectedSprites.push(sp);
       });
@@ -266,7 +266,7 @@ export class PlaneService {
       let placedN = 0, tries = 0;
       while (placedN < (sc.count ?? 15) && tries++ < 3000) {
         const x = x0 + R() * (x1 - x0), z = z0 + R() * (z1 - z0), a = list[Math.floor(R() * list.length)];
-        const A = LIB[resolveAsset(a, LIB).id || ""]; if (!A) { warnings.push(`scatter: asset '${a}' não existe`); break; }
+        const A = LIB[resolveAsset(a, LIB).id || ""]; if (!A) { warnings.push(`scatter: asset '${a}' does not exist`); break; }
         const k = (sc.size ?? 0.8) * (0.8 + R() * 0.4);
         if (!free(x, z, worldR(A.w, z, k) * 0.9) || occludes(x, z, A, k)) continue;
         addSprite(`scatter${si}_${placedN}`, { asset: a, size: k, facing: R() < 0.5 ? "left" : "right" }, x, z, { decor: true });
@@ -468,7 +468,7 @@ export class PlaneService {
       while (out.length < n) {
         let pick = -1;
         for (let i = 0; i < n; i++) if (!done[i] && indeg[i] === 0 && (pick < 0 || far(i) < far(pick))) pick = i;
-        if (pick < 0) { for (let i = 0; i < n; i++) if (!done[i] && (pick < 0 || indeg[i] < indeg[pick] || (indeg[i] === indeg[pick] && far(i) < far(pick)))) pick = i; warnings.push(`ordem de profundidade ambígua envolvendo '${items[pick].ref.id}' (volumes se cruzando); afaste os objetos ou ajuste from/to`); }
+        if (pick < 0) { for (let i = 0; i < n; i++) if (!done[i] && (pick < 0 || indeg[i] < indeg[pick] || (indeg[i] === indeg[pick] && far(i) < far(pick)))) pick = i; warnings.push(`ambiguous depth order involving '${items[pick].ref.id}' (intersecting volumes); move the objects apart or adjust from/to`); }
         done[pick] = true; out.push(pick);
         for (const j of edges[pick]) indeg[j]--;
       }
@@ -502,7 +502,7 @@ export class PlaneService {
         for (const o of [...labelBlockers, ...labels, ...titleBox]) score += overlap(b, o) * (o.label ? 3 : 1);
         if (score < bestScore) { bestScore = score; best = b; }
       }
-      if (bestScore > w * h * 0.15) warnings.push(`rótulo '${cp.label}' sobrepõe outros elementos (${Math.round(bestScore / (w * h) * 100)}% da área); ajuste 'label_side' ou a posição do ponto`);
+      if (bestScore > w * h * 0.15) warnings.push(`label '${cp.label}' overlaps other elements (${Math.round(bestScore / (w * h) * 100)}% of its area); adjust 'label_side' or the point position`);
       best.label = true; best.cx = cx; best.cy = cy; best.txt = txt; best.fs = fs; best.finish = cp.finish; best.color = cp.finish ? t.accent : (t[cp.color] || cp.color || t.primary);
       labels.push(best);
     }
@@ -529,29 +529,29 @@ export class PlaneService {
       const estW = tx.content.length * fs * 0.56, x0 = anchor === "start" ? xx : anchor === "end" ? xx - estW : xx - estW / 2;
       let ratio = contrast(color, t.skyTop);
       if (tx.box) { const bf = t[tx.box] || tx.box; ratio = contrast(color, bf); textSvg += `<rect x="${PlaneService.f1(x0 - fs * 0.45)}" y="${PlaneService.f1(yy - fs * 1.05)}" width="${PlaneService.f1(estW + fs * 0.9)}" height="${PlaneService.f1(fs * 1.45)}" rx="${PlaneService.f1(fs * 0.35)}" fill="${bf}"/>`; }
-      if (ratio < 4.5) warnings.push(`texto "${tx.content}" com contraste ${ratio.toFixed(1)}:1 (mín. 4.5)`);
+      if (ratio < 4.5) warnings.push(`text "${tx.content}" has contrast ${ratio.toFixed(1)}:1 (min. 4.5)`);
       const tb = { x0, x1: x0 + estW, y0: yy - fs, y1: yy + fs * 0.25 };
       for (const s of [...groundSprites, ...skySprites]) {
         const sb = s.sky ? { x0: s.sx - s.w / 2, x1: s.sx + s.w / 2, y0: s.sy - s.h, y1: s.sy } : { x0: s.bx0, x1: s.bx1, y0: s.by0, y1: s.by1 };
         const ov = overlap(tb, sb);
-        if (ov > 0.08 * estW * fs || ov > 0.15 * (sb.x1 - sb.x0) * (sb.y1 - sb.y0)) warnings.push(`texto "${tx.content}" cobre '${s.id}'`);
+        if (ov > 0.08 * estW * fs || ov > 0.15 * (sb.x1 - sb.x0) * (sb.y1 - sb.y0)) warnings.push(`text "${tx.content}" covers '${s.id}'`);
       }
-      for (const l of labels) if (overlap(tb, l) > 0) warnings.push(`texto "${tx.content}" cobre o rótulo '${l.txt.split("  ")[1]}'`);
+      for (const l of labels) if (overlap(tb, l) > 0) warnings.push(`text "${tx.content}" covers the label '${l.txt.split("  ")[1]}'`);
       textSvg += `<text x="${PlaneService.f1(xx)}" y="${PlaneService.f1(yy)}" font-family="${PlaneService.FONT}" font-size="${PlaneService.f1(fs)}" font-weight="${role === "title" ? 700 : 500}" fill="${color}" text-anchor="${anchor}">${PlaneService.esc(tx.content)}</text>`;
     }
 
     // ---------- verificações ----------
     for (const s of groundSprites) {
       if (s.decor) continue;
-      if (s.bx0 < -s.w * 0.05 || s.bx1 > W + s.w * 0.05 || s.by0 < -s.h * 0.05) warnings.push(`'${s.id}' sai do quadro`);
+      if (s.bx0 < -s.w * 0.05 || s.bx1 > W + s.w * 0.05 || s.by0 < -s.h * 0.05) warnings.push(`'${s.id}' is outside the frame`);
     }
 
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">\n<defs>${defs}</defs>\n${bg}\n` +
       skySprites.map(drawSprite).join("\n") + "\n" + road + "\n" + drawOrdered() + "\n" + labelSvg + "\n" + textSvg + "\n</svg>";
     const description = [
-      ...cps.map((cp: any, i: any) => `ponto ${i + 1} '${cp.id}' (${cp.label || "sem rótulo"}): x=${cp.at[0]}, z=${cp.at[1]}, tela=(${Math.round(X(...cp.at) / W * 100)}%, ${Math.round(Y(cp.at[1]) / H * 100)}%)${cp.zone ? ", zona " + cp.zone : ""}`),
-      ...groundSprites.filter((s) => !s.decor).map((s) => `${s.id} (${s.asset}): x=${s.x.toFixed(2)}, z=${s.z.toFixed(2)}, ${Math.round(s.h / H * 100)}% da altura`),
-      `${groundSprites.filter((s) => s.decor).length} elementos de cenário automáticos (zonas e scatter)`,
+      ...cps.map((cp: any, i: any) => `point ${i + 1} '${cp.id}' (${cp.label || "no label"}): x=${cp.at[0]}, z=${cp.at[1]}, screen=(${Math.round(X(...cp.at) / W * 100)}%, ${Math.round(Y(cp.at[1]) / H * 100)}%)${cp.zone ? ", zone " + cp.zone : ""}`),
+      ...groundSprites.filter((s) => !s.decor).map((s) => `${s.id} (${s.asset}): x=${s.x.toFixed(2)}, z=${s.z.toFixed(2)}, ${Math.round(s.h / H * 100)}% of the height`),
+      `${groundSprites.filter((s) => s.decor).length} automatic scenery elements (zones and scatter)`,
     ].join("\n");
     return { svg, warnings: [...new Set(warnings)], description };
   }

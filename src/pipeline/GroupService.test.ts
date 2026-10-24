@@ -57,7 +57,7 @@ describe("GroupService.expandGroups()", () => {
 
       expect([objects, warnings]).toStrictEqual([
         {},
-        ["grupo 'nope' (em 'corner') não existe; disponíveis: workspace, reading_corner, dining, conversation, park_bench, celebration, meeting"],
+        ["group 'nope' (in 'corner') does not exist; available: workspace, reading_corner, dining, conversation, park_bench, celebration, meeting"],
       ]);
     });
   });

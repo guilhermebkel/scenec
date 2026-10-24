@@ -147,7 +147,7 @@
   ],
   "warnings": [],
   "art": [
-    "arte: 'jantar_copo1' some contra o fundo na parte do meio (55% desse contorno sem contraste): a cor #BCBFC5 está próxima demais; mude a cor de um dos dois",
-    "arte: 'jantar_pessoa1' e 'jantar_copo1' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+    "art: 'jantar_copo1' blends into the background in the middle part (55% of this outline has no contrast): the color #BCBFC5 is too close; change the color of one of the two",
+    "art: 'jantar_pessoa1' and 'jantar_copo1' almost touch (tangency); move them apart a little or overlap them on purpose"
   ]
 }
