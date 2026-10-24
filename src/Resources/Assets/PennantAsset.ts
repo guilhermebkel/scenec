@@ -1,3 +1,4 @@
+import type { AssetParams, Theme } from "@/Protocols/AssetProtocol.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 import { ShapeUtil } from "@/Utils/ShapeUtil.ts";
 
@@ -6,11 +7,11 @@ export class PennantAsset extends BaseAsset {
 
   readonly kind = "ground";
 
-  readonly w = 30;
+  readonly width = 30;
 
-  readonly h = 70;
+  readonly height = 70;
 
   readonly tags = ["bandeirinha", "flag"];
 
-  draw(p: any, t: any) { return ShapeUtil.shadow(t, 7, 1.6) + `<path d="M0 0 L0 -70" stroke="${t.metal}" stroke-width="2.5"/><path d="M1 -70 L28 -62 L1 -54 Z" fill="${ShapeUtil.col(t, p.color, t.accent)}"/>`; }
+  draw(params: AssetParams, theme: Theme) { return ShapeUtil.shadow(theme, 7, 1.6) + `<path d="M0 0 L0 -70" stroke="${theme.metal}" stroke-width="2.5"/><path d="M1 -70 L28 -62 L1 -54 Z" fill="${ShapeUtil.col(theme, params.color, theme.accent)}"/>`; }
 }

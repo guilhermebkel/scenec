@@ -18,7 +18,7 @@ export class CatalogService {
 
   static listAssets(): AssetEntry[] {
     return Object.entries(AssetService.ASSETS).map(([id, asset]) => ({
-      id, kind: asset.kind, width: asset.w, height: asset.h, synonyms: (asset.tags ?? []) as string[],
+      id, kind: asset.kind, width: asset.width, height: asset.height, synonyms: (asset.tags ?? []) as string[],
     }));
   }
 

@@ -123,7 +123,7 @@ export class PlaneModule {
     // um objeto mais perto da câmera não pode tapar o caminho, checkpoints ou elementos importantes atrás dele
     const protectedSprites: any[] = [];
     const occludes = (x: any, z: any, A: any, k: any, o = {}) => {
-      const dims = A.size ? A.size(o) : A, ppu = pxPerUnit(z, k);
+      const dims = A.size ? A.size(o) : { w: A.width, h: A.height }, ppu = pxPerUnit(z, k);
       const sx = X(x, z), sy = Y(z), w = dims.w * ppu, h = dims.h * ppu;
       const b = { x0: sx - w * 0.42, x1: sx + w * 0.42, y0: sy - h * 0.95, y1: sy - h * 0.04 };
       for (let i = 0; i < samples.length; i += 2) { const p = samples[i]; if (p[1] > z + 0.005) { const px = X(p[0], p[1]), py = Y(p[1]); if (px > b.x0 && px < b.x1 && py > b.y0 && py < b.y1) { return true; } } }
@@ -158,7 +158,7 @@ export class PlaneModule {
       const ppu = pxPerUnit(z, k);
       const drawn = A.draw({ ...o }, t);
       const svg = typeof drawn === "string" ? drawn : drawn.svg;
-      const dims = A.size ? A.size(o) : { w: A.w, h: A.h };
+      const dims = A.size ? A.size(o) : { w: A.width, h: A.height };
       const lift = opts.lift ?? o.lift ?? 0;
       const sx = X(x, z), sy = Y(z) - lift * U * S(z);
       const sp: any = { id, asset: res.id, kind: A.kind, x, z, lift, sx, sy, ppu, svg, w: dims.w * ppu, h: dims.h * ppu, hu: dims.h * k, decor: !!opts.decor, person: res.id === "person" };
@@ -233,7 +233,7 @@ export class PlaneModule {
           if (o.offset) { [x, z] = [ax + o.offset[0], az + o.offset[1]]; } else if ((o.asset || id) === "person" || o.on_spot) { [x, z] = [ax, az - 0.005]; } else {
             const res = resolveAsset(o.asset || id, LIB); const A = res.id && LIB[res.id];
             const k = typeof o.size === "number" ? o.size : (PlaneModule.SIZES[o.size || "medium"] ?? 1);
-            const spot = A && autoPlace(ax, az, (A.size ? A.size(o) : A).w, k);
+            const spot = A && autoPlace(ax, az, (A.size ? A.size(o) : { w: A.width }).w, k);
             if (!spot) { warnings.push(`no free space found near '${o.near}' for '${id}'; use 'offset: [dx, dz]'`); [x, z] = [ax + 0.1, az + 0.1]; } else { [x, z] = spot; }
           }
         } else if (typeof o.at === "string" && LIB[resolveAsset(o.asset || id, LIB).id || ""]?.kind === "sky") {
@@ -243,7 +243,7 @@ export class PlaneModule {
         if (z === 99) { // objeto de céu
           const res = resolveAsset(o.asset || id, LIB); if (!res.id) { continue; }
           const A = LIB[res.id], k = typeof o.size === "number" ? o.size : (PlaneModule.SIZES[o.size || "medium"] ?? 1), ppu = H * 0.0017 * k;
-          sprites.push({ id, asset: res.id, kind: "sky", sx: x * W, sy: H * (o.altitude ?? 0.12) + A.h * ppu / 2, ppu, z: 50, svg: A.draw({ ...o }, t), w: A.w * ppu, h: A.h * ppu, sky: true });
+          sprites.push({ id, asset: res.id, kind: "sky", sx: x * W, sy: H * (o.altitude ?? 0.12) + A.height * ppu / 2, ppu, z: 50, svg: A.draw({ ...o }, t), w: A.width * ppu, h: A.height * ppu, sky: true });
           continue;
         }
         let lift;
@@ -263,7 +263,7 @@ export class PlaneModule {
       (Z.decor || []).forEach((d: any, i: any) => {
         const A = LIB[resolveAsset(d.asset, LIB).id || ""]; if (!A) { return; }
         const k = d.size ?? 1;
-        const spot = autoPlace(cp.at[0], cp.at[1], (A.size ? A.size(d) : A).w, k, i === 0 ? { A, o: d } : { A, o: d, dists: [0.1, 0.14, 0.18, 0.22, 0.27] });
+        const spot = autoPlace(cp.at[0], cp.at[1], (A.size ? A.size(d) : { w: A.width }).w, k, i === 0 ? { A, o: d } : { A, o: d, dists: [0.1, 0.14, 0.18, 0.22, 0.27] });
         if (!spot) { if (i === 0) { warnings.push(`zone '${cp.zone}': no free space for '${d.asset}' near '${cp.id}'`); } return; }
         const sp = addSprite(`${cp.id}_${d.asset}_${i}`, { ...d, size: k }, spot[0], spot[1], { decor: true });
         if (sp && i === 0) { protectedSprites.push(sp); }
@@ -279,7 +279,7 @@ export class PlaneModule {
         const x = x0 + R() * (x1 - x0), z = z0 + R() * (z1 - z0), a = list[Math.floor(R() * list.length)];
         const A = LIB[resolveAsset(a, LIB).id || ""]; if (!A) { warnings.push(`scatter: asset '${a}' does not exist`); break; }
         const k = (sc.size ?? 0.8) * (0.8 + R() * 0.4);
-        if (!free(x, z, worldR(A.w, z, k) * 0.9) || occludes(x, z, A, k)) { continue; }
+        if (!free(x, z, worldR(A.width, z, k) * 0.9) || occludes(x, z, A, k)) { continue; }
         addSprite(`scatter${si}_${placedN}`, { asset: a, size: k, facing: R() < 0.5 ? "left" : "right" }, x, z, { decor: true });
         placedN++;
       }

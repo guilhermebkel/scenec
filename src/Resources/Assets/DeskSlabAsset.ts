@@ -1,3 +1,4 @@
+import type { AssetParams, Theme } from "@/Protocols/AssetProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 import { ShapeUtil } from "@/Utils/ShapeUtil.ts";
@@ -9,24 +10,24 @@ export class DeskSlabAsset extends BaseAsset {
 
   readonly hollow = true;
 
-  readonly w = 120;
+  readonly width = 120;
 
-  readonly h = 46;
+  readonly height = 46;
 
   readonly top = 46;
 
   readonly tags = ["tampo", "bancada", "desk top", "mesa planejada"];
 
-  size(p: any) { return ({ w: p.width || 120, h: p.height || 46 }); }
+  size(params: AssetParams) { return ({ w: params.width || 120, h: params.height || 46 }); }
 
-  topOf(p: any) { return p.height || 46; }
+  topOf(params: AssetParams) { return params.height || 46; }
 
-  draw(p: any, t: any) {
-    const w = p.width || 120, h = p.height || 46, th = p.thickness || 4, c = ShapeUtil.col(t, p.color, t.wood);
-    let s = ShapeUtil.rect(-w / 2, -h, w, th, c) + ShapeUtil.rect(-w / 2, -h + th - 1.2, w, 1.2, ColorUtil.sh(c, -0.18)) + ShapeUtil.rect(-w / 2, -h, w, 0.8, ColorUtil.sh(c, 0.25));
-    const ends = p.ends || "none";
-    if (ends === "left" || ends === "both") { s = ShapeUtil.rect(-w / 2, -h, 3, h, ColorUtil.sh(c, -0.06)) + ShapeUtil.rect(-w / 2 + 2, -h, 1, h, ColorUtil.sh(c, -0.2)) + s; }
-    if (ends === "right" || ends === "both") { s = ShapeUtil.rect(w / 2 - 3, -h, 3, h, ColorUtil.sh(c, -0.12)) + s; }
-    return s;
+  draw(params: AssetParams, theme: Theme) {
+    const wide = params.width || 120, tall = params.height || 46, th = params.thickness || 4, mainColor = ShapeUtil.col(theme, params.color, theme.wood);
+    let svg = ShapeUtil.rect(-wide / 2, -tall, wide, th, mainColor) + ShapeUtil.rect(-wide / 2, -tall + th - 1.2, wide, 1.2, ColorUtil.sh(mainColor, -0.18)) + ShapeUtil.rect(-wide / 2, -tall, wide, 0.8, ColorUtil.sh(mainColor, 0.25));
+    const ends = params.ends || "none";
+    if (ends === "left" || ends === "both") { svg = ShapeUtil.rect(-wide / 2, -tall, 3, tall, ColorUtil.sh(mainColor, -0.06)) + ShapeUtil.rect(-wide / 2 + 2, -tall, 1, tall, ColorUtil.sh(mainColor, -0.2)) + svg; }
+    if (ends === "right" || ends === "both") { svg = ShapeUtil.rect(wide / 2 - 3, -tall, 3, tall, ColorUtil.sh(mainColor, -0.12)) + svg; }
+    return svg;
   }
 }

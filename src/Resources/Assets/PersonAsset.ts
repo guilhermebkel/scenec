@@ -6,13 +6,13 @@ export class PersonAsset extends BaseAsset {
 
   readonly kind = "ground";
 
-  readonly w = 40;
+  readonly width = 40;
 
-  readonly h = 108;
+  readonly height = 108;
 
   readonly tags = ["pessoa", "human", "character", "man", "woman", "personagem"];
 
-  draw(p: any, t: any) {
-    return PersonUtil.person(p, t);
+  draw(params: any, theme: any) {
+    return PersonUtil.person(params, theme);
   }
 }

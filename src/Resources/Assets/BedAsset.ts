@@ -1,3 +1,4 @@
+import type { AssetParams, Theme } from "@/Protocols/AssetProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 import { ShapeUtil } from "@/Utils/ShapeUtil.ts";
@@ -7,9 +8,9 @@ export class BedAsset extends BaseAsset {
 
   readonly kind = "ground";
 
-  readonly w = 180;
+  readonly width = 180;
 
-  readonly h = 70;
+  readonly height = 70;
 
   readonly top = 38;
 
@@ -17,10 +18,10 @@ export class BedAsset extends BaseAsset {
 
   readonly tags = ["cama", "bed"];
 
-  draw(p: any, t: any) {
-    const c = ShapeUtil.col(t, p.color, t.primary);
-    return ShapeUtil.shadow(t, 90, 4) + ShapeUtil.rect(-90, -70, 10, 70, t.woodDark, 3) + ShapeUtil.rect(80, -46, 10, 46, t.woodDark, 3)
-      + ShapeUtil.rect(-82, -34, 166, 22, t.paper, 4) + ShapeUtil.rect(-82, -16, 166, 6, ColorUtil.sh(t.paper, -0.12)) + ShapeUtil.rect(-76, -46, 40, 14, t.paper, 7) + ShapeUtil.rect(-76, -38, 40, 6, ColorUtil.sh(t.paper, -0.1), 3)
-      + `<path d="M-30 -40 Q20 -44 84 -38 L84 -14 L-34 -14 Z" fill="${c}"/><path d="M-30 -22 L84 -22 L84 -14 L-34 -14 Z" fill="${ColorUtil.sh(c, -0.15)}"/>` + ShapeUtil.rect(-84, -10, 168, 4, t.woodDark, 1);
+  draw(params: AssetParams, theme: Theme) {
+    const mainColor = ShapeUtil.col(theme, params.color, theme.primary);
+    return ShapeUtil.shadow(theme, 90, 4) + ShapeUtil.rect(-90, -70, 10, 70, theme.woodDark, 3) + ShapeUtil.rect(80, -46, 10, 46, theme.woodDark, 3)
+      + ShapeUtil.rect(-82, -34, 166, 22, theme.paper, 4) + ShapeUtil.rect(-82, -16, 166, 6, ColorUtil.sh(theme.paper, -0.12)) + ShapeUtil.rect(-76, -46, 40, 14, theme.paper, 7) + ShapeUtil.rect(-76, -38, 40, 6, ColorUtil.sh(theme.paper, -0.1), 3)
+      + `<path d="M-30 -40 Q20 -44 84 -38 L84 -14 L-34 -14 Z" fill="${mainColor}"/><path d="M-30 -22 L84 -22 L84 -14 L-34 -14 Z" fill="${ColorUtil.sh(mainColor, -0.15)}"/>` + ShapeUtil.rect(-84, -10, 168, 4, theme.woodDark, 1);
   }
 }

@@ -108,7 +108,7 @@ export class CompilationModule {
       const res = AssetService.resolveAsset(o.asset || id, LIB);
       if (!res.id) { if (FAILED.has(o.asset || id)) { warnings.push(`'${id}' was ignored because custom asset '${o.asset || id}' failed to load`); } else { warnings.push(`asset '${o.asset || id}' (in '${id}') does not exist; did you mean: ${res.suggest!.join(", ")}?`); } continue; }
       const A = LIB[res.id];
-      const dims = A.size ? A.size(o) : { w: A.w, h: A.h };
+      const dims = A.size ? A.size(o) : { w: A.width, h: A.height };
       const sizeK = typeof o.size === "number" ? o.size : (CompilationModule.SIZES[o.size || "medium"] ?? (warnings.push(`size '${o.size}' is invalid in '${id}' (use ${Object.keys(CompilationModule.SIZES).join(", ")})`), 1));
       let depth = o.depth || null, x = null, y = null, scale = null, z = 0;
       const ref = (k: any) => placed[o[k]];

@@ -1,3 +1,4 @@
+import type { AssetParams, Theme } from "@/Protocols/AssetProtocol.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 import { ShapeUtil } from "@/Utils/ShapeUtil.ts";
 
@@ -6,17 +7,17 @@ export class FlowersAsset extends BaseAsset {
 
   readonly kind = "ground";
 
-  readonly w = 50;
+  readonly width = 50;
 
-  readonly h = 30;
+  readonly height = 30;
 
   readonly tags = ["flores", "canteiro", "flower_bed"];
 
-  draw(p: any, t: any) {
-    const [a, b] = t.foliage; let s = ShapeUtil.shadow(t, 24, 2.5);
-    [[-16, -16, t.primary], [-4, -24, t.accent], [9, -18, t.paper], [19, -12, t.primary], [-20, -8, t.accent]].forEach(([x, y, c]) => {
-      s += `<path d="M${x} 0 Q${x + 1} ${y / 2} ${x} ${y}" stroke="${b}" stroke-width="2" fill="none"/>` + [0, 72, 144, 216, 288].map((g) => ShapeUtil.circle(x + Math.cos(ShapeUtil.rad(g)) * 3, y + Math.sin(ShapeUtil.rad(g)) * 3, 2.6, c)).join("") + ShapeUtil.circle(x, y, 1.8, t.accent === c ? t.paper : t.accent);
+  draw(params: AssetParams, theme: Theme) {
+    const [first, second] = theme.foliage; let svg = ShapeUtil.shadow(theme, 24, 2.5);
+    ([[-16, -16, theme.primary], [-4, -24, theme.accent], [9, -18, theme.paper], [19, -12, theme.primary], [-20, -8, theme.accent]] as Array<[number, number, string]>).forEach(([posX, posY, color]) => {
+      svg += `<path d="M${posX} 0 Q${posX + 1} ${posY / 2} ${posX} ${posY}" stroke="${second}" stroke-width="2" fill="none"/>` + [0, 72, 144, 216, 288].map((angle) => ShapeUtil.circle(posX + Math.cos(ShapeUtil.rad(angle)) * 3, posY + Math.sin(ShapeUtil.rad(angle)) * 3, 2.6, color)).join("") + ShapeUtil.circle(posX, posY, 1.8, theme.accent === color ? theme.paper : theme.accent);
     });
-    return s + ShapeUtil.ell(0, -2, 24, 4, a);
+    return svg + ShapeUtil.ell(0, -2, 24, 4, first);
   }
 }

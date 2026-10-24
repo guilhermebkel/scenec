@@ -97,7 +97,7 @@ export class CustomAssetService {
       const w = box.width * s;
       const art = (p: any, t: any) => (d.recolor ? RecolorUtil.makeRecolor(t, d.recolor === true ? 0.75 : d.recolor)(inner) : inner);
       out[id] = {
-        kind, w, h: height, custom: true,
+        kind, width: w, height, custom: true,
         top: d.top, seat: d.seat, elevation: d.elevation ?? (kind === "wall" ? 80 : undefined),
         tags: d.tags || [],
         draw: (p: any, t: any) => {
