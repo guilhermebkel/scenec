@@ -17,7 +17,10 @@ export class BenchAsset extends BaseAsset {
   readonly tags = ["banco", "park_bench"];
 
   draw(params: AssetParams, theme: Theme) {
-    return ShapeUtil.shadow(theme, 55, 3) + ShapeUtil.rect(-55, -40, 110, 6, theme.wood, 2) + ShapeUtil.rect(-55, -36, 110, 2, ColorUtil.sh(theme.wood, -0.2)) + ShapeUtil.rect(-55, -58, 110, 6, theme.wood, 2) + ShapeUtil.rect(-55, -54, 110, 2, ColorUtil.sh(theme.wood, -0.2))
-      + ShapeUtil.rect(-48, -34, 5, 34, theme.metal) + ShapeUtil.rect(43, -34, 5, 34, theme.metal) + ShapeUtil.rect(-48, -58, 4, 20, theme.metal) + ShapeUtil.rect(44, -58, 4, 20, theme.metal);
+    return ShapeUtil.shadow(theme, 55, 3) + ShapeUtil.rect(-55, -40, 110, 6, theme.wood, { rx: 2 })
+      + ShapeUtil.rect(-55, -36, 110, 2, ColorUtil.sh(theme.wood, -0.2)) + ShapeUtil.rect(-55, -58, 110, 6,
+      theme.wood, { rx: 2 }) + ShapeUtil.rect(-55, -54, 110, 2, ColorUtil.sh(theme.wood, -0.2))
+    + ShapeUtil.rect(-48, -34, 5, 34, theme.metal) + ShapeUtil.rect(43, -34, 5, 34, theme.metal)
+    + ShapeUtil.rect(-48, -58, 4, 20, theme.metal) + ShapeUtil.rect(44, -58, 4, 20, theme.metal);
   }
 }

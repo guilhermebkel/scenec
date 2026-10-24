@@ -5,6 +5,9 @@ import { RisoKit } from "@/Resources/Kits/RisoKit.ts";
 import { PaperKit } from "@/Resources/Kits/PaperKit.ts";
 import { SketchKit } from "@/Resources/Kits/SketchKit.ts";
 import { BaseKit } from "@/Resources/Kits/BaseKit.ts";
+import type { CompilationContext } from "@/Protocols/CompilationProtocol.ts";
+import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
+import { SvgUtil } from "@/Utils/SvgUtil.ts";
 
 export class KitService {
   // Kits de estilo: a mesma cena com outra linguagem visual (não só outra paleta).
@@ -15,6 +18,8 @@ export class KitService {
   static readonly KITS: Record<string, BaseKit> = Object.fromEntries(
     [new FlatKit(), new OutlineKit(), new HatchKit(), new RisoKit(), new PaperKit(), new SketchKit()].map((kit) => [kit.id, kit]),
   );
+
+  private static readonly WHOLE_KIT_HEIGHT = 900;
 
   private static readonly n = (v: any) => (+v).toFixed(3);
 
@@ -87,5 +92,28 @@ export class KitService {
         + `<feColorMatrix in="mix" type="matrix" values="0 0 0 0 0.42  0 0 0 0 0.36  0 0 0 0 0.28  0.5 0 0 0 -0.12"/></filter><rect width="${W}" height="${H}" filter="url(#kitTex)" opacity="0.55"/>`;
     }
     return "";
+  }
+
+  // Why: the text stays outside the filter (sharp) and above the texture.
+  static applyWholeKit(result: CompileResult, context: CompilationContext): CompileResult {
+    const { canvas, kit, theme, width } = context;
+    if (kit.outline || kit.light?.mode === "hatch") {
+      result.warnings.push(`in ${canvas.mode} mode, kit '${canvas.kit}' applies only filter and texture; per-object outline and hatching exist in classic mode`);
+    }
+    if (!kit.scene && !kit.texture) {
+      return result;
+    }
+    const height = canvas.height ?? KitService.WHOLE_KIT_HEIGHT;
+    const svg = result.svg.replace(/(<svg[^>]*>)([\s\S]*)(<\/svg>\s*)$/, (_match, open: string, body: string, close: string) => {
+      const texts: string[] = [];
+      const art = body.replace(/<text\b[\s\S]*?<\/text>/g, (text) => {
+        texts.push(text);
+        return "";
+      });
+      const defs = kit.scene ? KitService.sceneFilter(kit.scene, theme) : "";
+      const filter = kit.scene ? " filter=\"url(#kitScene)\"" : "";
+      return `${open}<defs>${defs}</defs><g${filter}>${art}</g>${KitService.texture(kit.texture, width, height)}${texts.join("")}${close}`;
+    });
+    return { ...result, svg: SvgUtil.flattenOpacity(svg) };
   }
 }

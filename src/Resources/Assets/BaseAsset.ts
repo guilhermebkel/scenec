@@ -1,8 +1,6 @@
-import type { AssetParams, AssetSize, Theme } from "@/Protocols/AssetProtocol.ts";
+import type { AssetDrawing, AssetParams, AssetSize, LibraryAsset, Theme } from "@/Protocols/AssetProtocol.ts";
 
-export type AssetDrawing = string | { svg: string; hand: number[]; box: { w: number; h: number } };
-
-export abstract class BaseAsset {
+export abstract class BaseAsset implements LibraryAsset {
   abstract readonly id: string;
 
   abstract readonly kind: string;
@@ -13,9 +11,7 @@ export abstract class BaseAsset {
 
   abstract readonly tags: readonly string[];
 
-  size?(params: AssetParams): AssetSize;
-
-  readonly backdrop?: boolean;
+  readonly isBackdrop?: boolean;
 
   readonly seat?: number;
 
@@ -23,7 +19,9 @@ export abstract class BaseAsset {
 
   readonly top?: number;
 
-  readonly hollow?: boolean;
+  readonly isHollow?: boolean;
+
+  size?(params: AssetParams): AssetSize;
 
   topOf?(params: AssetParams): number;
 

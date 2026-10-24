@@ -12,5 +12,8 @@ export class BirdAsset extends BaseAsset {
 
   readonly tags = ["pássaro", "passaro", "gaivota", "birds"];
 
-  draw(params: AssetParams, theme: Theme) { return `<path d="M-10 -6 Q-5 -11 0 -5 Q5 -11 10 -6" stroke="${theme.ink}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.75"/>`; }
+  draw(params: AssetParams,
+    theme: Theme) {
+    return `<path d="M-10 -6 Q-5 -11 0 -5 Q5 -11 10 -6" stroke="${theme.ink}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.75"/>`;
+  }
 }

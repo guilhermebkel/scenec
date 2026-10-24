@@ -15,7 +15,10 @@ export class BackpackAsset extends BaseAsset {
   readonly tags = ["mochila"];
 
   draw(params: AssetParams, theme: Theme) {
-    const mainColor = ShapeUtil.col(theme, params.color, theme.secondary);
-    return `<path d="M-6 -30 Q0 -38 6 -30" stroke="${ColorUtil.sh(mainColor, -0.3)}" stroke-width="2.5" fill="none"/>` + ShapeUtil.rect(-12, -30, 24, 30, mainColor, 8) + ShapeUtil.rect(2, -30, 10, 30, ColorUtil.sh(mainColor, -0.15), 6) + ShapeUtil.rect(-8, -14, 16, 11, ColorUtil.sh(mainColor, -0.1), 4) + ShapeUtil.rect(-3, -12, 6, 2, theme.accent, 1);
+    const mainColor = ShapeUtil.color(theme, params.color, theme.secondary);
+    return `<path d="M-6 -30 Q0 -38 6 -30" stroke="${ColorUtil.sh(mainColor, -0.3)}" stroke-width="2.5" fill="none"/>`
+      + ShapeUtil.rect(-12, -30, 24, 30, mainColor, { rx: 8 }) + ShapeUtil.rect(2, -30, 10, 30,
+      ColorUtil.sh(mainColor, -0.15), { rx: 6 }) + ShapeUtil.rect(-8, -14, 16, 11, ColorUtil.sh(mainColor, -0.1),
+      { rx: 4 }) + ShapeUtil.rect(-3, -12, 6, 2, theme.accent, { rx: 1 });
   }
 }

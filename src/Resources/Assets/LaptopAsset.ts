@@ -15,8 +15,9 @@ export class LaptopAsset extends BaseAsset {
   readonly tags = ["notebook", "computador", "computer"];
 
   draw(params: AssetParams, theme: Theme) {
-    const flip = params.facing === "left" ? -1 : 1;
-    return ShapeUtil.rect(-17, -3, 34, 3, theme.metal, 1.5) + ShapeUtil.rect(-17, -1.5, 34, 1.5, ColorUtil.sh(theme.metal, -0.25))
-      + `<path d="M${-flip * 15} -3 L${-flip * 19} -25" stroke="${theme.ink}" stroke-width="3.5" stroke-linecap="round"/><path d="M${-flip * 13} -5 L${-flip * 16.5} -23" stroke="${theme.glass}" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>`;
+    const flip = ShapeUtil.directionOf(params.facing);
+    return ShapeUtil.rect(-17, -3, 34, 3, theme.metal, { rx: 1.5 }) + ShapeUtil.rect(-17, -1.5, 34, 1.5,
+      ColorUtil.sh(theme.metal, -0.25))
+    + `<path d="M${-flip * 15} -3 L${-flip * 19} -25" stroke="${theme.ink}" stroke-width="3.5" stroke-linecap="round"/><path d="M${-flip * 13} -5 L${-flip * 16.5} -23" stroke="${theme.glass}" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>`;
   }
 }

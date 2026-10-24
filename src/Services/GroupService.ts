@@ -7,57 +7,140 @@ import { CelebrationGroup } from "@/Resources/Groups/CelebrationGroup.ts";
 import { MeetingGroup } from "@/Resources/Groups/MeetingGroup.ts";
 import { BaseGroup } from "@/Resources/Groups/BaseGroup.ts";
 
-export class GroupService {
-  // Grupos prontos: um objeto `group: <nome>` vira várias peças já arrumadas entre si.
-// Os ids gerados são <id>_<peça> (ex.: canto_pessoa), e podem ser referenciados de fora (look, on, left_of...).
-// Parâmetros comuns: at, depth, size, flip (espelha), person/people (sobrescreve personagens),
-// parts: { peça: {...campos} | false } para ajustar ou remover peças, color (cor principal do móvel).
+import type { GroupPart } from "@/Protocols/GroupProtocol.ts";
+import type { SceneObject } from "@/Protocols/SceneProtocol.ts";
 
-  private static readonly REL = ["left_of", "right_of", "behind", "in_front_of", "on", "under", "above", "holds", "look"];
+export class GroupService {
+  // Why: these are the keys that name another object, so a group has to prefix them with its own id.
+  private static readonly REFERENCE_KEYS = [
+    "left_of", "right_of", "behind", "in_front_of", "on", "under", "above", "holds", "look",
+  ];
+
+  private static readonly SIZE_NAME_TO_FACTOR: Record<string, number> = {
+    tiny: 0.5, small: 0.75, medium: 1, large: 1.3, huge: 1.7,
+  };
+
+  private static readonly FACING_TO_OPPOSITE: Record<string, string> = { left: "right", right: "left" };
 
   static readonly GROUPS: Record<string, BaseGroup> = Object.fromEntries(
     [new WorkspaceGroup(), new ReadingCornerGroup(), new DiningGroup(), new ConversationGroup(), new ParkBenchGroup(), new CelebrationGroup(), new MeetingGroup()].map((group) => [group.id, group]),
   );
 
-  private static readonly SIZES: Record<string, any> = { tiny: 0.5, small: 0.75, medium: 1, large: 1.3, huge: 1.7 };
-
-  private static readonly flipSide = (v: any) => (v === "left" ? "right" : v === "right" ? "left" : v);
-
-  static expandGroups(objs: Record<string, any>, warnings: string[]): Record<string, any> {
-    const out: Record<string, any> = {}, alias: Record<string, string> = {};
-    for (const [id, o] of Object.entries(objs || {})) {
-      if (!o?.group) { out[id] = o; continue; }
-      const G = GroupService.GROUPS[o.group];
-      if (!G) { warnings.push(`group '${o.group}' (in '${id}') does not exist; available: ${Object.keys(GroupService.GROUPS).join(", ")}`); continue; }
-      const parts = G.build({ ...o, at: o.at ?? 0.5 });
-      const removed = new Set();
-      for (const [k, v] of Object.entries(o.parts || {})) {
-        if (v === false) { delete parts[k]; removed.add(k); } else if (parts[k]) { parts[k] = { ...parts[k], ...(v as object) }; } else { parts[k] = v; } // peça extra
+  static expandGroups(objects: Record<string, SceneObject>, warnings: string[]): Record<string, SceneObject> {
+    const expanded: Record<string, SceneObject> = {};
+    const groupIdToAnchorId: Record<string, string> = {};
+    for (const [id, object] of Object.entries(objects)) {
+      if (!object.group) {
+        expanded[id] = object;
+        continue;
       }
-      const pre = (ref: any) => (typeof ref === "string" && parts[ref] ? `${id}_${ref}` : removed.has(ref) ? undefined : ref);
-      for (const [k, p] of Object.entries(parts)) {
-        const q: Record<string, any> = { ...(p as object) };
-        for (const r of GroupService.REL) { if (q[r] != null) { q[r] = Array.isArray(q[r]) ? q[r].map(pre) : pre(q[r]); } }
-        for (const key of Object.keys(q)) { if (q[key] === undefined) { delete q[key]; } }
-        if (o.depth && !q.on && !q.depth) { q.depth = o.depth; }
-        // tamanho do grupo: só para peças que não herdam escala (as apoiadas/seguradas herdam do suporte)
-        if (o.size != null && !q.on && !q.holds) {
-          const k0 = typeof q.size === "number" ? q.size : GroupService.SIZES[q.size] ?? 1;
-          q.size = k0 * (typeof o.size === "number" ? o.size : GroupService.SIZES[o.size] ?? 1);
-        }
-        if (o.flip) {
-          if (q.left_of || q.right_of) { const l = q.left_of; q.left_of = q.right_of; q.right_of = l; if (q.left_of == null) { delete q.left_of; } if (q.right_of == null) { delete q.right_of; } }
-          q.facing = GroupService.flipSide(q.facing);
-          if (typeof q.align === "number") { q.align = -q.align; } else { q.align = GroupService.flipSide(q.align); }
-          if (typeof q.offset === "number") { q.offset = -q.offset; }
-          for (const key of ["facing", "align"]) { if (q[key] == null) { delete q[key]; } }
-        }
-        out[`${id}_${k}`] = q;
+      const group = GroupService.GROUPS[object.group];
+      if (!group) {
+        const available = Object.keys(GroupService.GROUPS).join(", ");
+        warnings.push(`group '${object.group}' (in '${id}') does not exist; available: ${available}`);
+        continue;
       }
-      alias[id] = `${id}_${G.anchor}`;
+      const { parts, removed } = GroupService.buildParts(group, object);
+      for (const [partId, part] of Object.entries(parts)) {
+        // Why: a placed part has the same shape as a scene object, so the compiler can treat both alike.
+        expanded[`${id}_${partId}`] = GroupService.placePart(part, { groupId: id, parts, removed, object }) as SceneObject;
+      }
+      groupIdToAnchorId[id] = `${id}_${group.anchor}`;
     }
-    // referências ao id do grupo apontam para a peça âncora
-    for (const o of Object.values(out)) { for (const r of GroupService.REL) { if (typeof o[r] === "string" && alias[o[r]]) { o[r] = alias[o[r]]; } } }
-    return out;
+    GroupService.pointReferencesAtAnchors(expanded, groupIdToAnchorId);
+    return expanded;
+  }
+
+  private static buildParts(group: BaseGroup, object: SceneObject): { parts: Record<string, GroupPart>; removed: Set<string> } {
+    const parts = group.build({ ...object, at: object.at ?? 0.5 });
+    const removed = new Set<string>();
+    for (const [partId, override] of Object.entries(object.parts ?? {})) {
+      if (override === false) {
+        delete parts[partId];
+        removed.add(partId);
+      } else {
+        parts[partId] = { ...parts[partId], ...override };
+      }
+    }
+    return { parts, removed };
+  }
+
+  private static placePart(
+    part: GroupPart,
+    context: { groupId: string; parts: Record<string, GroupPart>; removed: Set<string>; object: SceneObject },
+  ): GroupPart {
+    const { groupId, parts, removed, object } = context;
+    const prefixed = (reference: unknown): unknown => {
+      if (typeof reference === "string" && parts[reference]) {
+        return `${groupId}_${reference}`;
+      }
+      return typeof reference === "string" && removed.has(reference) ? undefined : reference;
+    };
+    const placed: GroupPart = { ...part };
+    for (const key of GroupService.REFERENCE_KEYS) {
+      const reference = placed[key];
+      if (reference != null) {
+        placed[key] = Array.isArray(reference) ? reference.map(prefixed) : prefixed(reference);
+      }
+    }
+    GroupService.deleteUndefined(placed);
+    if (object.depth && !placed.on && !placed.depth) {
+      placed.depth = object.depth;
+    }
+    if (object.size != null && !placed.on && !placed.holds) {
+      placed.size = GroupService.sizeFactor(placed.size) * GroupService.sizeFactor(object.size);
+    }
+    if (object.flip) {
+      GroupService.flip(placed);
+    }
+    return placed;
+  }
+
+  private static sizeFactor(size: unknown): number {
+    if (typeof size === "number") {
+      return size;
+    }
+    return GroupService.SIZE_NAME_TO_FACTOR[String(size)] ?? 1;
+  }
+
+  private static flip(part: GroupPart): void {
+    if (part.left_of || part.right_of) {
+      [part.left_of, part.right_of] = [part.right_of, part.left_of];
+    }
+    part.facing = GroupService.opposite(part.facing);
+    part.align = typeof part.align === "number" ? -part.align : GroupService.opposite(part.align);
+    if (typeof part.offset === "number") {
+      part.offset = -part.offset;
+    }
+    GroupService.deleteUndefined(part);
+    for (const key of ["facing", "align"]) {
+      if (part[key] == null) {
+        delete part[key];
+      }
+    }
+  }
+
+  private static opposite(side: unknown): unknown {
+    return typeof side === "string" ? GroupService.FACING_TO_OPPOSITE[side] ?? side : side;
+  }
+
+  private static deleteUndefined(part: GroupPart): void {
+    for (const key of Object.keys(part)) {
+      if (part[key] === undefined) {
+        delete part[key];
+      }
+    }
+  }
+
+  private static pointReferencesAtAnchors(expanded: Record<string, SceneObject>, groupIdToAnchorId: Record<string, string>): void {
+    for (const part of Object.values(expanded)) {
+      const fields: GroupPart = part;
+      for (const key of GroupService.REFERENCE_KEYS) {
+        const reference = fields[key];
+        if (typeof reference === "string" && groupIdToAnchorId[reference]) {
+          fields[key] = groupIdToAnchorId[reference];
+        }
+      }
+    }
   }
 }

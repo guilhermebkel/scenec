@@ -1,3 +1,5 @@
+import type { GroupParams, GroupPart } from "@/Protocols/GroupProtocol.ts";
+
 export abstract class BaseGroup {
   abstract readonly id: string;
 
@@ -5,5 +7,5 @@ export abstract class BaseGroup {
 
   abstract readonly desc: string;
 
-  abstract build(group: any): Record<string, any>;
+  abstract build(group: GroupParams): Record<string, GroupPart>;
 }

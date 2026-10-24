@@ -1,11 +1,13 @@
-export abstract class BaseKit {
+import type { KitLight, KitOutline, KitStyle } from "@/Protocols/KitProtocol.ts";
+
+export abstract class BaseKit implements KitStyle {
   abstract readonly id: string;
 
-  abstract readonly desc: string;
+  abstract readonly description: string;
 
-  readonly outline?: { w: number; inner: number };
+  readonly outline?: KitOutline;
 
-  readonly light?: { strength?: number; mode?: string; casts?: boolean };
+  readonly light?: KitLight;
 
   readonly texture?: string;
 
@@ -13,5 +15,5 @@ export abstract class BaseKit {
 
   readonly scene?: string;
 
-  readonly drop?: boolean;
+  readonly hasDrop?: boolean;
 }

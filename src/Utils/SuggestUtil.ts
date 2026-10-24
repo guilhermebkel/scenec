@@ -1,5 +1,5 @@
 export class SuggestUtil {
-  private static distance(a: string, b: string): number {
+  static distance(a: string, b: string): number {
     const rows = Array.from({ length: a.length + 1 }, (_, i) => [i]);
     for (let j = 1; j <= b.length; j++) {
       rows[0][j] = j;

@@ -31,7 +31,7 @@ export class CatalogService {
   }
 
   static listKits(): { id: string; description: string }[] {
-    return Object.entries(KitService.KITS).map(([id, kit]) => ({ id, description: kit.desc }));
+    return Object.entries(KitService.KITS).map(([id, kit]) => ({ id, description: kit.description }));
   }
 
   static listThemes(): string[] {

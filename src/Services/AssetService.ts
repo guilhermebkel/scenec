@@ -1,3 +1,5 @@
+import type { LibraryAsset } from "@/Protocols/AssetProtocol.ts";
+import { SuggestUtil } from "@/Utils/SuggestUtil.ts";
 import { PersonAsset } from "@/Resources/Assets/PersonAsset.ts";
 import { HouseAsset } from "@/Resources/Assets/HouseAsset.ts";
 import { TreeAsset } from "@/Resources/Assets/TreeAsset.ts";
@@ -91,27 +93,37 @@ import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 // (y negativo = para cima). Metadados: kind (onde pode ficar), w/h (caixa),
 // top (altura da superfície de apoio), seat (altura do assento), tags (sinônimos).
 
+export interface AssetResolution {
+  id: string | null;
+  suggest?: string[];
+}
+
 export class AssetService {
+  private static readonly CANDIDATE_POOL = 6;
+
+  private static readonly SUGGESTION_COUNT = 3;
+
   static readonly ASSETS: Record<string, BaseAsset> = Object.fromEntries(
     [new PersonAsset(), new HouseAsset(), new TreeAsset(), new PineAsset(), new PalmAsset(), new BushAsset(), new FlowersAsset(), new FenceAsset(), new BuildingAsset(), new MountainAsset(), new SunAsset(), new MoonAsset(), new CloudAsset(), new BirdAsset(), new StarAsset(), new StarsAsset(), new CarAsset(), new BicycleAsset(), new DogAsset(), new CatAsset(), new StreetlightAsset(), new BenchAsset(), new WindowAsset(), new FrameAsset(), new ClockAsset(), new BoardAsset(), new ShelfWallAsset(), new BookshelfAsset(), new DeskAsset(), new TableAsset(), new CounterAsset(), new ChairAsset(), new SofaAsset(), new BedAsset(), new TvAsset(), new TvStandAsset(), new FloorLampAsset(), new RugAsset(), new PendantLampAsset(), new LaptopAsset(), new MonitorAsset(), new LampAsset(), new PlantAsset(), new BigPlantAsset(), new CupAsset(), new CakeAsset(), new PizzaAsset(), new FruitBowlAsset(), new BurgerAsset(), new PlateAsset(), new VaseFlowersAsset(), new BooksAsset(), new CoffeeMachineAsset(), new UmbrellaAsset(), new BoatAsset(), new SuitcaseAsset(), new BackpackAsset(), new BeachTowelAsset(), new BallAsset(), new SandcastleAsset(), new SchoolAsset(), new UniversityAsset(), new LabAsset(), new StageAsset(), new FinishFlagAsset(), new PennantAsset(), new BalloonsAsset(), new DiplomaAsset(), new TrophyAsset(), new DeskSlabAsset(), new DrawerUnitAsset(), new CabinetAsset(), new RollingCartAsset(), new TrashCanAsset(), new OfficeChairAsset(), new LaptopOpenAsset(), new HeadphonesAsset(), new CapAsset(), new PhotoFrameAsset(), new FigurineAsset(), new TumblerAsset(), new PaperCupAsset(), new PlasticBagAsset(), new CablesAsset(), new LightSwitchAsset(), new GlassShelfAsset()].map((asset) => [asset.id, asset]),
   );
 
-  // Busca por nome ou sinônimo; devolve id ou sugestões
-  static resolveAsset(name: any, LIB = AssetService.ASSETS) {
-    if (LIB[name]) { return { id: name }; }
-    const n = name.toLowerCase();
-    for (const [id, a] of Object.entries(LIB)) { if ((a.tags || []).includes(n)) { return { id }; } }
-    const lev = (a: any, b: any) => {
-      const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
-      for (let j = 1; j <= b.length; j++) { d[0][j] = j; }
-      for (let i = 1; i <= a.length; i++) {
-        for (let j = 1; j <= b.length; j++) { d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); }
+  static resolveAsset(name: string, library: Record<string, LibraryAsset> = AssetService.ASSETS): AssetResolution {
+    if (library[name]) {
+      return { id: name };
+    }
+    const lowered = name.toLowerCase();
+    const byTag = Object.entries(library).find(([, asset]) => (asset.tags ?? []).includes(lowered));
+    if (byTag) {
+      return { id: byTag[0] };
+    }
+    const candidates: Array<[number, string]> = [];
+    for (const [id, asset] of Object.entries(library)) {
+      for (const key of [id, ...(asset.tags ?? [])]) {
+        candidates.push([SuggestUtil.distance(lowered, key), id]);
       }
-      return d[a.length][b.length];
-    };
-    const cands: any[] = [];
-    for (const [id, a] of Object.entries(LIB)) { for (const k of [id, ...(a.tags || [])]) { cands.push([lev(n, k), id]); } }
-    cands.sort((x, y) => x[0] - y[0]);
-    return { id: null, suggest: [...new Set(cands.slice(0, 6).map((c) => c[1]))].slice(0, 3) };
+    }
+    candidates.sort((first, second) => first[0] - second[0]);
+    const nearest = candidates.slice(0, AssetService.CANDIDATE_POOL).map((candidate) => candidate[1]);
+    return { id: null, suggest: [...new Set(nearest)].slice(0, AssetService.SUGGESTION_COUNT) };
   }
 }

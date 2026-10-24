@@ -14,5 +14,9 @@ export class PlateAsset extends BaseAsset {
 
   readonly tags = ["prato", "dish"];
 
-  draw(params: AssetParams, theme: Theme) { const mainColor = ShapeUtil.col(theme, params.color, theme.paper); return ShapeUtil.ell(0, -1.5, 13, 3, mainColor) + ShapeUtil.ell(0, -2, 9, 1.8, ColorUtil.sh(mainColor, -0.08)); }
+  draw(params: AssetParams, theme: Theme) {
+    const mainColor = ShapeUtil.color(theme, params.color,
+      theme.paper); return ShapeUtil.ellipse(0, -1.5, 13, 3, mainColor) + ShapeUtil.ellipse(0, -2, 9, 1.8,
+      ColorUtil.sh(mainColor, -0.08));
+  }
 }

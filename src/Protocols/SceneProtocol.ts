@@ -118,6 +118,12 @@ export const sceneSchema = z.looseObject({
 
 export type Scene = z.infer<typeof sceneSchema>;
 
+export type SceneObject = z.infer<typeof objectSchema>;
+
+export type Canvas = z.infer<typeof canvasSchema>;
+
+export type SceneText = z.infer<typeof textSchema>;
+
 export const OBJECT_PARAM_KEYS = [
   "age", "along", "art", "backpack", "beard", "bg", "bottom", "build", "cane", "color", "count", "details", "dist", "doors",
   "draped", "drawers", "drop", "ends", "expr", "floors", "food", "frame", "gaze", "glasses", "gown", "hair", "hair_color",

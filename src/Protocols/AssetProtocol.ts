@@ -25,7 +25,7 @@ export interface AssetParams {
   steam?: boolean;
   mic?: boolean;
   stand?: boolean;
-  on?: boolean;
+  on?: string | boolean;
   off?: boolean;
   draped?: boolean | string;
   hair?: string;
@@ -35,6 +35,29 @@ export interface AssetParams {
 export interface AssetSize {
   w: number;
   h: number;
+}
+
+export interface PersonDrawing {
+  svg: string;
+  hand: number[];
+  box: AssetSize;
+}
+
+export type AssetDrawing = string | PersonDrawing;
+
+export interface LibraryAsset {
+  readonly kind: string;
+  readonly width: number;
+  readonly height: number;
+  readonly tags?: readonly string[];
+  readonly top?: number;
+  readonly seat?: number;
+  readonly elevation?: number;
+  readonly isBackdrop?: boolean;
+  readonly isHollow?: boolean;
+  size?(params: AssetParams): AssetSize;
+  topOf?(params: AssetParams): number;
+  draw(params: AssetParams, theme: Theme): AssetDrawing;
 }
 
 export type { Theme };

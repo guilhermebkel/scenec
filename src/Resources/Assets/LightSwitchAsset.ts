@@ -16,5 +16,9 @@ export class LightSwitchAsset extends BaseAsset {
 
   readonly tags = ["interruptor", "tomada", "switch"];
 
-  draw(params: AssetParams, theme: Theme) { return ShapeUtil.rect(-2.4, -7, 5, 7, "rgba(0,0,0,0.08)", 0.6) + ShapeUtil.rect(-2.5, -7.2, 5, 7, theme.paper, 0.6) + ShapeUtil.rect(-1, -5.2, 2, 3, ColorUtil.sh(theme.paper, -0.08), 0.4); }
+  draw(params: AssetParams, theme: Theme) {
+    return ShapeUtil.rect(-2.4, -7, 5, 7, "rgba(0,0,0,0.08)", { rx: 0.6 })
+      + ShapeUtil.rect(-2.5, -7.2, 5, 7, theme.paper, { rx: 0.6 }) + ShapeUtil.rect(-1, -5.2, 2, 3,
+      ColorUtil.sh(theme.paper, -0.08), { rx: 0.4 });
+  }
 }

@@ -14,5 +14,10 @@ export class DiplomaAsset extends BaseAsset {
 
   readonly tags = ["diploma", "canudo", "certificado"];
 
-  draw(params: AssetParams, theme: Theme) { return ShapeUtil.rect(-13, -10, 26, 10, theme.paper, 5) + ShapeUtil.rect(-13, -10, 26, 4, ColorUtil.sh(theme.paper, 0.0), 5) + ShapeUtil.rect(-13, -4, 26, 4, ColorUtil.sh(theme.paper, -0.12), 2) + ShapeUtil.rect(-2, -11, 4, 12, theme.primary) + `<path d="M0 0 L-3 6 M0 0 L3 6" stroke="${theme.primary}" stroke-width="1.6"/>`; }
+  draw(params: AssetParams, theme: Theme) {
+    return ShapeUtil.rect(-13, -10, 26, 10, theme.paper, { rx: 5 })
+      + ShapeUtil.rect(-13, -10, 26, 4, ColorUtil.sh(theme.paper, 0.0), { rx: 5 }) + ShapeUtil.rect(-13, -4, 26, 4,
+      ColorUtil.sh(theme.paper, -0.12), { rx: 2 }) + ShapeUtil.rect(-2, -11, 4, 12, theme.primary)
+    + `<path d="M0 0 L-3 6 M0 0 L3 6" stroke="${theme.primary}" stroke-width="1.6"/>`;
+  }
 }

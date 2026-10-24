@@ -15,7 +15,11 @@ export class SunAsset extends BaseAsset {
   readonly tags = ["sol"];
 
   draw(params: AssetParams, theme: Theme) {
-    let svg = ""; for (let first = 0; first < 360; first += 30) { svg += `<path d="M${ShapeUtil.r(Math.cos(ShapeUtil.rad(first)) * 34)} ${ShapeUtil.r(-45 + Math.sin(ShapeUtil.rad(first)) * 34)} L${ShapeUtil.r(Math.cos(ShapeUtil.rad(first)) * 44)} ${ShapeUtil.r(-45 + Math.sin(ShapeUtil.rad(first)) * 44)}" stroke="${theme.accent}" stroke-width="5" stroke-linecap="round"/>`; }
-    return ShapeUtil.circle(0, -45, 31, theme.accent, "opacity=\"0.25\"") + svg + ShapeUtil.circle(0, -45, 26, theme.accent) + `<path d="M-16 -55 A20 20 0 0 1 4 -66" stroke="${ColorUtil.sh(theme.accent, 0.45)}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+    let svg = ""; for (let first = 0; first < 360; first += 30) {
+      svg += `<path d="M${ShapeUtil.round(Math.cos(ShapeUtil.toRadians(first)) * 34)} ${ShapeUtil.round(-45 + Math.sin(ShapeUtil.toRadians(first)) * 34)} L${ShapeUtil.round(Math.cos(ShapeUtil.toRadians(first)) * 44)} ${ShapeUtil.round(-45 + Math.sin(ShapeUtil.toRadians(first)) * 44)}" stroke="${theme.accent}" stroke-width="5" stroke-linecap="round"/>`;
+    }
+    return ShapeUtil.circle(0, -45, 31, theme.accent, "opacity=\"0.25\"") + svg + ShapeUtil.circle(0, -45, 26,
+      theme.accent)
+    + `<path d="M-16 -55 A20 20 0 0 1 4 -66" stroke="${ColorUtil.sh(theme.accent, 0.45)}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
   }
 }

@@ -1,3 +1,4 @@
+import type { CritiqueInput } from "@/Protocols/CompilationProtocol.ts";
 // Diretor de arte: renderiza a cena em baixa resolução e devolve críticas de composição em texto,
 // cada uma com uma sugestão concreta de correção. Roda em CPU (resvg), sem modelo.
 import { Resvg } from "@resvg/resvg-js";
@@ -22,7 +23,7 @@ export class CritiqueModule {
 
   private static readonly hexToRgb = (h: any) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 
-  static critique({ W, H, head, bg, scene, objects, theme, scale, textRects, skip = [] }: any): string[] {
+  static critique({ width: W, height: H, head, bg, scene, objects, theme, scale, textRects, skip }: CritiqueInput): string[] {
     const f = CritiqueModule.R / W, Rw = CritiqueModule.R, Rh = Math.max(1, Math.round(H * f));
     const render = (inner: any) => {
       const img = new Resvg(`${head}${inner}</svg>`, { fitTo: { mode: "width", value: CritiqueModule.R }, font: { loadSystemFonts: false } }).render();
@@ -35,7 +36,7 @@ export class CritiqueModule {
     const FL = lab(full), BL = lab(back);
     const dE = (A: any, i: any, B: any, j: any) => Math.hypot(A[i * 3] - B[j * 3], A[i * 3 + 1] - B[j * 3 + 1], A[i * 3 + 2] - B[j * 3 + 2]);
 
-    const objs = objects.filter((o: any) => !o.ignore).sort((a: any, b: any) => a.z - b.z);
+    const objs: any[] = objects.filter((o) => !o.ignore).sort((a, b) => a.z - b.z);
     for (const o of objs) {
       const px = render(defs + o.body);
       o.alpha = new Uint8Array(N);

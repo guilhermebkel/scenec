@@ -1,3 +1,4 @@
+import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 
 // Modo mapa: contornos reais (data/europe.json, extraído uma vez do Natural Earth), projeção cônica
@@ -58,7 +59,7 @@ export class MapModule {
     return ([lon, lat]: number[]) => { const th = n * (lon - lon0) * r, rh = rho(lat); return [rh * Math.sin(th), -(rho0 - rh * Math.cos(th))]; };
   }
 
-  static compileMap(scene: any, { theme: t, warnings, W, H, contrast }: any) {
+  static compileMap(scene: any, { theme: t, warnings, W, H, contrast }: any): CompileResult {
     const c = scene.canvas || {}, m = scene.map || {};
     const panelOn = m.panel !== false;
     const PW = panelOn ? Math.round(W * 0.28) : 0, PAD = W * 0.025;
@@ -306,6 +307,6 @@ export class MapModule {
       ...legs.map((l) => `${l.a.city} → ${l.b.city}: ${l.by}`),
       `highlighted countries: ${visited.map((v) => v.pt).join(", ")}`,
     ].join("\n");
-    return { svg, warnings: [...new Set(warnings)], description };
+    return { svg, warnings: [...new Set<string>(warnings)], description };
   }
 }

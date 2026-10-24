@@ -11,8 +11,8 @@ export interface CheckResult extends CompileResult {
 export class CheckModule {
   static check(input: unknown, options: CompileOptions = {}): CheckResult {
     const { scene, warnings } = ParsingModule.parseScene(input);
-    const { critiqueInput, ...result } = CompilationModule.compileInternal(scene, { measure: (svg) => ResvgAdapter.measureSvg(svg), ...options });
-    const art: string[] = critiqueInput ? CritiqueModule.critique(critiqueInput) : [];
-    return { ...result, warnings: [...warnings, ...result.warnings], art } as CheckResult;
+    const { result, critique } = CompilationModule.compileInternal(scene, { measure: (svg) => ResvgAdapter.measureSvg(svg), ...options });
+    const art = critique ? CritiqueModule.critique(critique) : [];
+    return { ...result, warnings: [...warnings, ...result.warnings], art };
   }
 }

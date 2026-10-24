@@ -1,3 +1,4 @@
+import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 
 // Modo 2.5D: o chão é um plano contínuo (x, z) visto em perspectiva.
@@ -45,7 +46,7 @@ export class PlaneModule {
     return out;
   }
 
-  static compilePlane(scene: any, { LIB, theme: t, warnings, W, H, resolveAsset, contrast }: any) {
+  static compilePlane(scene: any, { LIB, theme: t, warnings, W, H, resolveAsset, contrast }: any): CompileResult {
     const c = scene.canvas || {};
     // ---------- projeção ----------
     // Dois tipos de câmera: 'board' (padrão, alta e distante, para mapas e tabuleiros) e 'room'
@@ -570,6 +571,6 @@ export class PlaneModule {
       ...groundSprites.filter((s) => !s.decor).map((s) => `${s.id} (${s.asset}): x=${s.x.toFixed(2)}, z=${s.z.toFixed(2)}, ${Math.round(s.h / H * 100)}% of the height`),
       `${groundSprites.filter((s) => s.decor).length} automatic scenery elements (zones and scatter)`,
     ].join("\n");
-    return { svg, warnings: [...new Set(warnings)], description };
+    return { svg, warnings: [...new Set<string>(warnings)], description };
   }
 }

@@ -14,7 +14,9 @@ export class MoonAsset extends BaseAsset {
   readonly tags = ["lua"];
 
   draw(params: AssetParams, theme: Theme) {
-    return ShapeUtil.circle(4, -32, 34, theme.primary, "opacity=\"0.12\"") + `<path d="M10 -58 A28 28 0 1 0 22 -10 A22 22 0 1 1 10 -58 Z" fill="${theme.primary}"/>`
-      + ShapeUtil.circle(-6, -28, 3, theme.ink, "opacity=\"0.12\"") + ShapeUtil.circle(4, -16, 2, theme.ink, "opacity=\"0.12\"");
+    return ShapeUtil.circle(4, -32, 34, theme.primary, "opacity=\"0.12\"")
+      + `<path d="M10 -58 A28 28 0 1 0 22 -10 A22 22 0 1 1 10 -58 Z" fill="${theme.primary}"/>`
+      + ShapeUtil.circle(-6, -28, 3, theme.ink, "opacity=\"0.12\"") + ShapeUtil.circle(4, -16, 2, theme.ink,
+      "opacity=\"0.12\"");
   }
 }
