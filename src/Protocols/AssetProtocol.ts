@@ -1,3 +1,4 @@
+import type { PersonParams } from "@/Protocols/PersonProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 
 // Why: the slug of every library asset, so code that names an asset by id is checked by the compiler.
@@ -94,7 +95,7 @@ export type AssetId = (typeof ASSET_IDS)[number];
 
 export type Facing = "left" | "right";
 
-export interface AssetParams {
+export interface AssetParams extends PersonParams {
   color?: string;
   width?: number;
   height?: number;

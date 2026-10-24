@@ -1,3 +1,4 @@
+import type { AssetDrawing, AssetParams, Theme } from "@/Protocols/AssetProtocol.ts";
 import { PersonUtil } from "@/Utils/PersonUtil.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 
@@ -12,7 +13,7 @@ export class PersonAsset extends BaseAsset {
 
   readonly tags = ["pessoa", "human", "character", "man", "woman", "personagem"];
 
-  draw(params: any, theme: any) {
+  draw(params: AssetParams, theme: Theme): AssetDrawing {
     return PersonUtil.person(params, theme);
   }
 }

@@ -10,7 +10,5 @@ export class ThemeService {
     [new FlatAutumnTheme(), new FlatCoolTheme(), new NightTheme(), new WarmCafeTheme(), new BeachTheme()].map((theme) => [theme.id, theme.palette]),
   );
 
-  static readonly SKIN: Record<string, string> = { light: "#F2C9A5", medium: "#D19A6E", tan: "#B87A50", dark: "#7A4B30", deep: "#5A3522" };
 
-  static readonly HAIR: Record<string, string> = { black: "#1E1A1A", brown: "#5A3825", blonde: "#E2B45A", red: "#B0462A", gray: "#9C9C9C" };
 }
