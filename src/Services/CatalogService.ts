@@ -1,5 +1,5 @@
 import { GroupService } from "@/Services/GroupService.ts";
-import { ThemeService } from "@/Services/ThemeService.ts";
+import { THEME_IDS, type ThemeId } from "@/Protocols/ThemeProtocol.ts";
 import { PersonUtil } from "@/Utils/PersonUtil.ts";
 import { KitService } from "@/Services/KitService.ts";
 import { AssetService } from "@/Services/AssetService.ts";
@@ -34,8 +34,8 @@ export class CatalogService {
     return Object.entries(KitService.KITS).map(([id, kit]) => ({ id, description: kit.description }));
   }
 
-  static listThemes(): string[] {
-    return Object.keys(ThemeService.THEMES);
+  static listThemes(): ThemeId[] {
+    return [...THEME_IDS];
   }
 
   static catalog(kind: CatalogKind): unknown {

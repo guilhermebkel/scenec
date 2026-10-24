@@ -1,7 +1,7 @@
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import type { KitStyle } from "@/Protocols/KitProtocol.ts";
 import type { AssetId, AssetKind, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
-import type { Canvas, SceneObject } from "@/Protocols/SceneProtocol.ts";
+import type { Canvas, SceneObject, SettingName } from "@/Protocols/SceneProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 
 export type Depth = "far" | "mid" | "near";
@@ -67,7 +67,7 @@ export interface CompilationContext {
   warnings: string[];
   width: number;
   height: number;
-  setting: string;
+  setting: SettingName;
   lines: LayoutLines;
   unit: number;
 }

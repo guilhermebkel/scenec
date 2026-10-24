@@ -359,6 +359,73 @@ const mapName = {
   },
 };
 
+const LIST_TYPE_NAMES = new Set(["Array", "ReadonlyArray"]);
+
+function isStringKeyword(typeNode) {
+  return typeNode?.type === "TSStringKeyword";
+}
+
+function unwrapRecord(typeNode) {
+  let current = typeNode;
+  while (current?.type === "TSTypeReference" && WRAPPER_TYPE_NAMES.has(current.typeName.name)) {
+    current = current.typeArguments?.params[0];
+  }
+  return current;
+}
+
+function isRecordOfStringKeys(typeNode) {
+  const record = unwrapRecord(typeNode);
+  return record?.type === "TSTypeReference" && record.typeName.name === "Record" && isStringKeyword(record.typeArguments?.params[0]);
+}
+
+function isListOfStrings(typeNode) {
+  if (typeNode?.type === "TSTypeOperator" && typeNode.operator === "readonly") {
+    return isListOfStrings(typeNode.typeAnnotation);
+  }
+  if (typeNode?.type === "TSArrayType") {
+    return isStringKeyword(typeNode.elementType);
+  }
+  return typeNode?.type === "TSTypeReference" && LIST_TYPE_NAMES.has(typeNode.typeName.name) && isStringKeyword(typeNode.typeArguments?.params[0]);
+}
+
+function hasOnlyFixedKeys(objectNode) {
+  return objectNode.properties.length > 0
+    && objectNode.properties.every((property) => property.type === "Property" && !property.computed);
+}
+
+function hasOnlyFixedStrings(arrayNode) {
+  return arrayNode.elements.length > 0
+    && arrayNode.elements.every((element) => element?.type === "Literal" && typeof element.value === "string");
+}
+
+const knownKeys = {
+  meta: {
+    type: "suggestion",
+    messages: {
+      keys: "The keys here are all known: type them as a union (Record<SomeName, ...>) instead of string, so a typo fails to compile.",
+      values: "The values here are all known: type the list as an array of a union (readonly SomeName[]) instead of string[].",
+    },
+  },
+  create(context) {
+    const check = (typeNode, init, reportNode) => {
+      if (isRecordOfStringKeys(typeNode) && init?.type === "ObjectExpression" && hasOnlyFixedKeys(init)) {
+        context.report({ node: reportNode, messageId: "keys" });
+      }
+      if (isListOfStrings(typeNode) && init?.type === "ArrayExpression" && hasOnlyFixedStrings(init)) {
+        context.report({ node: reportNode, messageId: "values" });
+      }
+    };
+    return {
+      "VariableDeclarator"(node) {
+        check(node.id.typeAnnotation?.typeAnnotation, node.init, node.id);
+      },
+      "PropertyDefinition"(node) {
+        check(node.typeAnnotation?.typeAnnotation, node.value, node.key);
+      },
+    };
+  },
+};
+
 export const localRules = {
   rules: {
     "comment-marker": commentMarker,
@@ -367,5 +434,6 @@ export const localRules = {
     "describe-target": describeTarget,
     "comment-placement": commentPlacement,
     "map-name": mapName,
+    "known-keys": knownKeys,
   },
 };

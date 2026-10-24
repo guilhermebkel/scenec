@@ -298,3 +298,36 @@ tsRuleTester.run("map-name", localRules.rules["map-name"], {
     },
   ],
 });
+
+tsRuleTester.run("known-keys", localRules.rules["known-keys"], {
+  valid: [
+    { name: "a record keyed by a union", code: "const SIZE_TO_FACTOR: Record<SizeName, number> = { small: 1, large: 2 };" },
+    { name: "a record keyed by user input, filled at run time", code: "const idToCost: Record<string, number> = {};" },
+    { name: "a record with computed keys", code: "const idToCost: Record<string, number> = { [id]: 1 };" },
+    { name: "a list of a union", code: "const KINDS: readonly AssetKind[] = [\"ground\", \"any\"];" },
+    { name: "a string list that is built at run time", code: "const names: string[] = [];" },
+    { name: "a string list from a call", code: "const names: string[] = Object.keys(table);" },
+  ],
+  invalid: [
+    {
+      name: "a string-keyed record with a fixed literal",
+      code: "const SIZE_TO_FACTOR: Record<string, number> = { small: 1, large: 2 };",
+      errors: [{ messageId: "keys" }],
+    },
+    {
+      name: "a static property typed as a partial string record",
+      code: "class A { static readonly TABLE: Partial<Record<string, number>> = { a: 1 }; }",
+      errors: [{ messageId: "keys" }],
+    },
+    {
+      name: "a string list with a fixed literal",
+      code: "const KINDS: string[] = [\"ground\", \"any\"];",
+      errors: [{ messageId: "values" }],
+    },
+    {
+      name: "a readonly string list and a ReadonlyArray",
+      code: "const A: readonly string[] = [\"a\"]; const B: ReadonlyArray<string> = [\"b\"];",
+      errors: [{ messageId: "values" }, { messageId: "values" }],
+    },
+  ],
+});

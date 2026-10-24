@@ -1,5 +1,6 @@
 import type { AssetId, AssetParams, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
 import type { CompilationContext, Depth, Placement } from "@/Protocols/CompilationProtocol.ts";
+import { DEPTH_NAMES } from "@/Protocols/SceneProtocol.ts";
 import type { ObjectLayer, SceneObject, SizeName, SlotName } from "@/Protocols/SceneProtocol.ts";
 import { AssetService } from "@/Services/AssetService.ts";
 import { DependencyOrderService, type ResolutionOrder } from "@/Services/DependencyOrderService.ts";
@@ -35,7 +36,7 @@ export class PlacementService {
     tiny: 0.5, small: 0.75, medium: 1, large: 1.3, huge: 1.7,
   };
 
-  private static readonly DEPTHS: string[] = ["far", "mid", "near"];
+  private static readonly DEPTHS: readonly Depth[] = DEPTH_NAMES;
 
   private static readonly DEPTH_TO_SCALE: Record<Depth, number> = { near: 1, mid: 0.8, far: 0.6 };
 
@@ -318,7 +319,7 @@ export class PlacementService {
   }
 
   private static isDepth(value: string): value is Depth {
-    return PlacementService.DEPTHS.includes(value);
+    return IdUtil.isOneOf(PlacementService.DEPTHS, value);
   }
 
   private static depthFor(request: PlacementRequest, reference: Placement | undefined, warnings: string[]): Depth {

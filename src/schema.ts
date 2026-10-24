@@ -22,7 +22,7 @@ export function listKits(): ReturnType<typeof CatalogService.listKits> {
   return CatalogService.listKits();
 }
 
-export function listThemes(): string[] {
+export function listThemes(): ReturnType<typeof CatalogService.listThemes> {
   return CatalogService.listThemes();
 }
 
