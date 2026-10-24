@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_start-d4a574" alt="Quick start" /></a>
-  <a href="https://www.npmjs.com/package/@scenec/core"><img src="https://img.shields.io/npm/v/@scenec/core?color=d4a574&label=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@guilhermebkel/scenec"><img src="https://img.shields.io/npm/v/@guilhermebkel/scenec?color=d4a574&label=npm" alt="npm version" /></a>
   <a href="https://github.com/guilhermebkel/scenec/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/guilhermebkel/scenec/ci.yml?branch=main&label=CI" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow" alt="License: MIT" /></a>
   <img src="https://img.shields.io/badge/Telemetry-none-2ea44f" alt="No telemetry" />
@@ -88,8 +88,8 @@ The agent picks one of 8 recipes (reel, carousel, "wrapped" card, e-learning, il
 ### 3. Or use the CLI yourself
 
 ```bash
-npx @scenec/core@1 check scene.yaml                  # warnings and critiques; exit code 1 if there are any
-npx @scenec/core@1 render scene.yaml -o out --png    # out.svg and out.png, plus a JSON report
+npx @guilhermebkel/scenec@1 check scene.yaml                  # warnings and critiques; exit code 1 if there are any
+npx @guilhermebkel/scenec@1 render scene.yaml -o out --png    # out.svg and out.png, plus a JSON report
 ```
 
 ## Example
@@ -106,7 +106,7 @@ objects:
 ```
 
 ```text
-$ npx @scenec/core@1 check scene.yaml
+$ npx @guilhermebkel/scenec@1 check scene.yaml
 warnings:
   'banco' is 10% outside the frame
   'rex' overlaps 'banco' by 36%; use left_of/right_of or a different depth
@@ -130,7 +130,7 @@ The agent moves the bench in, gives the dog another color, runs `check` again, a
 | `paper` | Paper cut-out: each piece with its own shadow and fiber texture |
 | `sketch` | Hand-drawn pencil look |
 
-`npx @scenec/core@1 catalog assets` lists everything; the full language is in [`skills/draw-scene/references/dsl.md`](skills/draw-scene/references/dsl.md).
+`npx @guilhermebkel/scenec@1 catalog assets` lists everything; the full language is in [`skills/draw-scene/references/dsl.md`](skills/draw-scene/references/dsl.md).
 
 ## How it works
 
@@ -144,16 +144,16 @@ The work is split on purpose:
 
 | Part | Does | Why |
 | --- | --- | --- |
-| **Pure core** (`@scenec/core`) | Parses, lays out and draws the SVG | Same scene, same SVG, on any machine. No file system, clock or randomness. |
-| **Renderer** (`@scenec/core/render`) | Measures boxes, rasterizes PNG, runs the critic | Needs the native renderer ([resvg](https://github.com/yisibl/resvg-js)); kept out of the core. |
+| **Pure core** (`@guilhermebkel/scenec`) | Parses, lays out and draws the SVG | Same scene, same SVG, on any machine. No file system, clock or randomness. |
+| **Renderer** (`@guilhermebkel/scenec/render`) | Measures boxes, rasterizes PNG, runs the critic | Needs the native renderer ([resvg](https://github.com/yisibl/resvg-js)); kept out of the core. |
 | **Your agent**, running the skill | Picks a recipe, writes the scene, reads the report, fixes | Taste and intent are the agent's job. |
 
 ### As a library
 
 ```ts
-import { compile } from "@scenec/core";                  // pure: no native code, no file system
-import { check, renderPng } from "@scenec/core/render";  // needs the native renderer
-import { sceneJsonSchema, catalog } from "@scenec/core/schema";
+import { compile } from "@guilhermebkel/scenec";                  // pure: no native code, no file system
+import { check, renderPng } from "@guilhermebkel/scenec/render";  // needs the native renderer
+import { sceneJsonSchema, catalog } from "@guilhermebkel/scenec/schema";
 ```
 
 <details>

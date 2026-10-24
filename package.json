@@ -1,5 +1,5 @@
 {
-  "name": "@scenec/core",
+  "name": "@guilhermebkel/scenec",
   "version": "0.1.1",
   "description": "Scene compiler: turns a short YAML scene into an illustrated SVG, with warnings and a text description so AI agents that cannot see images can draw.",
   "license": "MIT",

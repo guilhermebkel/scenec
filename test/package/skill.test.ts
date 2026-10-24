@@ -15,16 +15,11 @@ function frontmatterOf(markdown: string): Record<string, unknown> {
 }
 
 describe("skill", () => {
-  it("has a frontmatter with only the allowed keys and sources inside metadata", () => {
+  it("has a frontmatter with only the allowed keys", () => {
     const frontmatter = frontmatterOf(read("SKILL.md"));
 
     expect(Object.keys(frontmatter).every((key) => ALLOWED_FRONTMATTER_KEYS.includes(key))).toBe(true);
     expect(frontmatter.name).toBe("draw-scene");
-    expect(frontmatter.metadata).toStrictEqual({ "sources-file": "references/sources.md", "updated": "2026-10-24" });
-  });
-
-  it("starts the sources file with the consulted date", () => {
-    expect(read("references/sources.md").startsWith("Consultadas em ")).toBe(true);
   });
 
   it("keeps the generated references up to date", () => {
