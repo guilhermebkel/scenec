@@ -1,0 +1,123 @@
+{
+  "layout": [
+    {
+      "id": "janela",
+      "asset": "window",
+      "x": 20,
+      "base": 46.3,
+      "w": 13.7,
+      "h": 28.9
+    },
+    {
+      "id": "luz1",
+      "asset": "pendant_lamp",
+      "x": 33,
+      "base": 23.8,
+      "w": 7.1,
+      "h": 10.2
+    },
+    {
+      "id": "luz2",
+      "asset": "pendant_lamp",
+      "x": 50,
+      "base": 23.8,
+      "w": 7.1,
+      "h": 10.2
+    },
+    {
+      "id": "filho",
+      "asset": "person",
+      "x": 53.8,
+      "base": 93,
+      "w": 5.4,
+      "h": 27.5
+    },
+    {
+      "id": "mesa",
+      "asset": "table",
+      "x": 47,
+      "base": 93,
+      "w": 33.9,
+      "h": 15.6
+    },
+    {
+      "id": "c1",
+      "asset": "chair",
+      "x": 29.6,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "c2",
+      "asset": "chair",
+      "x": 64.4,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "estante",
+      "asset": "bookshelf",
+      "x": 92,
+      "base": 93,
+      "w": 14.3,
+      "h": 57.8
+    },
+    {
+      "id": "dog",
+      "asset": "dog",
+      "x": 12,
+      "base": 93,
+      "w": 8.9,
+      "h": 12.2
+    },
+    {
+      "id": "pai",
+      "asset": "person",
+      "x": 28.9,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "mae",
+      "asset": "person",
+      "x": 65.1,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "pizza",
+      "asset": "pizza",
+      "x": 47,
+      "base": 77.4,
+      "w": 7.1,
+      "h": 2.7
+    },
+    {
+      "id": "frutas",
+      "asset": "fruit_bowl",
+      "x": 36.8,
+      "base": 77.4,
+      "w": 6.1,
+      "h": 7.5
+    },
+    {
+      "id": "burger",
+      "asset": "burger",
+      "x": 32.8,
+      "base": 77.4,
+      "w": 3.9,
+      "h": 6.1
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "arte: peso visual pende para a direita (centro de massa em 66% da largura); aproxime 'estante' do centro ou ponha algo do lado esquerdo",
+    "arte: 'janela' some contra o fundo na parte de cima (86% desse contorno sem contraste): a cor #F8F0E4 está próxima demais; mude a cor de um dos dois",
+    "arte: 'pizza' some contra o fundo na parte de cima (47% desse contorno sem contraste): a cor #DF9C62 está próxima demais; mude a cor de um dos dois",
+    "arte: 'c1' e 'burger' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+  ]
+}

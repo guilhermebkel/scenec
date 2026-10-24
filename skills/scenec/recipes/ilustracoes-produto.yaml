@@ -1,0 +1,44 @@
+canvas:
+  width: 800
+  height: 600
+  theme: flat-cool
+  setting: indoor
+  scale: 1.6
+  horizon: 0.55
+  base: 0.77
+  colors:
+    wall: '#F4F6FB'
+    floor: '#E3E8F2'
+    woodDark: '#C9D2E3'
+objects:
+  mesa:
+    asset: table
+    at: 0.62
+    size: small
+  note:
+    asset: laptop_open
+    'on': mesa
+    size: 2.4
+  eu:
+    asset: person
+    pose: shrugging
+    expr: surprised
+    at: 0.38
+    hair: short
+    hair_color: black
+    skin: tan
+    shirt: primary
+    outfit: sweater
+    pants: '#8A94A6'
+text:
+  - content: Sem conexão
+    at: bottom-center
+    role: title
+    size: 0.05
+    'y': 0.86
+  - content: Verifique sua internet e tente de novo.
+    at: bottom-center
+    role: body
+    size: 0.032
+    'y': 0.93
+    color: '#55607A'

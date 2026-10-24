@@ -1,0 +1,132 @@
+{
+  "layout": [
+    {
+      "id": "quadro",
+      "asset": "frame",
+      "x": 55,
+      "base": 40.5,
+      "w": 11.8,
+      "h": 17.3
+    },
+    {
+      "id": "prat",
+      "asset": "shelf_wall",
+      "x": 82,
+      "base": 39.1,
+      "w": 13.7,
+      "h": 9.8
+    },
+    {
+      "id": "balcao",
+      "asset": "counter",
+      "x": 20,
+      "base": 74,
+      "w": 30.6,
+      "h": 16.4
+    },
+    {
+      "id": "flores",
+      "asset": "vase_flowers",
+      "x": 20,
+      "base": 57.6,
+      "w": 3.1,
+      "h": 9
+    },
+    {
+      "id": "maquina",
+      "asset": "coffee_machine",
+      "x": 10.8,
+      "base": 57.6,
+      "w": 4.7,
+      "h": 10.6
+    },
+    {
+      "id": "vaso",
+      "asset": "plant",
+      "x": 29.2,
+      "base": 57.6,
+      "w": 5,
+      "h": 12.2
+    },
+    {
+      "id": "luz1",
+      "asset": "pendant_lamp",
+      "x": 62,
+      "base": 23.8,
+      "w": 7.1,
+      "h": 10.2
+    },
+    {
+      "id": "mesa",
+      "asset": "table",
+      "x": 62,
+      "base": 93,
+      "w": 14.3,
+      "h": 15.6
+    },
+    {
+      "id": "cadeira1",
+      "asset": "chair",
+      "x": 53.9,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "cadeira2",
+      "asset": "chair",
+      "x": 70.1,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "lia",
+      "asset": "person",
+      "x": 53.2,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "rui",
+      "asset": "person",
+      "x": 70.8,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "cafe1",
+      "asset": "cup",
+      "x": 57.7,
+      "base": 77.4,
+      "w": 2.9,
+      "h": 7.5
+    },
+    {
+      "id": "cafe2",
+      "asset": "cup",
+      "x": 66.3,
+      "base": 77.4,
+      "w": 2.9,
+      "h": 7.5
+    },
+    {
+      "id": "bolo",
+      "asset": "cake",
+      "x": 62,
+      "base": 77.4,
+      "w": 5.4,
+      "h": 8.8
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "arte: 'balcao' some contra o fundo na parte de baixo (66% desse contorno sem contraste): a cor #7C5036 está próxima demais; mude a cor de um dos dois",
+    "arte: 'quadro' e 'luz1' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'cadeira1' e 'cafe1' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'cadeira2' e 'cafe2' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'cafe1' e 'bolo' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+  ]
+}

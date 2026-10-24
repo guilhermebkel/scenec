@@ -1,0 +1,79 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: flat-autumn
+  setting: outdoor
+objects:
+  sol:
+    asset: sun
+    at: top-right
+  nuvem1:
+    asset: cloud
+    at: top-center-right
+    altitude: 0.3
+  nuvem2:
+    asset: cloud
+    at: top-center
+    size: small
+    altitude: 0.36
+  monte:
+    asset: mountain
+    at: 0.78
+    depth: far
+    size: large
+  casa:
+    asset: house
+    at: 0.42
+  arvore:
+    asset: tree
+    behind: casa
+    offset: 0.55
+  pinho:
+    asset: pine
+    at: 0.12
+    depth: mid
+  joao:
+    asset: person
+    pose: waving
+    left_of: casa
+    gap: 0.03
+    hair: short
+    hair_color: brown
+    skin: light
+    shirt: paper
+    jacket: secondary
+    pants: ink
+    beard: true
+  rex:
+    asset: dog
+    left_of: joao
+    gap: 0
+    facing: right
+  flores:
+    asset: flowers
+    in_front_of: casa
+    offset: -0.32
+  passaro1:
+    asset: bird
+    at: top-center
+    altitude: 0.22
+  passaro2:
+    asset: bird
+    at: top-center-right
+    altitude: 0.18
+    size: small
+  cerca:
+    asset: fence
+    right_of: casa
+    gap: 0
+  arbusto:
+    asset: bush
+    right_of: cerca
+    gap: 0.01
+text:
+  - content: Bem-vindo ao outono
+    at: top-left
+    role: title
+  - content: 5 ideias para aproveitar a estação
+    at: top-left
+    role: subtitle

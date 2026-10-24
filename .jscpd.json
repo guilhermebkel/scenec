@@ -1,0 +1,9 @@
+{
+  "path": ["src", "scripts"],
+  "ignore": ["**/*.test.ts", "**/*.test.mjs", "src/data/**", "src/drawing/**", "src/modes/**"],
+  "minLines": 8,
+  "minTokens": 90,
+  "threshold": 3,
+  "reporters": ["console"],
+  "gitignore": true
+}

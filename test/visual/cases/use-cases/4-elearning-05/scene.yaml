@@ -1,0 +1,57 @@
+canvas:
+  width: 1200
+  height: 675
+  theme: flat-cool
+  setting: indoor
+  scale: 1.6
+  colors:
+    wall: '#EEF3F8'
+  horizon: 0.62
+objects:
+  ana:
+    asset: person
+    pose: thinking
+    expr: thinking
+    at: 0.72
+    hair: bun
+    hair_color: black
+    skin: medium
+    shirt: paper
+    jacket: primary
+  planta:
+    asset: big_plant
+    at: 0.87
+    size: small
+text:
+  - content: QUIZ
+    at: top-left
+    role: label
+    size: 0.03
+    color: secondary
+    weight: 700
+  - content: O que Ana deve fazer primeiro?
+    at: top-left
+    role: title
+    size: 0.055
+    'y': 0.25
+  - content: A) Explicar a política de trocas
+    at: top-left
+    role: body
+    size: 0.034
+    'y': 0.42
+    box: paper
+    pad: 0.6
+  - content: B) Ouvir o relato do Rui
+    at: top-left
+    role: body
+    size: 0.034
+    'y': 0.54
+    box: paper
+    pad: 0.6
+  - content: C) Chamar o gerente
+    at: top-left
+    role: body
+    size: 0.034
+    'y': 0.66
+    box: paper
+    pad: 0.6

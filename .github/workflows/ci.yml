@@ -1,0 +1,71 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm quality
+      - run: pnpm test
+      - run: pnpm build
+      - run: pnpm check:pack
+      - run: pnpm check:licenses
+  visual:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:visual
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-report
+          path: test/visual/report/
+      - if: failure()
+        run: echo "Visual baselines changed. Open the visual-report artifact (index.html)." >> "$GITHUB_STEP_SUMMARY"
+  update-baselines:
+    needs: visual
+    if: always() && needs.visual.result == 'failure' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    environment: baseline-update
+    steps:
+      - uses: actions/create-github-app-token@v1
+        id: app
+        with:
+          app-id: ${{ vars.BASELINE_APP_ID }}
+          private-key: ${{ secrets.BASELINE_APP_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ steps.app.outputs.token }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test:visual --update
+      - run: |
+          git config user.name "scenec-baselines[bot]"
+          git config user.email "baselines@users.noreply.github.com"
+          git add test/visual/cases
+          git commit -m "test: update visual baselines" || exit 0
+          git push

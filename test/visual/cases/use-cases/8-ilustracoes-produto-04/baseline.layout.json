@@ -1,0 +1,30 @@
+{
+  "layout": [
+    {
+      "id": "eu",
+      "asset": "person",
+      "x": 50,
+      "base": 77,
+      "w": 16.3,
+      "h": 58.8
+    },
+    {
+      "id": "planta",
+      "asset": "big_plant",
+      "x": 20,
+      "base": 77,
+      "w": 18.4,
+      "h": 44.9
+    },
+    {
+      "id": "gato",
+      "asset": "cat",
+      "x": 72,
+      "base": 77,
+      "w": 14.7,
+      "h": 17.4
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

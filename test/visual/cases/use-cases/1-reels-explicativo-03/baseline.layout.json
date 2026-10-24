@@ -1,0 +1,62 @@
+{
+  "layout": [
+    {
+      "id": "prat",
+      "asset": "shelf_wall",
+      "x": 55,
+      "base": 30.5,
+      "w": 37.9,
+      "h": 8.1
+    },
+    {
+      "id": "canto_mesa",
+      "asset": "desk",
+      "x": 60,
+      "base": 90,
+      "w": 64.4,
+      "h": 12.8
+    },
+    {
+      "id": "canto_cadeira",
+      "asset": "chair",
+      "x": 20.9,
+      "base": 90,
+      "w": 21.8,
+      "h": 24.5
+    },
+    {
+      "id": "canto_pessoa",
+      "asset": "person",
+      "x": 18.9,
+      "base": 90,
+      "w": 19.8,
+      "h": 30.1
+    },
+    {
+      "id": "canto_tela",
+      "asset": "laptop",
+      "x": 40.7,
+      "base": 77.2,
+      "w": 21.1,
+      "h": 8.4
+    },
+    {
+      "id": "canto_luminaria",
+      "asset": "lamp",
+      "x": 79.3,
+      "base": 77.2,
+      "w": 14.9,
+      "h": 11.7
+    },
+    {
+      "id": "canto_caneca",
+      "asset": "cup",
+      "x": 67.7,
+      "base": 77.2,
+      "w": 7.9,
+      "h": 6.1
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

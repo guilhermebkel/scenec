@@ -1,0 +1,48 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: flat-autumn
+  setting: outdoor
+  horizon: 0.6
+  base: 0.84
+objects:
+  a1:
+    asset: tree
+    at: 0.15
+    depth: mid
+  a2:
+    asset: tree
+    at: 0.82
+    depth: far
+  banco:
+    asset: bench
+    at: 0.8
+    depth: mid
+  fl:
+    asset: flowers
+    at: 0.3
+  lia:
+    asset: person
+    pose: walking
+    at: 0.45
+    look: rex
+    age: child
+    size: 1.15
+    hair: ponytail
+    hair_color: red
+    skin: tan
+    outfit: dress
+    shirt: '#D94F70'
+  rex:
+    asset: dog
+    facing: right
+    color: wood
+    right_of: lia
+    gap: 0.04
+text:
+  - content: No parque, Rex corria atrás das folhas.
+    at: bottom-center
+    role: body
+    size: 0.03
+    box: paper
+    pad: 0.9

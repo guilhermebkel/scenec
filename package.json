@@ -1,0 +1,102 @@
+{
+  "name": "scenec",
+  "version": "0.1.0",
+  "description": "Scene compiler: turns a short YAML scene into an illustrated SVG, with warnings and a text description so AI agents that cannot see images can draw.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guilhermebkel/scenec.git"
+  },
+  "homepage": "https://github.com/guilhermebkel/scenec#readme",
+  "bugs": {
+    "url": "https://github.com/guilhermebkel/scenec/issues"
+  },
+  "keywords": [
+    "svg",
+    "illustration",
+    "scene",
+    "compiler",
+    "ai-agents",
+    "agent-skill",
+    "yaml"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./render": {
+      "types": "./dist/render.d.ts",
+      "default": "./dist/render.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "default": "./dist/schema.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "scenec": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "fonts",
+    "skills",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "quality": "knip && jscpd && dpdm --no-warning --no-tree --exit-code circular:1 src/index.ts src/render.ts src/schema.ts src/cli.ts",
+    "test": "vitest run",
+    "test:visual": "node scripts/test-visual.mjs",
+    "check": "pnpm typecheck && pnpm lint && pnpm quality && pnpm test && pnpm build && pnpm check:pack && pnpm check:licenses && pnpm test:visual",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish",
+    "check:pack": "node scripts/check-pack.mjs",
+    "check:licenses": "node scripts/check-licenses.mjs",
+    "skill:refs": "pnpm build && node scripts/gen-skill-refs.mjs"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "js-yaml": "5.5.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.3",
+    "@eslint/js": "^10.0.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^26.6.5",
+    "@types/pngjs": "^6.0.5",
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "@vitest/eslint-plugin": "^1.6.28",
+    "dpdm": "^4.3.0",
+    "eslint": "^10.13.0",
+    "eslint-plugin-sonarjs": "^4.2.2",
+    "globals": "^17.13.0",
+    "jscpd": "^5.4.2",
+    "knip": "^6.43.0",
+    "pixelmatch": "^8.0.0",
+    "pngjs": "^7.0.0",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-eslint": "^8.72.0",
+    "vitest": "^5.0.5"
+  }
+}

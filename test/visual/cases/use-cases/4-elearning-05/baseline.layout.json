@@ -1,0 +1,22 @@
+{
+  "layout": [
+    {
+      "id": "ana",
+      "asset": "person",
+      "x": 72,
+      "base": 93,
+      "w": 12.2,
+      "h": 58.8
+    },
+    {
+      "id": "planta",
+      "asset": "big_plant",
+      "x": 87,
+      "base": 93,
+      "w": 13.8,
+      "h": 44.9
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

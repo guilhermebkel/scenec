@@ -1,0 +1,87 @@
+canvas:
+  mode: 2.5d
+  width: 1200
+  height: 900
+  theme: flat-autumn
+path:
+  width: 0.06
+  tiles: false
+  color: groundDark
+  points:
+    - id: casa
+      at:
+        - 0.12
+        - 0.08
+      label: Casa
+      zone: home
+    - id: praca
+      at:
+        - 0.55
+        - 0.2
+      label: Praça
+      zone: park
+    - id: escola
+      at:
+        - 0.82
+        - 0.48
+      label: Escola
+      zone: school
+    - id: centro
+      at:
+        - 0.4
+        - 0.62
+      label: Centro
+      zone: city
+    - id: mirante
+      at:
+        - 0.62
+        - 0.95
+      label: Mirante
+      finish: true
+objects:
+  ana:
+    asset: person
+    near: praca
+    pose: walking
+    hair: bun
+    hair_color: black
+    skin: medium
+    shirt: primary
+    jacket: secondary
+  rex:
+    asset: dog
+    near: praca
+    offset:
+      - 0.05
+      - -0.01
+    facing: right
+  bike:
+    asset: bicycle
+    near: casa
+    offset:
+      - 0
+      - 0.08
+    facing: right
+  monte:
+    asset: mountain
+    at:
+      - 0.75
+      - 1.25
+    size: 1.1
+  sol:
+    asset: sun
+    at: far-right
+    altitude: 0.07
+    size: small
+scatter:
+  - assets:
+      - tree
+      - pine
+      - bush
+    count: 30
+    seed: 4
+    size: 0.7
+text:
+  - content: Um passeio pelo bairro
+    at: top-left
+    role: title

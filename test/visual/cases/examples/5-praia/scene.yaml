@@ -1,0 +1,64 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: beach
+  setting: beach
+objects:
+  sol:
+    asset: sun
+    at: top-right
+    altitude: 0.17
+  nuvem:
+    asset: cloud
+    at: top-center-left
+    altitude: 0.3
+  barco:
+    asset: boat
+    at: 0.9
+  coqueiro:
+    asset: palm
+    at: 0.15
+    size: small
+  guarda:
+    asset: umbrella
+    at: 0.66
+  toalha:
+    asset: beach_towel
+    under: guarda
+  bola:
+    asset: ball
+    right_of: guarda
+    gap: 0
+    depth: near
+  bia:
+    asset: person
+    pose: walking
+    at: 0.35
+    hair: bun
+    hair_color: blonde
+    skin: tan
+    shirt: primary
+    pants: secondary
+    bottom: shorts
+    holds: mala
+  castelo:
+    asset: sandcastle
+    at: 0.5
+  gaivota1:
+    asset: bird
+    at: top-center
+    altitude: 0.3
+  gaivota2:
+    asset: bird
+    at: top-center
+    altitude: 0.26
+    size: small
+  mala:
+    asset: suitcase
+    color: accent
+text:
+  - content: Férias de verão
+    at: top-left
+    role: title
+    color: paper
+    box: secondary

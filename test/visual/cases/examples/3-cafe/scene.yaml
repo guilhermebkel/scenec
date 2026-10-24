@@ -1,0 +1,89 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: warm-cafe
+  setting: indoor
+objects:
+  quadro:
+    asset: frame
+    at: 0.55
+    size: large
+  prat:
+    asset: shelf_wall
+    at: 0.82
+    elevation: 100
+  flores:
+    asset: vase_flowers
+    'on': balcao
+    align: center
+  balcao:
+    asset: counter
+    at: 0.2
+    depth: far
+    size: large
+  maquina:
+    asset: coffee_machine
+    'on': balcao
+    align: left
+  vaso:
+    asset: plant
+    'on': balcao
+    align: right
+  mesa:
+    asset: table
+    at: 0.62
+  cadeira1:
+    asset: chair
+    left_of: mesa
+    gap: -0.03
+    facing: right
+    color: primary
+  cadeira2:
+    asset: chair
+    right_of: mesa
+    gap: -0.03
+    facing: left
+    color: primary
+  lia:
+    asset: person
+    pose: drinking
+    facing: right
+    'on': cadeira1
+    hair: long
+    hair_color: red
+    skin: light
+    shirt: secondary
+  rui:
+    asset: person
+    pose: sitting
+    outfit: sweater
+    facing: left
+    'on': cadeira2
+    hair: curly
+    hair_color: black
+    skin: dark
+    shirt: accent
+    pants: ink
+  cafe1:
+    asset: cup
+    'on': mesa
+    align: left
+  cafe2:
+    asset: cup
+    'on': mesa
+    align: right
+    steam: false
+  bolo:
+    asset: cake
+    'on': mesa
+  luz1:
+    asset: pendant_lamp
+    above: mesa
+    hang: 70
+text:
+  - content: Café & conversa
+    at: top-left
+    role: title
+  - content: Nosso novo cardápio de outono
+    at: top-left
+    role: subtitle

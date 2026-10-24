@@ -1,0 +1,93 @@
+canvas:
+  mode: 2.5d
+  width: 1200
+  height: 900
+  theme: flat-cool
+path:
+  width: 0.08
+  points:
+    - id: desc
+      at:
+        - 0.16
+        - 0.05
+      label: Descobre o app
+      zone: city
+    - id: cad
+      at:
+        - 0.68
+        - 0.2
+      label: Cria a conta
+      zone: home
+    - id: comp
+      at:
+        - 0.25
+        - 0.45
+      label: Primeira compra
+      zone: office
+    - id: sup
+      at:
+        - 0.74
+        - 0.68
+      label: Fala com o suporte
+      zone: park
+    - id: fiel
+      at:
+        - 0.38
+        - 0.95
+      label: Vira cliente fiel
+      zone: ceremony
+      finish: true
+objects:
+  c1:
+    asset: person
+    near: desc
+    pose: walking
+    hair: curly
+    skin: dark
+    shirt: accent
+  c2:
+    asset: person
+    near: cad
+    pose: phone
+    hair: curly
+    skin: dark
+    shirt: accent
+  c3:
+    asset: person
+    near: comp
+    pose: holding
+    hair: curly
+    skin: dark
+    shirt: accent
+  c4:
+    asset: person
+    near: sup
+    pose: thinking
+    expr: thinking
+    hair: curly
+    skin: dark
+    shirt: accent
+  c5:
+    asset: person
+    near: fiel
+    pose: celebrating
+    hair: curly
+    skin: dark
+    shirt: accent
+  sol:
+    asset: sun
+    at: far-right
+    altitude: 0.06
+    size: small
+scatter:
+  - assets:
+      - tree
+      - bush
+      - flowers
+    count: 22
+    seed: 5
+    size: 0.65
+text:
+  - content: Jornada do cliente
+    at: top-left
+    role: title

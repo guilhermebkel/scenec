@@ -1,0 +1,74 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: flat-cool
+  setting: indoor
+objects:
+  janela:
+    asset: window
+    at: 0.62
+  relogio:
+    asset: clock
+    at: 0.82
+  quadro:
+    asset: frame
+    at: 0.47
+    elevation: 80
+  estante:
+    asset: bookshelf
+    at: far-right
+    depth: mid
+  mesa:
+    asset: desk
+    at: 0.58
+  cadeira:
+    asset: chair
+    left_of: mesa
+    gap: -0.035
+    facing: right
+  ana:
+    asset: person
+    pose: typing
+    outfit: sweater
+    glasses: true
+    facing: right
+    'on': cadeira
+    hair: bun
+    hair_color: black
+    skin: tan
+    shirt: primary
+  note:
+    asset: laptop
+    'on': mesa
+    align: left
+    facing: left
+  lampada:
+    asset: lamp
+    'on': mesa
+    align: right
+  caneca:
+    asset: cup
+    'on': mesa
+    align: center
+  planta:
+    asset: big_plant
+    at: 0.16
+  gato:
+    asset: cat
+    right_of: planta
+    gap: 0.02
+    facing: right
+  prat:
+    asset: shelf_wall
+    at: 0.2
+    elevation: 105
+  tapete:
+    asset: rug
+    under: mesa
+text:
+  - content: Trabalho remoto
+    at: top-left
+    role: title
+  - content: Como montar um home office que funciona
+    at: top-left
+    role: subtitle

@@ -1,0 +1,52 @@
+canvas:
+  width: 800
+  height: 600
+  theme: flat-cool
+  setting: indoor
+  scale: 1.6
+  horizon: 0.55
+  base: 0.77
+  colors:
+    wall: '#F4F6FB'
+    floor: '#E3E8F2'
+    woodDark: '#C9D2E3'
+  shot: full
+  focus: festa
+  headroom: 0.1
+  kit: outline
+objects:
+  festa:
+    group: celebration
+    at: 0.4
+    size: 0.9
+    people:
+      - hair: short
+        hair_color: black
+        skin: tan
+        shirt: primary
+        outfit: sweater
+        pants: '#8A94A6'
+      - hair: long
+        hair_color: black
+        skin: light
+        shirt: accent
+        outfit: sweater
+        pants: '#8A94A6'
+    parts:
+      bolo: false
+      trofeu:
+        asset: trophy
+        'on': mesa
+        size: 1.4
+text:
+  - content: Tudo pronto!
+    at: bottom-center
+    role: title
+    size: 0.05
+    'y': 0.86
+  - content: Seu projeto foi publicado com sucesso.
+    at: bottom-center
+    role: body
+    size: 0.032
+    'y': 0.93
+    color: '#55607A'

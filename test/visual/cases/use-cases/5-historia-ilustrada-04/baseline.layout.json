@@ -1,0 +1,46 @@
+{
+  "layout": [
+    {
+      "id": "ceu",
+      "asset": "stars",
+      "x": 50,
+      "base": 38,
+      "w": 96.8,
+      "h": 32.3
+    },
+    {
+      "id": "lua",
+      "asset": "moon",
+      "x": 80,
+      "base": 23.2,
+      "w": 18.4,
+      "h": 18.4
+    },
+    {
+      "id": "pinho",
+      "asset": "pine",
+      "x": 12,
+      "base": 75.2,
+      "w": 21.8,
+      "h": 54.4
+    },
+    {
+      "id": "lia",
+      "asset": "person",
+      "x": 42,
+      "base": 84,
+      "w": 12.5,
+      "h": 28.2
+    },
+    {
+      "id": "rex",
+      "asset": "dog",
+      "x": 62.8,
+      "base": 84,
+      "w": 17,
+      "h": 12.2
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

@@ -1,0 +1,30 @@
+canvas:
+  mode: map
+  width: 1400
+  height: 900
+  theme: flat-cool
+map:
+  padding: 3
+route:
+  - city: Paris
+    country: França
+  - by: trem
+  - city: Bruxelas
+    country: Bélgica
+  - by: trem
+  - city: Amsterdã
+    country: Países Baixos
+  - by: ônibus
+  - city: Berlim
+    country: Alemanha
+  - by: trem
+  - city: Praga
+    country: Tchéquia
+  - by: trem
+  - city: Viena
+    country: Áustria
+text:
+  - content: Mochilão pela Europa Central
+    role: title
+  - content: 6 cidades, só trem e ônibus
+    role: subtitle

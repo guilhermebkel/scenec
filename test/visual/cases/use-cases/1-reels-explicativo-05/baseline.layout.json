@@ -1,0 +1,30 @@
+{
+  "layout": [
+    {
+      "id": "quadro",
+      "asset": "frame",
+      "x": 20,
+      "base": 30.5,
+      "w": 25.3,
+      "h": 10.9
+    },
+    {
+      "id": "eu",
+      "asset": "person",
+      "x": 50,
+      "base": 90,
+      "w": 19.8,
+      "h": 30.1
+    },
+    {
+      "id": "planta",
+      "asset": "big_plant",
+      "x": 85,
+      "base": 90,
+      "w": 22.3,
+      "h": 23
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

@@ -1,0 +1,85 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: warm-cafe
+  setting: indoor
+assets:
+  prensa:
+    svg: custom/prensa.svg
+    kind: surface
+    height: 24
+  logo:
+    image: custom/logo.png
+    kind: wall
+    height: 55
+    elevation: 95
+  robo:
+    kind: ground
+    height: 70
+    recolor: true
+    tags:
+      - robô
+      - robot
+    svg: |
+      <svg viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg">
+        <rect x="27" y="2" width="6" height="10" fill="#555"/><circle cx="30" cy="3" r="4" fill="#E33"/>
+        <rect x="10" y="12" width="40" height="28" rx="8" fill="#4A90D9"/>
+        <circle cx="22" cy="26" r="5" fill="#fff"/><circle cx="38" cy="26" r="5" fill="#fff"/>
+        <circle cx="23" cy="27" r="2.5" fill="#222"/><circle cx="39" cy="27" r="2.5" fill="#222"/>
+        <rect x="14" y="42" width="32" height="30" rx="6" fill="#2D6CB5"/><rect x="22" y="50" width="16" height="8" rx="2" fill="#F5C342"/>
+        <rect x="4" y="44" width="8" height="22" rx="4" fill="#4A90D9"/><rect x="48" y="44" width="8" height="22" rx="4" fill="#4A90D9"/>
+        <rect x="18" y="72" width="9" height="16" rx="3" fill="#333"/><rect x="33" y="72" width="9" height="16" rx="3" fill="#333"/>
+      </svg>
+  vaso_raro:
+    svg: custom/nao-existe.svg
+    kind: surface
+objects:
+  logo:
+    asset: logo
+    at: 0.55
+  balcao:
+    asset: counter
+    at: 0.62
+  prensa:
+    asset: prensa
+    'on': balcao
+    align: left
+  xicara:
+    asset: cup
+    'on': balcao
+    align: center
+  maquina:
+    asset: coffee_machine
+    'on': balcao
+    align: right
+  barista:
+    asset: person
+    behind: balcao
+    depth: near
+    layer: back
+    offset: 0.12
+    hair: bun
+    hair_color: black
+    skin: medium
+    shirt: secondary
+    pose: presenting
+  robo:
+    asset: robô
+    at: 0.2
+    facing: right
+  cliente:
+    asset: person
+    pose: waving
+    right_of: robo
+    gap: 0.02
+    hair: short
+    skin: light
+    jacket: primary
+    shirt: paper
+  extra:
+    asset: vaso_raro
+    'on': balcao
+text:
+  - content: Objetos próprios na cena
+    at: top-left
+    role: title

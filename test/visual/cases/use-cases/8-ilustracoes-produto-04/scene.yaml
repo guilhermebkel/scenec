@@ -1,0 +1,42 @@
+canvas:
+  width: 800
+  height: 600
+  theme: flat-cool
+  setting: indoor
+  scale: 1.6
+  horizon: 0.55
+  base: 0.77
+  colors:
+    wall: '#F4F6FB'
+    floor: '#E3E8F2'
+    woodDark: '#C9D2E3'
+objects:
+  eu:
+    asset: person
+    pose: waving
+    at: 0.5
+    hair: short
+    hair_color: black
+    skin: tan
+    shirt: primary
+    outfit: sweater
+    pants: '#8A94A6'
+  planta:
+    asset: big_plant
+    at: 0.2
+    size: small
+  gato:
+    asset: cat
+    at: 0.72
+text:
+  - content: Boas-vindas!
+    at: bottom-center
+    role: title
+    size: 0.05
+    'y': 0.86
+  - content: Vamos configurar sua conta em 2 minutos.
+    at: bottom-center
+    role: body
+    size: 0.032
+    'y': 0.93
+    color: '#55607A'

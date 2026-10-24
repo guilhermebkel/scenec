@@ -1,0 +1,47 @@
+canvas:
+  width: 1200
+  height: 675
+  theme: flat-cool
+  setting: indoor
+  scale: 1
+  colors:
+    wall: '#EEF3F8'
+objects:
+  balcao:
+    asset: counter
+    at: 0.6
+  mon:
+    asset: monitor
+    'on': balcao
+    align: right
+    size: 0.55
+  logo:
+    asset: frame
+    at: 0.88
+    elevation: 105
+  ana:
+    asset: person
+    pose: waving
+    behind: balcao
+    offset: 0.05
+    depth: near
+    layer: back
+    hair: bun
+    hair_color: black
+    skin: medium
+    shirt: paper
+    jacket: primary
+text:
+  - content: MÓDULO 2
+    at: top-left
+    role: label
+    size: 0.03
+    color: secondary
+    weight: 700
+  - content: |-
+      Lidando com um
+      cliente insatisfeito
+    at: top-left
+    role: title
+    size: 0.07
+    'y': 0.25

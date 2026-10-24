@@ -1,0 +1,38 @@
+{
+  "layout": [
+    {
+      "id": "pausa_prateleira",
+      "asset": "shelf_wall",
+      "x": 54.8,
+      "base": 60.2,
+      "w": 24.4,
+      "h": 7.4
+    },
+    {
+      "id": "pausa_sofa",
+      "asset": "sofa",
+      "x": 45,
+      "base": 93,
+      "w": 54.2,
+      "h": 18.4
+    },
+    {
+      "id": "pausa_abajur",
+      "asset": "floor_lamp",
+      "x": 79,
+      "base": 93,
+      "w": 12.7,
+      "h": 38.2
+    },
+    {
+      "id": "pausa_pessoa",
+      "asset": "person",
+      "x": 28.6,
+      "base": 95.3,
+      "w": 12.7,
+      "h": 27.5
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

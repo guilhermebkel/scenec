@@ -1,0 +1,61 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: beach
+  horizon: 0.68
+  base: 0.9
+  scale: 1.12
+  setting: beach
+  shot: medium
+  focus: eu
+  headroom: 0.45
+  frame: 0.42
+  kit: riso
+objects:
+  gs:
+    asset: umbrella
+    at: 0.95
+  eu:
+    asset: person
+    pose: holding
+    at: 0.35
+    holds: cafe
+    bottom: shorts
+    hair: bun
+    hair_color: brown
+    skin: medium
+    shirt: primary
+  cafe:
+    asset: tumbler
+    size: 2.2
+text:
+  - content: Café Ponto
+    at: top-left
+    role: label
+    size: 0.03
+    weight: 800
+    color: text
+  - content: |-
+      Gelado, do jeito
+      que o verão pede.
+    at: top-left
+    role: title
+    size: 0.06
+    'y': 0.2
+    color: text
+  - content: 'Novo: cold brew'
+    at: top-left
+    role: subtitle
+    size: 0.03
+    'y': 0.38
+    color: ink
+    box: accent
+    pad: 0.7
+  - content: Peça pelo app  →
+    at: top-right
+    role: label
+    size: 0.026
+    color: paper
+    box: secondary
+    pad: 0.7
+    weight: 700

@@ -1,0 +1,35 @@
+canvas:
+  width: 1600
+  height: 600
+  setting: indoor
+  theme: flat-cool
+  scale: 0.9
+  shot: medium
+  focus: jantar
+objects:
+  canto:
+    group: workspace
+    at: 0.16
+    person:
+      hair: curly
+      skin: dark
+      shirt: accent
+  leitura:
+    group: reading_corner
+    at: 0.48
+    color: '#5B4BDB'
+    person:
+      hair: long
+      skin: light
+      shirt: '#3E8E6B'
+  jantar:
+    group: dining
+    at: 0.82
+    people:
+      - hair: bun
+        skin: tan
+        shirt: primary
+      - hair: short
+        skin: deep
+        shirt: '#D9534F'
+        beard: true

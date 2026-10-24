@@ -1,0 +1,38 @@
+{
+  "layout": [
+    {
+      "id": "logo",
+      "asset": "frame",
+      "x": 125.2,
+      "base": -3.9,
+      "w": 18.8,
+      "h": 25.6
+    },
+    {
+      "id": "ana",
+      "asset": "person",
+      "x": 75.2,
+      "base": 102.8,
+      "w": 14.8,
+      "h": 70.8
+    },
+    {
+      "id": "balcao",
+      "asset": "counter",
+      "x": 71.2,
+      "base": 102.8,
+      "w": 81.1,
+      "h": 40.6
+    },
+    {
+      "id": "rui",
+      "asset": "person",
+      "x": 27.1,
+      "base": 102.8,
+      "w": 17.1,
+      "h": 70.8
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

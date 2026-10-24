@@ -1,0 +1,64 @@
+canvas:
+  width: 720
+  height: 1280
+  theme: flat-autumn
+  setting: indoor
+  scale: 0.8
+  horizon: 0.72
+  base: 0.92
+objects:
+  canto:
+    group: reading_corner
+    at: 0.44
+    size: 0.85
+    color: secondary
+    person:
+      pose: reading
+      hair: bun
+      hair_color: blonde
+      skin: tan
+      jacket: primary
+      shirt: paper
+      glasses: true
+      build: heavy
+text:
+  - content: SEU 2026 EM LEITURA
+    at: top-left
+    role: label
+    size: 0.02
+    'y': 0.07
+    color: secondary
+    weight: 700
+  - content: Diego, que ano!
+    at: top-left
+    role: title
+    size: 0.045
+    'y': 0.13
+    color: text
+  - content: '41'
+    at: top-left
+    role: title
+    size: 0.16
+    'y': 0.3
+    color: secondary
+    weight: 800
+  - content: livros lidos
+    at: top-left
+    role: subtitle
+    size: 0.03
+    'y': 0.355
+    color: text
+  - content: 'Gênero favorito: Fantasia'
+    at: top-left
+    role: body
+    size: 0.024
+    'y': 0.42
+    color: text
+  - content: 'Maratona: 3 livros em 1 semana'
+    at: top-left
+    role: subtitle
+    size: 0.022
+    'y': 0.48
+    color: paper
+    box: secondary
+    pad: 0.7

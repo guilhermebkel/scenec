@@ -1,0 +1,64 @@
+canvas:
+  width: 1200
+  height: 675
+  theme: flat-cool
+  setting: indoor
+  scale: 1
+  colors:
+    wall: '#EEF3F8'
+  shot: medium
+  focus:
+    - ana
+    - rui
+  headroom: 0.32
+  kit: paper
+objects:
+  balcao:
+    asset: counter
+    at: 0.6
+  logo:
+    asset: frame
+    at: 0.88
+    elevation: 105
+  ana:
+    asset: person
+    pose: thinking
+    expr: thinking
+    behind: balcao
+    offset: 0.05
+    depth: near
+    layer: back
+    hair: bun
+    hair_color: black
+    skin: medium
+    shirt: paper
+    jacket: primary
+  rui:
+    asset: person
+    pose: presenting
+    expr: neutral
+    left_of: balcao
+    gap: -0.02
+    hair: short
+    hair_color: brown
+    skin: light
+    outfit: sweater
+    shirt: accent
+    beard: true
+    build: heavy
+    look: ana
+text:
+  - content: PASSO 1
+    at: top-left
+    role: label
+    size: 0.03
+    color: secondary
+    weight: 700
+  - content: Ouça até o fim, sem interromper.
+    at: top-left
+    role: body
+    size: 0.04
+    'y': 0.21
+    color: paper
+    box: secondary
+    pad: 0.8

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/index.ts",
+    "src/render.ts",
+    "src/schema.ts",
+    "src/cli.ts",
+    "scripts/*.mjs",
+    "src/**/*.test.ts",
+    "test/**/*.ts",
+    "vitest*.config.mjs"
+  ],
+  "project": [
+    "src/**/*.ts",
+    "scripts/**/*.mjs",
+    "test/**/*.ts"
+  ],
+  "ignoreExportsUsedInFile": true,
+  "ignoreBinaries": [
+    "vitest.visual.config.mjs"
+  ],
+  "ignoreDependencies": [
+    "@types/js-yaml"
+  ]
+}

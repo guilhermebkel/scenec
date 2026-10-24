@@ -1,0 +1,107 @@
+{
+  "layout": [
+    {
+      "id": "janela",
+      "asset": "window",
+      "x": 24,
+      "base": 50.1,
+      "w": 13.7,
+      "h": 28.9
+    },
+    {
+      "id": "quadro",
+      "asset": "frame",
+      "x": 47,
+      "base": 39.1,
+      "w": 11.8,
+      "h": 17.3
+    },
+    {
+      "id": "prat",
+      "asset": "shelf_wall",
+      "x": 85,
+      "base": 40.5,
+      "w": 13.7,
+      "h": 9.8
+    },
+    {
+      "id": "tapete",
+      "asset": "rug",
+      "x": 55,
+      "base": 93,
+      "w": 32.1,
+      "h": 4.8
+    },
+    {
+      "id": "luz",
+      "asset": "floor_lamp",
+      "x": 8,
+      "base": 93,
+      "w": 7.1,
+      "h": 51
+    },
+    {
+      "id": "sofa",
+      "asset": "sofa",
+      "x": 33,
+      "base": 93,
+      "w": 30.3,
+      "h": 24.5
+    },
+    {
+      "id": "rack",
+      "asset": "tv_stand",
+      "x": 80,
+      "base": 93,
+      "w": 21.4,
+      "h": 13.6
+    },
+    {
+      "id": "planta",
+      "asset": "big_plant",
+      "x": 95.7,
+      "base": 93,
+      "w": 8,
+      "h": 28.1
+    },
+    {
+      "id": "gato",
+      "asset": "cat",
+      "x": 58,
+      "base": 93,
+      "w": 6.4,
+      "h": 10.9
+    },
+    {
+      "id": "ana",
+      "asset": "person",
+      "x": 23.8,
+      "base": 96.1,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "leo",
+      "asset": "person",
+      "x": 40.8,
+      "base": 96.1,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "tv",
+      "asset": "tv",
+      "x": 80,
+      "base": 79.4,
+      "w": 16.1,
+      "h": 19.7
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "arte: 'janela' some contra o fundo na parte de baixo (42% desse contorno sem contraste): a cor #DDD5CC está próxima demais; mude a cor de um dos dois",
+    "arte: 'rack' some contra o fundo na parte de cima (93% desse contorno sem contraste): a cor #8B6249 está próxima demais; mude a cor de um dos dois",
+    "arte: 'planta' some contra o fundo na parte de baixo (78% desse contorno sem contraste): a cor #92553B está próxima demais; mude a cor de um dos dois",
+    "arte: 'ana' some contra 'sofa' na parte de baixo (52% desse contorno sem contraste): a cor #2E4135 está próxima demais; mude a cor de um dos dois"
+  ]
+}

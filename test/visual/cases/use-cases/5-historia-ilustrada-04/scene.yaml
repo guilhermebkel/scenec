@@ -1,0 +1,45 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: night
+  setting: outdoor
+  horizon: 0.62
+  base: 0.84
+objects:
+  ceu:
+    asset: stars
+  lua:
+    asset: moon
+    at: top-right
+    altitude: 0.14
+  pinho:
+    asset: pine
+    at: 0.12
+    depth: mid
+    color: '#3E7468'
+  lia:
+    asset: person
+    pose: pointing
+    at: 0.42
+    look: lua
+    age: child
+    size: 1.15
+    hair: ponytail
+    hair_color: red
+    skin: tan
+    outfit: dress
+    shirt: '#D94F70'
+  rex:
+    asset: dog
+    facing: left
+    color: wood
+    right_of: lia
+    gap: 0.06
+text:
+  - content: À noite, Lia contava estrelas para Rex.
+    at: bottom-center
+    role: body
+    size: 0.03
+    box: paper
+    pad: 0.9
+    color: ink

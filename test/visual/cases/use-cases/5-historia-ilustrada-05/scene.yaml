@@ -1,0 +1,45 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: warm-cafe
+  setting: indoor
+  horizon: 0.66
+  base: 0.86
+objects:
+  jan:
+    asset: window
+    at: 0.75
+    view: night
+    elevation: 80
+    frame: trunk
+  cama:
+    asset: bed
+    at: 0.38
+    color: secondary
+  lia:
+    asset: person
+    pose: reading
+    'on': cama
+    facing: right
+    age: child
+    size: 1.15
+    hair: ponytail
+    hair_color: red
+    skin: tan
+    outfit: dress
+    shirt: '#D94F70'
+  rex:
+    asset: dog
+    at: 0.75
+    facing: left
+    color: wood
+  luz:
+    asset: floor_lamp
+    at: 0.92
+text:
+  - content: E sonhavam com a aventura de amanhã.
+    at: bottom-center
+    role: body
+    size: 0.03
+    box: paper
+    pad: 0.9

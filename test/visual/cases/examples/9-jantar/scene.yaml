@@ -1,0 +1,92 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: flat-autumn
+  setting: indoor
+objects:
+  janela:
+    asset: window
+    at: 0.2
+  luz1:
+    asset: pendant_lamp
+    at: 0.33
+    hang: 70
+  luz2:
+    asset: pendant_lamp
+    at: 0.5
+    hang: 70
+  mesa:
+    asset: table
+    at: 0.47
+    width: 190
+  c1:
+    asset: chair
+    left_of: mesa
+    gap: -0.035
+    facing: right
+    color: secondary
+  c2:
+    asset: chair
+    right_of: mesa
+    gap: -0.035
+    facing: left
+    color: secondary
+  pai:
+    asset: person
+    pose: drinking
+    'on': c1
+    facing: right
+    hair: short
+    hair_color: brown
+    skin: medium
+    shirt: secondary
+    beard: true
+  mae:
+    asset: person
+    pose: sitting
+    'on': c2
+    facing: left
+    hair: curly
+    hair_color: black
+    skin: dark
+    outfit: dress
+    shirt: primary
+  filho:
+    asset: person
+    pose: celebrating
+    behind: mesa
+    offset: 0.2
+    size: small
+    hair: short
+    hair_color: black
+    skin: medium
+    shirt: accent
+    bottom: shorts
+    depth: near
+    layer: back
+  pizza:
+    asset: pizza
+    'on': mesa
+    align: center
+  frutas:
+    asset: fruit_bowl
+    'on': mesa
+    align: left
+  burger:
+    asset: burger
+    'on': mesa
+    align: far-left
+  estante:
+    asset: bookshelf
+    at: far-right
+  dog:
+    asset: dog
+    at: 0.12
+    facing: right
+text:
+  - content: Jantar em família
+    at: top-right
+    role: title
+  - content: Receitas rápidas para a semana
+    at: top-right
+    role: subtitle

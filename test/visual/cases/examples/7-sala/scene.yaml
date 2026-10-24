@@ -1,0 +1,72 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: warm-cafe
+  setting: indoor
+objects:
+  janela:
+    asset: window
+    at: 0.24
+    view: night
+    elevation: 62
+  quadro:
+    asset: frame
+    at: 0.47
+    elevation: 100
+    size: large
+  prat:
+    asset: shelf_wall
+    at: 0.85
+    elevation: 95
+  luz:
+    asset: floor_lamp
+    at: 0.08
+  sofa:
+    asset: sofa
+    at: 0.33
+    color: secondary
+  ana:
+    asset: person
+    pose: reading
+    'on': sofa
+    align: left
+    facing: right
+    hair: long
+    hair_color: brown
+    skin: light
+    outfit: sweater
+    shirt: accent
+  leo:
+    asset: person
+    pose: sitting
+    'on': sofa
+    align: right
+    facing: right
+    hair: short
+    hair_color: black
+    skin: deep
+    shirt: primary
+    pants: ink
+  rack:
+    asset: tv_stand
+    at: 0.8
+  tv:
+    asset: tv
+    'on': rack
+  planta:
+    asset: big_plant
+    right_of: rack
+    gap: 0.01
+    size: small
+  gato:
+    asset: cat
+    at: 0.58
+    facing: left
+  tapete:
+    asset: rug
+    at: 0.55
+    color: primary
+text:
+  - content: Noite de filme
+    at: top-left
+    role: title

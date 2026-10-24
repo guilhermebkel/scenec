@@ -1,0 +1,40 @@
+{
+  "layout": [
+    {
+      "id": "canto_prateleira",
+      "asset": "shelf_wall",
+      "x": 56.6,
+      "base": 61.6,
+      "w": 31.4,
+      "h": 6.7
+    },
+    {
+      "id": "canto_sofa",
+      "asset": "sofa",
+      "x": 44,
+      "base": 92,
+      "w": 69.9,
+      "h": 16.6
+    },
+    {
+      "id": "canto_abajur",
+      "asset": "floor_lamp",
+      "x": 87.7,
+      "base": 92,
+      "w": 16.4,
+      "h": 34.7
+    },
+    {
+      "id": "canto_pessoa",
+      "asset": "person",
+      "x": 22.8,
+      "base": 94.1,
+      "w": 14.5,
+      "h": 25
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "arte: 'canto_abajur' some contra o fundo na parte de baixo (41% desse contorno sem contraste): a cor #0E122A está próxima demais; mude a cor de um dos dois"
+  ]
+}

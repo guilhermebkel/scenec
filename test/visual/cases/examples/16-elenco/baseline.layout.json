@@ -1,0 +1,70 @@
+{
+  "layout": [
+    {
+      "id": "vo",
+      "asset": "person",
+      "x": 7,
+      "base": 88,
+      "w": 7.5,
+      "h": 44.2
+    },
+    {
+      "id": "neta",
+      "asset": "person",
+      "x": 18,
+      "base": 88,
+      "w": 6.8,
+      "h": 30.6
+    },
+    {
+      "id": "teen",
+      "asset": "person",
+      "x": 30,
+      "base": 88,
+      "w": 7.6,
+      "h": 40.7
+    },
+    {
+      "id": "pai",
+      "asset": "person",
+      "x": 43,
+      "base": 88,
+      "w": 9.9,
+      "h": 45.9
+    },
+    {
+      "id": "alta",
+      "asset": "person",
+      "x": 55,
+      "base": 88,
+      "w": 7.5,
+      "h": 50
+    },
+    {
+      "id": "forte",
+      "asset": "person",
+      "x": 67,
+      "base": 88,
+      "w": 9.5,
+      "h": 45.9
+    },
+    {
+      "id": "crianca",
+      "asset": "person",
+      "x": 78,
+      "base": 88,
+      "w": 6.8,
+      "h": 30.6
+    },
+    {
+      "id": "ana",
+      "asset": "person",
+      "x": 91,
+      "base": 88,
+      "w": 8.5,
+      "h": 45.9
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

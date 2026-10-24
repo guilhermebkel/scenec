@@ -1,0 +1,62 @@
+{
+  "layout": [
+    {
+      "id": "sol",
+      "asset": "sun",
+      "x": 80,
+      "base": 20.3,
+      "w": 13.8,
+      "h": 20.7
+    },
+    {
+      "id": "casa",
+      "asset": "house",
+      "x": 22,
+      "base": 76.4,
+      "w": 29,
+      "h": 47.6
+    },
+    {
+      "id": "praca_arvore",
+      "asset": "tree",
+      "x": 78.9,
+      "base": 76.4,
+      "w": 20.9,
+      "h": 55.8
+    },
+    {
+      "id": "cerca",
+      "asset": "fence",
+      "x": 84,
+      "base": 86,
+      "w": 36.3,
+      "h": 13.6
+    },
+    {
+      "id": "praca_banco",
+      "asset": "bench",
+      "x": 58,
+      "base": 86,
+      "w": 24.9,
+      "h": 20.4
+    },
+    {
+      "id": "praca_cachorro",
+      "asset": "dog",
+      "x": 38.9,
+      "base": 86,
+      "w": 11.3,
+      "h": 12.2
+    },
+    {
+      "id": "praca_pessoa",
+      "asset": "person",
+      "x": 50.1,
+      "base": 89.1,
+      "w": 9.1,
+      "h": 36.7
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

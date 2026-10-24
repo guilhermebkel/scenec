@@ -1,0 +1,30 @@
+{
+  "layout": [
+    {
+      "id": "eu",
+      "asset": "person",
+      "x": 38,
+      "base": 77,
+      "w": 16.3,
+      "h": 58.8
+    },
+    {
+      "id": "mesa",
+      "asset": "table",
+      "x": 62,
+      "base": 77,
+      "w": 24.5,
+      "h": 18.8
+    },
+    {
+      "id": "prato",
+      "asset": "plate",
+      "x": 62,
+      "base": 58.2,
+      "w": 10.3,
+      "h": 2.1
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

@@ -1,0 +1,102 @@
+{
+  "layout": [
+    {
+      "id": "sol",
+      "asset": "sun",
+      "x": 80,
+      "base": 30.8,
+      "w": 14.5,
+      "h": 27.5
+    },
+    {
+      "id": "nuvem",
+      "asset": "cloud",
+      "x": 35,
+      "base": 37.6,
+      "w": 17.7,
+      "h": 15.3
+    },
+    {
+      "id": "gaivota1",
+      "asset": "bird",
+      "x": 50,
+      "base": 31.5,
+      "w": 3.2,
+      "h": 3.1
+    },
+    {
+      "id": "gaivota2",
+      "asset": "bird",
+      "x": 50,
+      "base": 27.1,
+      "w": 2.4,
+      "h": 2.3
+    },
+    {
+      "id": "barco",
+      "asset": "boat",
+      "x": 90,
+      "base": 58.5,
+      "w": 6.9,
+      "h": 13.1
+    },
+    {
+      "id": "toalha",
+      "asset": "beach_towel",
+      "x": 66,
+      "base": 93,
+      "w": 16.1,
+      "h": 3.4
+    },
+    {
+      "id": "coqueiro",
+      "asset": "palm",
+      "x": 15,
+      "base": 93,
+      "w": 26.8,
+      "h": 66.8
+    },
+    {
+      "id": "guarda",
+      "asset": "umbrella",
+      "x": 66,
+      "base": 93,
+      "w": 25,
+      "h": 51
+    },
+    {
+      "id": "bola",
+      "asset": "ball",
+      "x": 80.6,
+      "base": 93,
+      "w": 4.3,
+      "h": 8.2
+    },
+    {
+      "id": "bia",
+      "asset": "person",
+      "x": 35,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "castelo",
+      "asset": "sandcastle",
+      "x": 50,
+      "base": 93,
+      "w": 8.2,
+      "h": 13.6
+    },
+    {
+      "id": "mala",
+      "asset": "suitcase",
+      "x": 40.6,
+      "base": 90.6,
+      "w": 5.4,
+      "h": 15.6
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

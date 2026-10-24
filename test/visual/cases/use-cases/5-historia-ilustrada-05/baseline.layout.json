@@ -1,0 +1,46 @@
+{
+  "layout": [
+    {
+      "id": "jan",
+      "asset": "window",
+      "x": 75,
+      "base": 42.9,
+      "w": 26,
+      "h": 28.9
+    },
+    {
+      "id": "cama",
+      "asset": "bed",
+      "x": 38,
+      "base": 86,
+      "w": 61.2,
+      "h": 23.8
+    },
+    {
+      "id": "rex",
+      "asset": "dog",
+      "x": 75,
+      "base": 86,
+      "w": 17,
+      "h": 12.2
+    },
+    {
+      "id": "luz",
+      "asset": "floor_lamp",
+      "x": 92,
+      "base": 86,
+      "w": 13.6,
+      "h": 51
+    },
+    {
+      "id": "lia",
+      "asset": "person",
+      "x": 36.6,
+      "base": 83.3,
+      "w": 12.5,
+      "h": 28.2
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

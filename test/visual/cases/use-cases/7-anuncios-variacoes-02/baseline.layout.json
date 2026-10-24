@@ -1,0 +1,30 @@
+{
+  "layout": [
+    {
+      "id": "sofa",
+      "asset": "sofa",
+      "x": 50,
+      "base": 90,
+      "w": 49.1,
+      "h": 20.8
+    },
+    {
+      "id": "luz",
+      "asset": "floor_lamp",
+      "x": 90,
+      "base": 90,
+      "w": 11.6,
+      "h": 43.3
+    },
+    {
+      "id": "eu",
+      "asset": "person",
+      "x": 35.1,
+      "base": 92.6,
+      "w": 11.6,
+      "h": 31.2
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

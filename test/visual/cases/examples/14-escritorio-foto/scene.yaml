@@ -1,0 +1,203 @@
+canvas:
+  width: 1200
+  height: 900
+  setting: indoor
+  theme: flat-cool
+  scale: 2
+  horizon: 0.79
+  base: 0.867
+  floor: planks
+  vanish: 0.62
+  haze: false
+  colors:
+    wall: '#ECECEA'
+    floor: '#5B2E1F'
+    wood: '#E9DFCB'
+    woodDark: '#D6CDBB'
+    metal: '#B8BCC2'
+    ink: '#1E1E22'
+    glass: '#D3E4E8'
+    shadow: rgba(40,30,20,0.18)
+objects:
+  interruptor:
+    asset: light_switch
+    at: 0.98
+    elevation: 63
+    size: 1.4
+  gaveteiro:
+    asset: drawer_unit
+    at: 0.1925
+    width: 25
+    height: 38
+    drawers: 4
+    layer: back
+  carrinho:
+    asset: rolling_cart
+    at: 0.315
+    size: 0.94
+    layer: back
+  lixeira:
+    asset: trash_can
+    at: 0.409
+    size: 0.95
+    layer: back
+  armario:
+    asset: cabinet
+    at: 0.5425
+    width: 39
+    height: 42
+    doors: 2
+    layer: back
+  armario2:
+    asset: cabinet
+    at: 0.93
+    width: 36
+    height: 42
+    doors: 2
+    layer: back
+    allow_crop: true
+  vidro:
+    asset: glass_shelf
+    at: 0.084
+    width: 13
+  bancada:
+    asset: desk_slab
+    at: 0.396
+    width: 113
+  retorno:
+    asset: desk_slab
+    at: 0.855
+    width: 67
+    allow_crop: true
+  poster:
+    asset: photo_frame
+    'on': bancada
+    align: -0.397
+    width: 12.9
+    height: 14.7
+    art: poster
+    bg: accent
+  quadro_op:
+    asset: photo_frame
+    'on': bancada
+    align: -0.295
+    width: 7.8
+    height: 8.8
+    art: poster
+    bg: primary
+    frame: paper
+  quadro_rosa:
+    asset: photo_frame
+    'on': bancada
+    align: -0.216
+    width: 9.1
+    height: 11.3
+    art: portrait
+    bg: '#E9A6A0'
+    frame: paper
+  foto:
+    asset: photo_frame
+    'on': bancada
+    align: -0.127
+    width: 10.5
+    height: 13.7
+    art: portrait
+    bg: '#3A3A40'
+  quadro_txt:
+    asset: photo_frame
+    'on': bancada
+    align: -0.043
+    width: 7.7
+    height: 10
+    art: text
+  boneco1:
+    asset: figurine
+    'on': bancada
+    align: -0.452
+    color: accent
+    layer: front
+  boneco2:
+    asset: figurine
+    'on': bancada
+    align: -0.43
+    color: primary
+    size: 0.8
+    layer: front
+  boneco3:
+    asset: figurine
+    'on': bancada
+    align: -0.314
+    color: '#C0392B'
+    size: 1.1
+    layer: front
+  boneco4:
+    asset: figurine
+    'on': bancada
+    align: -0.236
+    color: paper
+    size: 1.2
+    layer: front
+  copo_cafe:
+    asset: paper_cup
+    'on': bancada
+    align: -0.175
+    size: 0.95
+    layer: front
+  copo:
+    asset: tumbler
+    'on': bancada
+    align: -0.114
+    size: 0.95
+    layer: front
+  bone:
+    asset: cap
+    'on': bancada
+    align: -0.036
+    size: 1
+    layer: front
+  sacola:
+    asset: plastic_bag
+    'on': bancada
+    align: 0.106
+    size: 1
+    color: '#E2E2DE'
+  copinho:
+    asset: cup
+    'on': bancada
+    align: 0.189
+    size: 0.3
+    steam: false
+  fone:
+    asset: headphones
+    'on': bancada
+    align: 0.258
+    size: 0.85
+  cabos:
+    asset: cables
+    'on': bancada
+    align: 0.336
+    drop: 28
+  notebook:
+    asset: laptop_open
+    'on': bancada
+    align: 0.427
+    size: 1.15
+  monitor:
+    asset: monitor
+    'on': retorno
+    align: -0.408
+    size: 0.5
+    'off': true
+  caneca:
+    asset: cup
+    'on': retorno
+    align: -0.03
+    size: 0.26
+    steam: false
+    color: paper
+  cadeira:
+    asset: office_chair
+    at: 0.7475
+    size: 0.95
+    draped: '#5A5A5E'
+    layer: front

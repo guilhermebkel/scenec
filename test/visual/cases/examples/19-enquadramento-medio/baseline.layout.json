@@ -1,0 +1,153 @@
+{
+  "layout": [
+    {
+      "id": "leitura_prateleira",
+      "asset": "shelf_wall",
+      "x": -53.7,
+      "base": -0.4,
+      "w": 29.8,
+      "h": 30.1
+    },
+    {
+      "id": "canto_mesa",
+      "asset": "desk",
+      "x": -174.4,
+      "base": 124.4,
+      "w": 50.7,
+      "h": 47.9
+    },
+    {
+      "id": "canto_cadeira",
+      "asset": "chair",
+      "x": -194.8,
+      "base": 124.4,
+      "w": 17.2,
+      "h": 91.6
+    },
+    {
+      "id": "canto_planta",
+      "asset": "big_plant",
+      "x": -135.2,
+      "base": 124.4,
+      "w": 17.6,
+      "h": 85.8
+    },
+    {
+      "id": "leitura_sofa",
+      "asset": "sofa",
+      "x": -65.6,
+      "base": 124.4,
+      "w": 66.3,
+      "h": 74.9
+    },
+    {
+      "id": "leitura_abajur",
+      "asset": "floor_lamp",
+      "x": -22.9,
+      "base": 124.4,
+      "w": 15.6,
+      "h": 156.1
+    },
+    {
+      "id": "jantar_mesa",
+      "asset": "table",
+      "x": 50,
+      "base": 124.4,
+      "w": 31.2,
+      "h": 47.9
+    },
+    {
+      "id": "jantar_cadeira1",
+      "asset": "chair",
+      "x": 27.2,
+      "base": 124.4,
+      "w": 17.2,
+      "h": 91.6
+    },
+    {
+      "id": "jantar_cadeira2",
+      "asset": "chair",
+      "x": 72.8,
+      "base": 124.4,
+      "w": 17.2,
+      "h": 91.6
+    },
+    {
+      "id": "canto_pessoa",
+      "asset": "person",
+      "x": -196.3,
+      "base": 124.4,
+      "w": 15.6,
+      "h": 112.4
+    },
+    {
+      "id": "canto_tela",
+      "asset": "laptop",
+      "x": -189.6,
+      "base": 76.5,
+      "w": 13.3,
+      "h": 25
+    },
+    {
+      "id": "canto_luminaria",
+      "asset": "lamp",
+      "x": -159.2,
+      "base": 76.5,
+      "w": 11.7,
+      "h": 43.7
+    },
+    {
+      "id": "canto_caneca",
+      "asset": "cup",
+      "x": -168.3,
+      "base": 76.5,
+      "w": 6.2,
+      "h": 22.9
+    },
+    {
+      "id": "leitura_pessoa",
+      "asset": "person",
+      "x": -85.7,
+      "base": 133.7,
+      "w": 15.6,
+      "h": 112.4
+    },
+    {
+      "id": "jantar_pessoa1",
+      "asset": "person",
+      "x": 25.6,
+      "base": 124.4,
+      "w": 15.6,
+      "h": 112.4
+    },
+    {
+      "id": "jantar_pessoa2",
+      "asset": "person",
+      "x": 74.4,
+      "base": 124.4,
+      "w": 15.6,
+      "h": 112.4
+    },
+    {
+      "id": "jantar_prato",
+      "asset": "pizza",
+      "x": 50,
+      "base": 76.5,
+      "w": 15.6,
+      "h": 8.3
+    },
+    {
+      "id": "jantar_copo1",
+      "asset": "cup",
+      "x": 40,
+      "base": 76.5,
+      "w": 6.2,
+      "h": 22.9
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "arte: 'jantar_copo1' some contra o fundo na parte do meio (55% desse contorno sem contraste): a cor #BCBFC5 está próxima demais; mude a cor de um dos dois",
+    "arte: 'jantar_pessoa1' e 'jantar_copo1' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+  ]
+}

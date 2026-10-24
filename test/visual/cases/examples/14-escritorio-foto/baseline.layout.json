@@ -1,0 +1,257 @@
+{
+  "layout": [
+    {
+      "id": "interruptor",
+      "asset": "light_switch",
+      "x": 98,
+      "base": 42.6,
+      "w": 3,
+      "h": 5.7
+    },
+    {
+      "id": "gaveteiro",
+      "asset": "drawer_unit",
+      "x": 19.3,
+      "base": 86.7,
+      "w": 12.7,
+      "h": 25.8
+    },
+    {
+      "id": "carrinho",
+      "asset": "rolling_cart",
+      "x": 31.5,
+      "base": 86.7,
+      "w": 12.5,
+      "h": 23
+    },
+    {
+      "id": "lixeira",
+      "asset": "trash_can",
+      "x": 40.9,
+      "base": 86.7,
+      "w": 4.4,
+      "h": 9.7
+    },
+    {
+      "id": "armario",
+      "asset": "cabinet",
+      "x": 54.3,
+      "base": 86.7,
+      "w": 19.9,
+      "h": 28.6
+    },
+    {
+      "id": "armario2",
+      "asset": "cabinet",
+      "x": 93,
+      "base": 86.7,
+      "w": 18.4,
+      "h": 28.6
+    },
+    {
+      "id": "vidro",
+      "asset": "glass_shelf",
+      "x": 8.4,
+      "base": 86.7,
+      "w": 6.6,
+      "h": 31.3
+    },
+    {
+      "id": "bancada",
+      "asset": "desk_slab",
+      "x": 39.6,
+      "base": 86.7,
+      "w": 57.6,
+      "h": 31.3
+    },
+    {
+      "id": "retorno",
+      "asset": "desk_slab",
+      "x": 85.5,
+      "base": 86.7,
+      "w": 34.2,
+      "h": 31.3
+    },
+    {
+      "id": "poster",
+      "asset": "photo_frame",
+      "x": 16.7,
+      "base": 55.4,
+      "w": 6.6,
+      "h": 10
+    },
+    {
+      "id": "quadro_op",
+      "asset": "photo_frame",
+      "x": 22.6,
+      "base": 55.4,
+      "w": 4,
+      "h": 6
+    },
+    {
+      "id": "quadro_rosa",
+      "asset": "photo_frame",
+      "x": 27.2,
+      "base": 55.4,
+      "w": 4.6,
+      "h": 7.7
+    },
+    {
+      "id": "foto",
+      "asset": "photo_frame",
+      "x": 32.3,
+      "base": 55.4,
+      "w": 5.4,
+      "h": 9.3
+    },
+    {
+      "id": "quadro_txt",
+      "asset": "photo_frame",
+      "x": 37.1,
+      "base": 55.4,
+      "w": 3.9,
+      "h": 6.8
+    },
+    {
+      "id": "sacola",
+      "asset": "plastic_bag",
+      "x": 45.7,
+      "base": 55.4,
+      "w": 5.6,
+      "h": 6.1
+    },
+    {
+      "id": "copinho",
+      "asset": "cup",
+      "x": 50.5,
+      "base": 55.4,
+      "w": 2.4,
+      "h": 4.5
+    },
+    {
+      "id": "fone",
+      "asset": "headphones",
+      "x": 54.5,
+      "base": 55.4,
+      "w": 4.3,
+      "h": 5.2
+    },
+    {
+      "id": "cabos",
+      "asset": "cables",
+      "x": 59,
+      "base": 55.4,
+      "w": 7.1,
+      "h": 2.7
+    },
+    {
+      "id": "notebook",
+      "asset": "laptop_open",
+      "x": 64.2,
+      "base": 55.4,
+      "w": 10,
+      "h": 14.1
+    },
+    {
+      "id": "monitor",
+      "asset": "monitor",
+      "x": 71.6,
+      "base": 55.4,
+      "w": 12.7,
+      "h": 15.6
+    },
+    {
+      "id": "caneca",
+      "asset": "cup",
+      "x": 84.5,
+      "base": 55.4,
+      "w": 2.1,
+      "h": 3.9
+    },
+    {
+      "id": "boneco1",
+      "asset": "figurine",
+      "x": 13.6,
+      "base": 55.4,
+      "w": 2,
+      "h": 4.1
+    },
+    {
+      "id": "boneco2",
+      "asset": "figurine",
+      "x": 14.8,
+      "base": 55.4,
+      "w": 1.6,
+      "h": 3.3
+    },
+    {
+      "id": "boneco3",
+      "asset": "figurine",
+      "x": 21.5,
+      "base": 55.4,
+      "w": 2.2,
+      "h": 4.5
+    },
+    {
+      "id": "boneco4",
+      "asset": "figurine",
+      "x": 26,
+      "base": 55.4,
+      "w": 2.4,
+      "h": 4.9
+    },
+    {
+      "id": "copo_cafe",
+      "asset": "paper_cup",
+      "x": 29.5,
+      "base": 55.4,
+      "w": 2.2,
+      "h": 3.9
+    },
+    {
+      "id": "copo",
+      "asset": "tumbler",
+      "x": 33,
+      "base": 55.4,
+      "w": 2.4,
+      "h": 7.1
+    },
+    {
+      "id": "bone",
+      "asset": "cap",
+      "x": 37.5,
+      "base": 55.4,
+      "w": 5.1,
+      "h": 4.1
+    },
+    {
+      "id": "cadeira",
+      "asset": "office_chair",
+      "x": 74.8,
+      "base": 86.7,
+      "w": 20.3,
+      "h": 38.8
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "arte: faixa vazia de 37% da altura (de y=0% a y=37%); suba o grupo principal, aumente a escala ou ocupe a faixa (texto, objeto de parede, elemento de céu)",
+    "arte: 'interruptor' some contra o fundo na parte do meio (50% desse contorno sem contraste): a cor #CECCCA está próxima demais; mude a cor de um dos dois",
+    "arte: 'armario2' some contra o fundo na parte de cima (100% desse contorno sem contraste): a cor #D7D0BF está próxima demais; mude a cor de um dos dois",
+    "arte: 'vidro' some contra o fundo na parte de cima (100% desse contorno sem contraste): a cor #DEE7E7 está próxima demais; mude a cor de um dos dois",
+    "arte: 'bancada' some contra o fundo na parte de cima (75% desse contorno sem contraste): a cor #E6DDCD está próxima demais; mude a cor de um dos dois",
+    "arte: 'retorno' some contra o fundo na parte de cima (99% desse contorno sem contraste): a cor #E5DDCC está próxima demais; mude a cor de um dos dois",
+    "arte: 'quadro_rosa' some contra o fundo na parte de cima (81% desse contorno sem contraste): a cor #F5E5E2 está próxima demais; mude a cor de um dos dois",
+    "arte: 'sacola' some contra o fundo na parte de cima (74% desse contorno sem contraste): a cor #E2E2DE está próxima demais; mude a cor de um dos dois",
+    "arte: 'armario' e 'bancada' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'armario2' e 'retorno' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'bancada' e 'retorno' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'bancada' e 'monitor' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'quadro_op' e 'quadro_rosa' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'quadro_op' e 'boneco4' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'quadro_rosa' e 'foto' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'foto' e 'quadro_txt' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'foto' e 'bone' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
+    "arte: 'interruptor' encosta na borda (direita); afaste da borda ou deixe cortar de propósito"
+  ]
+}

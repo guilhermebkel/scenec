@@ -1,0 +1,120 @@
+canvas:
+  mode: 2.5d
+  width: 1200
+  height: 900
+  theme: flat-cool
+path:
+  width: 0.08
+  points:
+    - id: escola
+      at:
+        - 0.14
+        - 0.04
+      label: Ensino médio
+      zone: school
+    - id: grad
+      at:
+        - 0.66
+        - 0.16
+      label: Graduação
+      zone: campus
+    - id: emprego
+      at:
+        - 0.24
+        - 0.42
+      label: Primeiro emprego
+      zone: office
+    - id: mestrado
+      at:
+        - 0.74
+        - 0.66
+      label: Mestrado
+      zone: lab
+    - id: doutor
+      at:
+        - 0.36
+        - 0.95
+      label: Doutorado
+      zone: ceremony
+      finish: true
+objects:
+  eu1:
+    asset: person
+    near: escola
+    pose: walking
+    hair: ponytail
+    hair_color: brown
+    skin: tan
+    shirt: accent
+    bottom: shorts
+    backpack: secondary
+  eu2:
+    asset: person
+    near: grad
+    pose: waving
+    hair: ponytail
+    hair_color: brown
+    skin: tan
+    outfit: gown
+    gown: secondary
+    hat: grad_cap
+  eu3:
+    asset: person
+    near: emprego
+    pose: presenting
+    hair: ponytail
+    hair_color: brown
+    skin: tan
+    shirt: paper
+    jacket: primary
+  eu4:
+    asset: person
+    near: mestrado
+    pose: thinking
+    hair: ponytail
+    hair_color: brown
+    skin: tan
+    outfit: labcoat
+    shirt: secondary
+    glasses: true
+  eu5:
+    asset: person
+    near: doutor
+    pose: celebrating
+    hair: ponytail
+    hair_color: brown
+    skin: tan
+    outfit: gown
+    gown: ink
+    stole: accent
+    hat: grad_cap
+    glasses: true
+  chegada:
+    asset: finish_flag
+    near: doutor
+    offset:
+      - 0.07
+      - 0.01
+  sol:
+    asset: sun
+    at: far-right
+    altitude: 0.06
+    size: small
+  nuvem:
+    asset: cloud
+    at: right
+    altitude: 0.17
+    size: small
+scatter:
+  - assets:
+      - tree
+      - pine
+      - bush
+      - flowers
+    count: 24
+    seed: 11
+    size: 0.65
+text:
+  - content: Minha trilha até o doutorado
+    at: top-left
+    role: title

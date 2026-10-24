@@ -1,0 +1,50 @@
+canvas:
+  width: 800
+  height: 600
+  theme: flat-cool
+  setting: indoor
+  scale: 1.6
+  horizon: 0.55
+  base: 0.77
+  colors:
+    wall: '#F4F6FB'
+    floor: '#E3E8F2'
+    woodDark: '#C9D2E3'
+objects:
+  sofa:
+    asset: sofa
+    at: 0.5
+    color: secondary
+    size: small
+  eu:
+    asset: person
+    pose: reading
+    'on': sofa
+    align: left
+    facing: right
+    hair: short
+    hair_color: black
+    skin: tan
+    shirt: primary
+    outfit: sweater
+    pants: '#8A94A6'
+  planta:
+    asset: big_plant
+    at: 0.84
+    size: small
+  quadro:
+    asset: frame
+    at: 0.5
+    elevation: 52
+text:
+  - content: Nenhuma tarefa por aqui
+    at: bottom-center
+    role: title
+    size: 0.05
+    'y': 0.86
+  - content: Aproveite a calmaria ou crie uma nova tarefa.
+    at: bottom-center
+    role: body
+    size: 0.032
+    'y': 0.93
+    color: '#55607A'

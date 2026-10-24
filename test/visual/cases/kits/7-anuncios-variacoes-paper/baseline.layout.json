@@ -1,0 +1,30 @@
+{
+  "layout": [
+    {
+      "id": "gs",
+      "asset": "umbrella",
+      "x": 171.4,
+      "base": 133.7,
+      "w": 115,
+      "h": 123.2
+    },
+    {
+      "id": "eu",
+      "asset": "person",
+      "x": 42,
+      "base": 133.7,
+      "w": 32.9,
+      "h": 88.7
+    },
+    {
+      "id": "cafe",
+      "asset": "tumbler",
+      "x": 59.2,
+      "base": 96.8,
+      "w": 9,
+      "h": 19.9
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

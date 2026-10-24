@@ -1,0 +1,27 @@
+canvas:
+  mode: map
+  width: 1400
+  height: 900
+  theme: flat-cool
+map:
+  padding: 3
+route:
+  - city: Sevilha
+    country: Espanha
+  - by: ônibus
+  - city: Lisboa
+    country: Portugal
+  - by: trem
+  - city: Porto
+    country: Portugal
+  - by: avião
+  - city: Madri
+    country: Espanha
+  - by: trem
+  - city: Barcelona
+    country: Espanha
+text:
+  - content: Península Ibérica
+    role: title
+  - content: ônibus, trem e avião
+    role: subtitle

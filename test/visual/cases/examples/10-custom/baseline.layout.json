@@ -1,0 +1,73 @@
+{
+  "layout": [
+    {
+      "id": "logo",
+      "asset": "logo",
+      "x": 55,
+      "base": 40.5,
+      "w": 8.3,
+      "h": 15.9
+    },
+    {
+      "id": "barista",
+      "asset": "person",
+      "x": 66.7,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "balcao",
+      "asset": "counter",
+      "x": 62,
+      "base": 93,
+      "w": 39.3,
+      "h": 21.1
+    },
+    {
+      "id": "robo",
+      "asset": "robo",
+      "x": 20,
+      "base": 93,
+      "w": 7.3,
+      "h": 23.8
+    },
+    {
+      "id": "cliente",
+      "asset": "person",
+      "x": 29.2,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "prensa",
+      "asset": "prensa",
+      "x": 50.2,
+      "base": 71.9,
+      "w": 2.8,
+      "h": 8.2
+    },
+    {
+      "id": "xicara",
+      "asset": "cup",
+      "x": 62,
+      "base": 71.9,
+      "w": 2.9,
+      "h": 7.5
+    },
+    {
+      "id": "maquina",
+      "asset": "coffee_machine",
+      "x": 73.8,
+      "base": 71.9,
+      "w": 6.1,
+      "h": 13.6
+    }
+  ],
+  "warnings": [
+    "asset custom 'vaso_raro': arquivo 'custom/nao-existe.svg' não encontrado (caminho relativo ao arquivo da cena)",
+    "'extra' foi ignorado porque o asset custom 'vaso_raro' não carregou"
+  ],
+  "art": []
+}

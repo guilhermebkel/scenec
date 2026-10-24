@@ -1,0 +1,49 @@
+canvas:
+  width: 720
+  height: 1280
+  theme: flat-cool
+  scale: 0.82
+  horizon: 0.66
+  base: 0.9
+  colors:
+    primary: '#2E6BE6'
+    accent: '#FFB547'
+  setting: indoor
+  shot: full
+  focus: eu
+objects:
+  eu:
+    asset: person
+    pose: thinking
+    at: 0.5
+    expr: thinking
+    hair: bun
+    hair_color: black
+    skin: tan
+    shirt: primary
+    outfit: sweater
+    glasses: true
+  planta:
+    asset: big_plant
+    at: 0.22
+    size: small
+  gato:
+    asset: cat
+    at: 0.66
+    facing: left
+    look: eu
+text:
+  - content: |-
+      Por que seu dinheiro
+      cresce sozinho?
+    at: top-center
+    role: title
+    size: 0.05
+    'y': 0.12
+  - content: Juros compostos em 30 segundos
+    at: bottom-center
+    role: subtitle
+    size: 0.026
+    color: paper
+    box: secondary
+    pad: 0.8

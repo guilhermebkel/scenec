@@ -1,0 +1,58 @@
+canvas:
+  width: 864
+  height: 1080
+  theme: flat-cool
+  scale: 0.75
+  horizon: 0.7
+  base: 0.93
+  colors:
+    primary: '#5B4BDB'
+    accent: '#FFB547'
+    secondary: '#1F2A44'
+    wall: '#F1EEFC'
+  setting: outdoor
+objects:
+  sol:
+    asset: sun
+    at: top-right
+    altitude: 0.36
+    size: small
+  arv:
+    asset: tree
+    at: 0.82
+    depth: mid
+  eu:
+    asset: person
+    pose: walking
+    at: 0.35
+    look: rex
+    hair: curly
+    hair_color: black
+    skin: dark
+    shirt: accent
+    pants: secondary
+  rex:
+    asset: dog
+    right_of: eu
+    gap: 0.01
+    facing: right
+text:
+  - content: 2/5
+    at: top-right
+    role: label
+    size: 0.022
+    color: primary
+    weight: 700
+  - content: 1. Tenha uma rotina
+    at: top-left
+    role: title
+    size: 0.052
+    'y': 0.15
+  - content: |-
+      Comece o dia como se fosse
+      sair de casa: caminhe 10 min.
+    at: top-left
+    role: body
+    size: 0.027
+    'y': 0.27
+    color: secondary

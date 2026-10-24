@@ -1,0 +1,68 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: flat-autumn
+  setting: indoor
+objects:
+  lousa:
+    asset: board
+    at: 0.56
+    size: large
+    elevation: 38
+  relogio:
+    asset: clock
+    at: 0.86
+  profa:
+    asset: person
+    pose: pointing
+    left_of: lousa
+    gap: 0
+    hair: ponytail
+    hair_color: black
+    skin: medium
+    shirt: paper
+    jacket: primary
+    bottom: skirt
+    pants: secondary
+    glasses: true
+  estante:
+    asset: bookshelf
+    at: far-right
+  mesa:
+    asset: desk
+    at: 0.1
+    depth: near
+    size: small
+  livros:
+    asset: books
+    'on': mesa
+    align: left
+  vaso:
+    asset: plant
+    'on': mesa
+    align: right
+  aluno:
+    asset: person
+    view: back
+    at: 0.5
+    depth: near
+    hair: curly
+    hair_color: brown
+    skin: dark
+    shirt: accent
+    layer: front
+  aluna:
+    asset: person
+    view: back
+    right_of: aluno
+    gap: 0.03
+    hair: long
+    hair_color: red
+    skin: light
+    shirt: secondary
+    layer: front
+text:
+  - content: 'Aula 3: crescimento'
+    at: top-left
+    role: title
+    color: secondary

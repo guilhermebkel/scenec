@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+  <defs><linearGradient id="vidro" x1="0" x2="1"><stop offset="0" stop-color="#E9D3B8"/><stop offset="1" stop-color="#C79B6E"/></linearGradient></defs>
+  <rect x="20" y="30" width="56" height="96" rx="6" fill="url(#vidro)" stroke="#3A2418" stroke-width="5"/>
+  <rect x="24" y="70" width="48" height="52" rx="3" fill="#5C3620"/>
+  <path d="M76 50 Q98 50 98 75 Q98 100 76 100" fill="none" stroke="#3A2418" stroke-width="7"/>
+  <rect x="14" y="22" width="68" height="10" rx="4" fill="#3A2418"/>
+  <rect x="45" y="4" width="6" height="20" fill="#3A2418"/><circle cx="48" cy="5" r="6" fill="#B5482E"/>
+  <rect x="16" y="124" width="64" height="8" rx="3" fill="#3A2418"/>
+  <script>alert('isso será removido')</script>
+</svg>

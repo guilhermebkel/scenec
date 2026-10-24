@@ -1,0 +1,54 @@
+{
+  "layout": [
+    {
+      "id": "jan",
+      "asset": "window",
+      "x": 82,
+      "base": 41,
+      "w": 22.1,
+      "h": 24.6
+    },
+    {
+      "id": "mesa",
+      "asset": "desk",
+      "x": 45,
+      "base": 90,
+      "w": 37.6,
+      "h": 13.3
+    },
+    {
+      "id": "cad",
+      "asset": "chair",
+      "x": 24.9,
+      "base": 90,
+      "w": 12.7,
+      "h": 25.4
+    },
+    {
+      "id": "eu",
+      "asset": "person",
+      "x": 23.7,
+      "base": 90,
+      "w": 11.6,
+      "h": 31.2
+    },
+    {
+      "id": "mon",
+      "asset": "monitor",
+      "x": 45,
+      "base": 76.7,
+      "w": 11.6,
+      "h": 10.6
+    },
+    {
+      "id": "cafe",
+      "asset": "cup",
+      "x": 56.3,
+      "base": 76.7,
+      "w": 4.6,
+      "h": 6.4
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

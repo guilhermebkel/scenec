@@ -1,0 +1,52 @@
+canvas:
+  width: 864
+  height: 1080
+  theme: flat-cool
+  scale: 0.75
+  horizon: 0.7
+  base: 0.93
+  colors:
+    primary: '#5B4BDB'
+    accent: '#FFB547'
+    secondary: '#1F2A44'
+    wall: '#F1EEFC'
+  setting: indoor
+objects:
+  est:
+    asset: bookshelf
+    at: 0.88
+    size: small
+  canto:
+    group: workspace
+    at: 0.45
+    screen: monitor
+    person:
+      hair: curly
+      hair_color: black
+      skin: dark
+      shirt: accent
+      pants: secondary
+    parts:
+      cadeira:
+        color: primary
+      planta: false
+text:
+  - content: 3/5
+    at: top-right
+    role: label
+    size: 0.022
+    color: primary
+    weight: 700
+  - content: 2. Um canto só seu
+    at: top-left
+    role: title
+    size: 0.052
+    'y': 0.15
+  - content: |-
+      Mesmo pequeno: o cérebro associa
+      o lugar ao modo trabalho.
+    at: top-left
+    role: body
+    size: 0.027
+    'y': 0.27
+    color: secondary

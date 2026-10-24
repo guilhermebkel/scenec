@@ -1,0 +1,92 @@
+canvas:
+  width: 1400
+  height: 700
+  setting: indoor
+  theme: flat-cool
+  scale: 1.25
+  horizon: 0.6
+  base: 0.88
+  critique: false
+objects:
+  vo:
+    asset: person
+    at: 0.07
+    age: elder
+    cane: true
+    build: slim
+    outfit: sweater
+    shirt: '#8C6A9E'
+    glasses: true
+    expr: happy
+    look: neta
+  neta:
+    asset: person
+    at: 0.18
+    age: child
+    hair: ponytail
+    hair_color: brown
+    skin: medium
+    outfit: dress
+    shirt: accent
+    pose: waving
+    look: up-left
+  teen:
+    asset: person
+    at: 0.3
+    age: teen
+    hair: curly
+    skin: dark
+    shirt: primary
+    pose: phone
+    backpack: true
+  pai:
+    asset: person
+    at: 0.43
+    build: heavy
+    beard: true
+    hair: short
+    skin: light
+    shirt: '#3E8E6B'
+    pose: hands_on_hips
+    expr: laughing
+  alta:
+    asset: person
+    at: 0.55
+    height: 1.12
+    build: slim
+    hair: long
+    hair_color: black
+    skin: tan
+    outfit: sweater
+    shirt: '#D9534F'
+    pose: pointing
+    expr: surprised
+  forte:
+    asset: person
+    at: 0.67
+    build: broad
+    hair: bald
+    skin: deep
+    shirt: secondary
+    pose: presenting
+    expr: happy
+    look: crianca
+  crianca:
+    asset: person
+    at: 0.78
+    age: child
+    hair: curly
+    skin: dark
+    shirt: '#F2994A'
+    bottom: shorts
+    pose: celebrating
+    expr: laughing
+  ana:
+    asset: person
+    at: 0.91
+    hair: bun
+    skin: medium
+    jacket: primary
+    shirt: paper
+    pose: thinking
+    expr: worried

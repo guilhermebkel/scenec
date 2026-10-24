@@ -1,0 +1,38 @@
+{
+  "layout": [
+    {
+      "id": "quadro",
+      "asset": "frame",
+      "x": 50,
+      "base": 31,
+      "w": 20.8,
+      "h": 21.3
+    },
+    {
+      "id": "sofa",
+      "asset": "sofa",
+      "x": 50,
+      "base": 77,
+      "w": 52,
+      "h": 29.4
+    },
+    {
+      "id": "planta",
+      "asset": "big_plant",
+      "x": 84,
+      "base": 77,
+      "w": 18.4,
+      "h": 44.9
+    },
+    {
+      "id": "eu",
+      "asset": "person",
+      "x": 34.2,
+      "base": 80.7,
+      "w": 12.2,
+      "h": 44.1
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

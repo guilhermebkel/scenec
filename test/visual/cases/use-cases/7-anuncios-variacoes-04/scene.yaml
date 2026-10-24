@@ -1,0 +1,73 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: night
+  horizon: 0.68
+  base: 0.9
+  scale: 0.85
+  setting: indoor
+  colors:
+    wall: '#26305E'
+    floor: '#1B2245'
+objects:
+  jan:
+    asset: window
+    at: 0.82
+    view: night
+    elevation: 110
+  mesa:
+    asset: desk
+    at: 0.45
+  cad:
+    asset: chair
+    left_of: mesa
+    gap: -0.05
+    facing: right
+  eu:
+    asset: person
+    pose: typing
+    'on': cad
+    facing: right
+    hair: bun
+    hair_color: brown
+    skin: medium
+    shirt: primary
+  mon:
+    asset: monitor
+    'on': mesa
+    size: 0.8
+  cafe:
+    asset: cup
+    'on': mesa
+    align: right
+text:
+  - content: Café Ponto
+    at: top-left
+    role: label
+    size: 0.03
+    weight: 800
+    color: paper
+  - content: |-
+      Plantão até tarde?
+      A gente também.
+    at: top-left
+    role: title
+    size: 0.06
+    'y': 0.2
+    color: paper
+  - content: Aberto até 2h
+    at: top-left
+    role: subtitle
+    size: 0.03
+    'y': 0.38
+    color: ink
+    box: accent
+    pad: 0.7
+  - content: Peça pelo app  →
+    at: top-right
+    role: label
+    size: 0.026
+    color: ink
+    box: primary
+    pad: 0.7
+    weight: 700

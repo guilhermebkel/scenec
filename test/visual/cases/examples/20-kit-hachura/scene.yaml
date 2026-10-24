@@ -1,0 +1,34 @@
+canvas:
+  width: 900
+  height: 600
+  setting: outdoor
+  theme: flat-cool
+  horizon: 0.6
+  kit: hatch
+  base: 0.86
+objects:
+  sol:
+    asset: sun
+    at: top-right
+    altitude: 0.1
+    size: small
+  casa:
+    asset: house
+    at: 0.22
+    depth: mid
+  cerca:
+    asset: fence
+    at: 0.84
+    allow_crop: true
+  praca:
+    group: park_bench
+    at: 0.58
+    person:
+      hair: bun
+      skin: tan
+      shirt: accent
+text:
+  - content: Domingo no parque
+    at: top-left
+    role: title
+    size: 0.07

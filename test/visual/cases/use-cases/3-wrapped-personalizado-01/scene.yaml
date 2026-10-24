@@ -1,0 +1,67 @@
+canvas:
+  width: 720
+  height: 1280
+  theme: night
+  setting: indoor
+  scale: 0.8
+  horizon: 0.72
+  base: 0.92
+  colors:
+    wall: '#26305E'
+    floor: '#1B2245'
+    text: '#F5F1E6'
+objects:
+  canto:
+    group: reading_corner
+    at: 0.44
+    size: 0.85
+    color: metal
+    person:
+      pose: reading
+      hair: long
+      hair_color: brown
+      skin: light
+      outfit: sweater
+      shirt: accent
+      build: slim
+text:
+  - content: SEU 2026 EM LEITURA
+    at: top-left
+    role: label
+    size: 0.02
+    'y': 0.07
+    color: accent
+    weight: 700
+  - content: Ana, que ano!
+    at: top-left
+    role: title
+    size: 0.045
+    'y': 0.13
+    color: paper
+  - content: '12'
+    at: top-left
+    role: title
+    size: 0.16
+    'y': 0.3
+    color: accent
+    weight: 800
+  - content: livros lidos
+    at: top-left
+    role: subtitle
+    size: 0.03
+    'y': 0.355
+    color: paper
+  - content: 'Gênero favorito: Romance'
+    at: top-left
+    role: body
+    size: 0.024
+    'y': 0.42
+    color: paper
+  - content: Você leu mais à noite
+    at: top-left
+    role: subtitle
+    size: 0.022
+    'y': 0.48
+    color: paper
+    box: ink
+    pad: 0.7

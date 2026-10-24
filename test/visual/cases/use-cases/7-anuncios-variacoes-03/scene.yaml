@@ -1,0 +1,61 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: flat-autumn
+  horizon: 0.68
+  base: 0.9
+  scale: 0.85
+  setting: outdoor
+objects:
+  a1:
+    asset: tree
+    at: 0.82
+    depth: mid
+  banco:
+    asset: bench
+    at: 0.55
+    depth: mid
+  eu:
+    asset: person
+    pose: holding
+    at: 0.3
+    holds: cafe
+    look: cafe
+    hair: bun
+    hair_color: brown
+    skin: medium
+    shirt: primary
+  cafe:
+    asset: cup
+    size: 0.6
+text:
+  - content: Café Ponto
+    at: top-left
+    role: label
+    size: 0.03
+    weight: 800
+    color: text
+  - content: |-
+      Entregamos até
+      no parque.
+    at: top-left
+    role: title
+    size: 0.06
+    'y': 0.2
+    color: text
+  - content: Chega em 20 min
+    at: top-left
+    role: subtitle
+    size: 0.03
+    'y': 0.38
+    color: ink
+    box: accent
+    pad: 0.7
+  - content: Peça pelo app  →
+    at: top-right
+    role: label
+    size: 0.026
+    color: paper
+    box: secondary
+    pad: 0.7
+    weight: 700

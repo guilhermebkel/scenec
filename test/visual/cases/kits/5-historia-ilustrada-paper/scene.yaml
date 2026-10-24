@@ -1,0 +1,50 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: flat-cool
+  setting: outdoor
+  horizon: 0.6
+  base: 0.84
+  kit: paper
+objects:
+  sol:
+    asset: sun
+    at: top-right
+    altitude: 0.15
+  nuvem:
+    asset: cloud
+    at: top-left
+    altitude: 0.15
+  casa:
+    asset: house
+    at: 0.3
+    depth: mid
+  arv:
+    asset: tree
+    at: 0.85
+    depth: mid
+  lia:
+    asset: person
+    pose: waving
+    at: 0.58
+    look: sol
+    age: child
+    size: 1.15
+    hair: ponytail
+    hair_color: red
+    skin: tan
+    outfit: dress
+    shirt: '#D94F70'
+  rex:
+    asset: dog
+    facing: left
+    color: wood
+    right_of: lia
+    gap: 0
+text:
+  - content: Toda manhã, Lia e Rex davam bom-dia ao sol.
+    at: bottom-center
+    role: body
+    size: 0.03
+    box: paper
+    pad: 0.9

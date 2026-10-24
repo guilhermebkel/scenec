@@ -1,0 +1,108 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: flat-cool
+  setting: city
+objects:
+  sol:
+    asset: sun
+    at: top-right
+    altitude: 0.16
+    size: small
+  nuvem:
+    asset: cloud
+    at: top-center-right
+    altitude: 0.26
+  p1:
+    asset: building
+    at: 0.08
+    depth: far
+    floors: 6
+    width: 110
+    color: secondary
+  p2:
+    asset: building
+    right_of: p1
+    gap: 0
+    floors: 5
+    width: 90
+    color: primary
+    seed: 3
+  p3:
+    asset: building
+    at: 0.62
+    depth: far
+    floors: 10
+    width: 100
+    color: secondary
+    seed: 5
+  p4:
+    asset: building
+    right_of: p3
+    gap: 0
+    floors: 9
+    width: 120
+    color: primary
+    seed: 1
+  arv1:
+    asset: tree
+    at: 0.3
+    depth: mid
+  arv2:
+    asset: tree
+    at: 0.86
+    depth: mid
+    size: small
+  banco:
+    asset: bench
+    at: 0.56
+    depth: mid
+  idosa:
+    asset: person
+    pose: reading
+    'on': banco
+    align: left
+    facing: right
+    hair: bun
+    hair_color: gray
+    skin: light
+    outfit: sweater
+    shirt: accent
+    bottom: skirt
+    pants: secondary
+    glasses: true
+  poste:
+    asset: streetlight
+    at: 0.44
+    depth: mid
+  carro:
+    asset: car
+    at: 0.76
+    depth: near
+    color: primary
+    facing: left
+  bike:
+    asset: bicycle
+    at: 0.09
+    depth: near
+    facing: right
+  bia:
+    asset: person
+    pose: walking
+    at: 0.22
+    hair: ponytail
+    hair_color: black
+    skin: tan
+    shirt: primary
+    bottom: shorts
+    pants: secondary
+  rex:
+    asset: dog
+    right_of: bia
+    gap: 0
+    facing: right
+    color: accent
+text:
+  - content: Cidade para pessoas
+    at: top-left
+    role: title

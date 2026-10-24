@@ -1,0 +1,49 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: beach
+  setting: beach
+objects:
+  sol:
+    asset: sun
+    at: top-left
+    altitude: 0.2
+  nuvem:
+    asset: cloud
+    at: top-right
+    altitude: 0.14
+  ave:
+    asset: bird
+    at: top-center
+    altitude: 0.28
+  barco:
+    asset: boat
+    at: 0.8
+  cast:
+    asset: sandcastle
+    at: 0.55
+    size: large
+  lia:
+    asset: person
+    pose: celebrating
+    at: 0.32
+    age: child
+    size: 1.15
+    hair: ponytail
+    hair_color: red
+    skin: tan
+    outfit: dress
+    shirt: '#D94F70'
+  rex:
+    asset: dog
+    facing: left
+    color: wood
+    right_of: cast
+    gap: 0.02
+text:
+  - content: No verão, construíram o maior castelo da praia.
+    at: bottom-center
+    role: body
+    size: 0.03
+    box: paper
+    pad: 0.9

@@ -1,0 +1,128 @@
+{
+  "layout": [
+    {
+      "id": "sol",
+      "asset": "sun",
+      "x": 80,
+      "base": 26.3,
+      "w": 10.8,
+      "h": 20.7
+    },
+    {
+      "id": "nuvem",
+      "asset": "cloud",
+      "x": 65,
+      "base": 33.7,
+      "w": 17.7,
+      "h": 15.3
+    },
+    {
+      "id": "p1",
+      "asset": "building",
+      "x": 8,
+      "base": 74,
+      "w": 11.8,
+      "h": 42
+    },
+    {
+      "id": "p2",
+      "asset": "building",
+      "x": 18.7,
+      "base": 74,
+      "w": 9.6,
+      "h": 35.9
+    },
+    {
+      "id": "p3",
+      "asset": "building",
+      "x": 62,
+      "base": 74,
+      "w": 10.7,
+      "h": 66.5
+    },
+    {
+      "id": "p4",
+      "asset": "building",
+      "x": 73.8,
+      "base": 74,
+      "w": 12.9,
+      "h": 60.4
+    },
+    {
+      "id": "arv1",
+      "asset": "tree",
+      "x": 30,
+      "base": 84,
+      "w": 16.4,
+      "h": 55.8
+    },
+    {
+      "id": "arv2",
+      "asset": "tree",
+      "x": 86,
+      "base": 84,
+      "w": 12.3,
+      "h": 41.8
+    },
+    {
+      "id": "banco",
+      "asset": "bench",
+      "x": 56,
+      "base": 84,
+      "w": 15.7,
+      "h": 16.3
+    },
+    {
+      "id": "poste",
+      "asset": "streetlight",
+      "x": 44,
+      "base": 84,
+      "w": 5.7,
+      "h": 46.2
+    },
+    {
+      "id": "idosa",
+      "asset": "person",
+      "x": 51,
+      "base": 86.4,
+      "w": 5.7,
+      "h": 29.4
+    },
+    {
+      "id": "carro",
+      "asset": "car",
+      "x": 76,
+      "base": 94,
+      "w": 25,
+      "h": 21.1
+    },
+    {
+      "id": "bike",
+      "asset": "bicycle",
+      "x": 9,
+      "base": 94,
+      "w": 14.3,
+      "h": 16.3
+    },
+    {
+      "id": "bia",
+      "asset": "person",
+      "x": 22,
+      "base": 94,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "rex",
+      "asset": "dog",
+      "x": 30,
+      "base": 94,
+      "w": 8.9,
+      "h": 12.2
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "arte: 'arv1' e 'rex' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+  ]
+}

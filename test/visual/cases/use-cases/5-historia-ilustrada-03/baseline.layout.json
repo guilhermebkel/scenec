@@ -1,0 +1,62 @@
+{
+  "layout": [
+    {
+      "id": "sol",
+      "asset": "sun",
+      "x": 20,
+      "base": 33.8,
+      "w": 27.5,
+      "h": 27.5
+    },
+    {
+      "id": "nuvem",
+      "asset": "cloud",
+      "x": 80,
+      "base": 21.6,
+      "w": 33.7,
+      "h": 15.3
+    },
+    {
+      "id": "ave",
+      "asset": "bird",
+      "x": 50,
+      "base": 29.5,
+      "w": 6.1,
+      "h": 3.1
+    },
+    {
+      "id": "barco",
+      "asset": "boat",
+      "x": 80,
+      "base": 58.5,
+      "w": 13.1,
+      "h": 13.1
+    },
+    {
+      "id": "cast",
+      "asset": "sandcastle",
+      "x": 55,
+      "base": 93,
+      "w": 20.3,
+      "h": 17.7
+    },
+    {
+      "id": "lia",
+      "asset": "person",
+      "x": 32,
+      "base": 93,
+      "w": 12.5,
+      "h": 28.2
+    },
+    {
+      "id": "rex",
+      "asset": "dog",
+      "x": 75.7,
+      "base": 93,
+      "w": 17,
+      "h": 12.2
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

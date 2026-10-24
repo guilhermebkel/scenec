@@ -1,0 +1,62 @@
+{
+  "layout": [
+    {
+      "id": "est",
+      "asset": "bookshelf",
+      "x": 88,
+      "base": 93,
+      "w": 19.1,
+      "h": 32.5
+    },
+    {
+      "id": "canto_mesa",
+      "asset": "desk",
+      "x": 45,
+      "base": 93,
+      "w": 41.4,
+      "h": 11.7
+    },
+    {
+      "id": "canto_cadeira",
+      "asset": "chair",
+      "x": 21.3,
+      "base": 93,
+      "w": 14,
+      "h": 22.4
+    },
+    {
+      "id": "canto_pessoa",
+      "asset": "person",
+      "x": 20,
+      "base": 93,
+      "w": 12.7,
+      "h": 27.5
+    },
+    {
+      "id": "canto_tela",
+      "asset": "monitor",
+      "x": 40.9,
+      "base": 81.3,
+      "w": 12.8,
+      "h": 9.4
+    },
+    {
+      "id": "canto_luminaria",
+      "asset": "lamp",
+      "x": 57.4,
+      "base": 81.3,
+      "w": 9.6,
+      "h": 10.7
+    },
+    {
+      "id": "canto_caneca",
+      "asset": "cup",
+      "x": 50,
+      "base": 81.3,
+      "w": 5.1,
+      "h": 5.6
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

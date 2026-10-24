@@ -1,0 +1,30 @@
+{
+  "layout": [
+    {
+      "id": "eu",
+      "asset": "person",
+      "x": 50,
+      "base": 93,
+      "w": 19.5,
+      "h": 42.2
+    },
+    {
+      "id": "bal",
+      "asset": "balloons",
+      "x": 82,
+      "base": 93,
+      "w": 19.5,
+      "h": 39.1
+    },
+    {
+      "id": "bal2",
+      "asset": "balloons",
+      "x": 18,
+      "base": 93,
+      "w": 14.7,
+      "h": 29.3
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

@@ -1,0 +1,121 @@
+{
+  "layout": [
+    {
+      "id": "janela",
+      "asset": "window",
+      "x": 62,
+      "base": 46.3,
+      "w": 13.7,
+      "h": 28.9
+    },
+    {
+      "id": "relogio",
+      "asset": "clock",
+      "x": 82,
+      "base": 33.3,
+      "w": 5.2,
+      "h": 9.8
+    },
+    {
+      "id": "quadro",
+      "asset": "frame",
+      "x": 47,
+      "base": 44.9,
+      "w": 9.1,
+      "h": 13.3
+    },
+    {
+      "id": "prat",
+      "asset": "shelf_wall",
+      "x": 20,
+      "base": 37.7,
+      "w": 13.7,
+      "h": 9.8
+    },
+    {
+      "id": "estante",
+      "asset": "bookshelf",
+      "x": 92,
+      "base": 84,
+      "w": 11.4,
+      "h": 46.2
+    },
+    {
+      "id": "tapete",
+      "asset": "rug",
+      "x": 58,
+      "base": 93,
+      "w": 32.1,
+      "h": 4.8
+    },
+    {
+      "id": "mesa",
+      "asset": "desk",
+      "x": 58,
+      "base": 93,
+      "w": 23.2,
+      "h": 15.6
+    },
+    {
+      "id": "cadeira",
+      "asset": "chair",
+      "x": 46,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "planta",
+      "asset": "big_plant",
+      "x": 16,
+      "base": 93,
+      "w": 10.7,
+      "h": 37.4
+    },
+    {
+      "id": "gato",
+      "asset": "cat",
+      "x": 26.6,
+      "base": 93,
+      "w": 6.4,
+      "h": 10.9
+    },
+    {
+      "id": "ana",
+      "asset": "person",
+      "x": 45.3,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "note",
+      "asset": "laptop",
+      "x": 51,
+      "base": 77.4,
+      "w": 6.1,
+      "h": 8.2
+    },
+    {
+      "id": "lampada",
+      "asset": "lamp",
+      "x": 65,
+      "base": 77.4,
+      "w": 5.4,
+      "h": 14.3
+    },
+    {
+      "id": "caneca",
+      "asset": "cup",
+      "x": 58,
+      "base": 77.4,
+      "w": 2.9,
+      "h": 7.5
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "arte: 'janela' some contra o fundo na parte de cima (90% desse contorno sem contraste): a cor #F8F8F8 está próxima demais; mude a cor de um dos dois",
+    "arte: 'cadeira' e 'note' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+  ]
+}

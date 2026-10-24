@@ -1,0 +1,51 @@
+canvas:
+  width: 864
+  height: 1080
+  theme: flat-cool
+  scale: 1.15
+  horizon: 0.62
+  base: 0.93
+  colors:
+    primary: '#5B4BDB'
+    accent: '#FFB547'
+    secondary: '#1F2A44'
+    wall: '#F1EEFC'
+  setting: indoor
+objects:
+  eu:
+    asset: person
+    pose: celebrating
+    at: 0.5
+    expr: laughing
+    hair: curly
+    hair_color: black
+    skin: dark
+    shirt: accent
+    pants: secondary
+  bal:
+    asset: balloons
+    at: 0.82
+  bal2:
+    asset: balloons
+    at: 0.18
+    size: small
+text:
+  - content: 5/5
+    at: top-right
+    role: label
+    size: 0.022
+    color: primary
+    weight: 700
+  - content: 4. Feche o expediente
+    at: top-left
+    role: title
+    size: 0.052
+    'y': 0.15
+  - content: |-
+      Desligue o notebook e saia do
+      cômodo. Salve este post!
+    at: top-left
+    role: body
+    size: 0.027
+    'y': 0.27
+    color: secondary

@@ -1,0 +1,27 @@
+canvas:
+  mode: map
+  width: 1400
+  height: 900
+  theme: flat-cool
+map:
+  padding: 3
+route:
+  - city: Roma
+    country: Itália
+  - by: trem
+  - city: Florença
+    country: Itália
+  - by: trem
+  - city: Veneza
+    country: Itália
+  - by: trem
+  - city: Verona
+    country: Itália
+  - by: trem
+  - city: Milão
+    country: Itália
+text:
+  - content: Itália de trem
+    role: title
+  - content: 5 cidades em 10 dias
+    role: subtitle

@@ -1,0 +1,64 @@
+canvas:
+  width: 720
+  height: 1280
+  theme: flat-cool
+  setting: indoor
+  scale: 0.8
+  horizon: 0.72
+  base: 0.92
+objects:
+  canto:
+    group: reading_corner
+    at: 0.44
+    size: 0.85
+    color: secondary
+    person:
+      pose: reading
+      hair: short
+      hair_color: black
+      skin: deep
+      shirt: primary
+      beard: true
+      pants: '#8A94A6'
+      build: broad
+text:
+  - content: SEU 2026 EM LEITURA
+    at: top-left
+    role: label
+    size: 0.02
+    'y': 0.07
+    color: secondary
+    weight: 700
+  - content: Bruno, que ano!
+    at: top-left
+    role: title
+    size: 0.045
+    'y': 0.13
+    color: text
+  - content: '27'
+    at: top-left
+    role: title
+    size: 0.16
+    'y': 0.3
+    color: secondary
+    weight: 800
+  - content: livros lidos
+    at: top-left
+    role: subtitle
+    size: 0.03
+    'y': 0.355
+    color: text
+  - content: 'Gênero favorito: Ficção científica'
+    at: top-left
+    role: body
+    size: 0.024
+    'y': 0.42
+    color: text
+  - content: Top 5% dos leitores
+    at: top-left
+    role: subtitle
+    size: 0.022
+    'y': 0.48
+    color: paper
+    box: secondary
+    pad: 0.7

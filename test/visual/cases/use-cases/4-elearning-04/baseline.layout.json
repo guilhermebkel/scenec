@@ -1,0 +1,46 @@
+{
+  "layout": [
+    {
+      "id": "logo",
+      "asset": "frame",
+      "x": 88,
+      "base": 37.7,
+      "w": 9.8,
+      "h": 13.3
+    },
+    {
+      "id": "ana",
+      "asset": "person",
+      "x": 57.5,
+      "base": 93,
+      "w": 7.6,
+      "h": 36.7
+    },
+    {
+      "id": "balcao",
+      "asset": "counter",
+      "x": 60,
+      "base": 93,
+      "w": 42.1,
+      "h": 21.1
+    },
+    {
+      "id": "rui",
+      "asset": "person",
+      "x": 37.1,
+      "base": 93,
+      "w": 8.9,
+      "h": 36.7
+    },
+    {
+      "id": "mon",
+      "asset": "monitor",
+      "x": 72.6,
+      "base": 71.9,
+      "w": 5.3,
+      "h": 8.6
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

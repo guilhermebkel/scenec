@@ -1,0 +1,53 @@
+canvas:
+  width: 1200
+  height: 700
+  setting: indoor
+  theme: flat-cool
+  scale: 2.4
+  horizon: 0.55
+  base: 0.98
+  critique: false
+objects:
+  a:
+    asset: person
+    at: 0.14
+    pose: waving
+    hair: short
+    skin: tan
+    shirt: primary
+    look: right
+  b:
+    asset: person
+    at: 0.36
+    layer: back
+    pose: shrugging
+    hair: long
+    skin: light
+    outfit: sweater
+    shirt: accent
+    expr: worried
+  sofa:
+    asset: sofa
+    at: 0.66
+    allow_crop: true
+    color: '#C9B8A6'
+  c:
+    asset: person
+    pose: reading
+    'on': sofa
+    align: left
+    facing: right
+    hair: bun
+    skin: dark
+    shirt: '#3E8E6B'
+  d:
+    asset: person
+    pose: drinking
+    age: child
+    'on': sofa
+    align: 0.12
+    facing: left
+    hair: curly
+    skin: medium
+    shirt: '#F2994A'
+    look: c
