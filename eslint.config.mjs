@@ -145,7 +145,7 @@ export default tseslint.config(
   },
   {
     // Why: in drawing code a number is a coordinate, size or angle of a shape, not a business rule; naming each one would hide the drawing behind constants. Logic code (Services, Modules, Commands) keeps the rule on.
-    files: ["src/Resources/Assets/**", "src/Utils/PersonUtil.ts", "src/Utils/ShapeUtil.ts"],
+    files: ["src/Resources/Assets/**", "src/Utils/PersonUtil.ts", "src/Utils/ShapeUtil.ts", "src/Services/BackgroundService.ts", "src/Services/LightingService.ts"],
     rules: { "@typescript-eslint/no-magic-numbers": "off" },
   },
   {

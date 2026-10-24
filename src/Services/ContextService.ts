@@ -5,6 +5,7 @@ import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 import { AssetService } from "@/Services/AssetService.ts";
 import { CustomAssetService } from "@/Services/CustomAssetService.ts";
 import { KitService } from "@/Services/KitService.ts";
+import { RequireUtil } from "@/Utils/RequireUtil.ts";
 import { ThemeService } from "@/Services/ThemeService.ts";
 
 export class ContextService {
@@ -56,7 +57,7 @@ export class ContextService {
       return theme;
     }
     warnings.push(`theme '${name}' does not exist; using '${ContextService.DEFAULT_THEME}'. Available: ${Object.keys(ThemeService.THEMES).join(", ")}`);
-    return ThemeService.THEMES[ContextService.DEFAULT_THEME];
+    return RequireUtil.defined(ThemeService.THEMES[ContextService.DEFAULT_THEME], "default theme");
   }
 
   private static kitOf(name: string | undefined, warnings: string[]): CompilationContext["kit"] {
@@ -65,14 +66,14 @@ export class ContextService {
       return kit;
     }
     warnings.push(`kit '${name}' does not exist; available: ${Object.keys(KitService.KITS).join(", ")}`);
-    return KitService.KITS[ContextService.DEFAULT_KIT];
+    return RequireUtil.defined(KitService.KITS[ContextService.DEFAULT_KIT], "default kit");
   }
 
   private static linesOf(setting: string, canvas: CompilationContext["canvas"], warnings: string[]): LayoutLines {
     let preset = ContextService.SETTING_TO_LINES[setting];
     if (!preset) {
       warnings.push(`setting '${setting}' is invalid; use outdoor, indoor, beach or city`);
-      preset = ContextService.SETTING_TO_LINES[ContextService.DEFAULT_SETTING];
+      preset = RequireUtil.defined(ContextService.SETTING_TO_LINES[ContextService.DEFAULT_SETTING], "default setting");
     }
     const lines = structuredClone(preset);
     if (canvas.horizon != null) {

@@ -71,15 +71,15 @@ export class CameraService {
     if (ids.length > 0) {
       return ids;
     }
-    const people = Object.keys(placed).filter((key) => placed[key].asset === "person");
+    const people = Object.values(placed).filter((placement) => placement.asset === "person");
     if (people.length > 0) {
-      return people;
+      return people.map((placement) => placement.id);
     }
-    return Object.keys(placed).filter((key) => ["ground", "any"].includes(placed[key].kind));
+    return Object.values(placed).filter((placement) => ["ground", "any"].includes(placement.kind)).map((placement) => placement.id);
   }
 
   private static focusedPlacements(placed: Record<string, Placement>, context: CompilationContext, config: ShotConfig): Placement[] {
-    const focused = CameraService.focusIds(placed, context).map((id) => placed[id]);
+    const focused = CameraService.focusIds(placed, context).flatMap((id) => placed[id] ?? []);
     // Why: medium and close frame people (head and torso), so the group's table must not decide the zoom.
     const hasPerson = focused.some((placement) => placement.asset === "person");
     return config.top != null && hasPerson ? focused.filter((placement) => placement.asset === "person") : focused;

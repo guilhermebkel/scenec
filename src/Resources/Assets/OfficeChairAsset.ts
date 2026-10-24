@@ -19,7 +19,7 @@ export class OfficeChairAsset extends BaseAsset {
       darker = ColorUtil.sh(mainColor, 0.12);
     let svg = ShapeUtil.shadow(theme, 22, 2.2);
     // base em estrela
-    [[-19, -2], [19, -2], [-11, 0.5], [11, 0.5], [0, -3.5]].forEach(([posX,
+    ([[-19, -2], [19, -2], [-11, 0.5], [11, 0.5], [0, -3.5]] as Array<[number, number]>).forEach(([posX,
       posY]) => {
       svg += `<path d="M0 -5 L${posX} ${posY}" stroke="${chrome}" stroke-width="2.2" stroke-linecap="round"/>`
         + ShapeUtil.circle(posX, posY + 0.6, 1.6, theme.ink);

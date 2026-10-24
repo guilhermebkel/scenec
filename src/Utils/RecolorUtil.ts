@@ -1,50 +1,166 @@
+import type { Theme } from "@/Protocols/ThemeProtocol.ts";
+
+type Triple = [number, number, number];
+
 export class RecolorUtil {
-  // Recolore um SVG importado para a paleta do tema, preservando a luminosidade relativa.
-// Cada cor é levada para o swatch do tema de matiz mais próximo; cinzas viram neutros do tema.
-  private static readonly hex2rgb = (h: any) => { h = h.replace("#", ""); if (h.length === 3) { h = [...h].map((c) => c + c).join(""); } return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16) / 255); };
+  private static readonly DEFAULT_STRENGTH = 0.75;
 
-  private static readonly lin = (c: any) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+  private static readonly COLOR_ATTRIBUTE = /(fill|stroke|stop-color)="(#[0-9a-fA-F]{3,6})"/g;
 
-  private static readonly delin = (c: any) => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055);
+  private static readonly MIN_SWATCH_CHROMA = 12;
 
-  private static rgb2lab([r, g, b]: number[]) {
-    [r, g, b] = [r, g, b].map(RecolorUtil.lin);
-    const x = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.95047, y = 0.2126 * r + 0.7152 * g + 0.0722 * b, z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.08883;
-    const f = (t: any) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
-    return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))];
-  }
+  private static readonly GRAY_CHROMA = 10;
 
-  private static lab2hex([L, a, b]: number[]) {
-    const fy = (L + 16) / 116, fx = fy + a / 500, fz = fy - b / 200;
-    const inv = (t: any) => (t ** 3 > 0.008856 ? t ** 3 : (t - 16 / 116) / 7.787);
-    const [x, y, z] = [inv(fx) * 0.95047, inv(fy), inv(fz) * 1.08883];
-    const rgb = [3.2406 * x - 1.5372 * y - 0.4986 * z, -0.9689 * x + 1.8758 * y + 0.0415 * z, 0.0557 * x - 0.204 * y + 1.057 * z];
-    return "#" + rgb.map((c) => Math.round(Math.min(1, Math.max(0, RecolorUtil.delin(c))) * 255).toString(16).padStart(2, "0")).join("");
-  }
+  private static readonly NEUTRAL_PULL = 0.5;
 
-  private static readonly lch = ([L, a, b]: number[]) => [L, Math.hypot(a, b), Math.atan2(b, a)];
+  private static readonly LIGHTNESS_PULL = 0.4;
 
-  static makeRecolor(theme: any, strength = 0.75) {
+  private static readonly HUE_WEIGHT = 2;
+
+  private static readonly CHROMA_DISTANCE_SCALE = 60;
+
+  private static readonly CHANNEL_MAX = 255;
+
+  private static readonly SRGB_KNEE = 0.04045;
+
+  private static readonly SRGB_LINEAR_SLOPE = 12.92;
+
+  private static readonly SRGB_INVERSE_KNEE = 0.0031308;
+
+  private static readonly SRGB_OFFSET = 0.055;
+
+  private static readonly SRGB_GAMMA_DIVISOR = 1.055;
+
+  private static readonly SRGB_GAMMA = 2.4;
+
+  private static readonly LAB_EPSILON = 0.008856;
+
+  private static readonly LAB_SLOPE = 7.787;
+
+  private static readonly LAB_OFFSET = 16 / 116;
+
+  private static readonly LIGHTNESS_SCALE = 116;
+
+  private static readonly LIGHTNESS_SHIFT = 16;
+
+  private static readonly A_SCALE = 500;
+
+  private static readonly B_SCALE = 200;
+
+  private static readonly WHITE_X = 0.95047;
+
+  private static readonly WHITE_Z = 1.08883;
+
+  private static readonly RGB_TO_XYZ: Triple[] = [[0.4124, 0.3576, 0.1805], [0.2126, 0.7152, 0.0722], [0.0193, 0.1192, 0.9505]];
+
+  private static readonly XYZ_TO_RGB: Triple[] = [[3.2406, -1.5372, -0.4986], [-0.9689, 1.8758, 0.0415], [0.0557, -0.204, 1.057]];
+
+  /** Returns a function that moves the colors of an SVG toward the theme palette, keeping their relative lightness. */
+  static makeRecolor(theme: Theme, strength = RecolorUtil.DEFAULT_STRENGTH): (svg: string) => string {
     const swatches = [theme.primary, theme.secondary, theme.accent, ...theme.foliage, theme.trunk, theme.wood, theme.glass]
-      .filter((c) => c?.startsWith("#")).map((c) => RecolorUtil.lch(RecolorUtil.rgb2lab(RecolorUtil.hex2rgb(c)))).filter((s) => s[1] > 12);
-    const neutral = RecolorUtil.rgb2lab(RecolorUtil.hex2rgb(theme.metal));
-    const cache = new Map();
-    const map = (hex: any) => {
-      if (cache.has(hex)) { return cache.get(hex); }
-      const lab = RecolorUtil.rgb2lab(RecolorUtil.hex2rgb(hex)); const [L, C, H] = RecolorUtil.lch(lab);
-      let out;
-      if (C < 10) { // cinza: puxa levemente para o neutro do tema
-        out = RecolorUtil.lab2hex([L, lab[1] * (1 - strength) + neutral[1] * strength * 0.5, lab[2] * (1 - strength) + neutral[2] * strength * 0.5]);
-      } else {
-        let best = swatches[0], bd = Infinity;
-        for (const s of swatches) { const dh = Math.abs(Math.atan2(Math.sin(H - s[2]), Math.cos(H - s[2]))); const d = dh * 2 + Math.abs(C - s[1]) / 60; if (d < bd) { bd = d; best = s; } }
-        const nH = Math.atan2(Math.sin(H) * (1 - strength) + Math.sin(best[2]) * strength, Math.cos(H) * (1 - strength) + Math.cos(best[2]) * strength);
-        const nC = C * (1 - strength) + Math.min(C, best[1]) * strength;
-        const nL = L * (1 - strength * 0.4) + best[0] * strength * 0.4;
-        out = RecolorUtil.lab2hex([nL, nC * Math.cos(nH), nC * Math.sin(nH)]);
+      .filter((color) => color.startsWith("#"))
+      .map((color) => RecolorUtil.toLch(RecolorUtil.toLab(RecolorUtil.toRgb(color))))
+      .filter((swatch) => swatch[1] > RecolorUtil.MIN_SWATCH_CHROMA);
+    const neutral = RecolorUtil.toLab(RecolorUtil.toRgb(theme.metal));
+    const cache = new Map<string, string>();
+    const recolorOne = (hex: string): string => {
+      const cached = cache.get(hex);
+      if (cached) {
+        return cached;
       }
-      cache.set(hex, out); return out;
+      const recolored = RecolorUtil.recolorColor(hex, { swatches, neutral, strength });
+      cache.set(hex, recolored);
+      return recolored;
     };
-    return (svg: any) => svg.replace(/(fill|stroke|stop-color)="(#[0-9a-fA-F]{3,6})"/g, (_: any, attr: any, c: any) => `${attr}="${map(c)}"`);
+    return (svg) => svg.replace(RecolorUtil.COLOR_ATTRIBUTE, (_match, attribute: string, color: string) => `${attribute}="${recolorOne(color)}"`);
+  }
+
+  private static recolorColor(hex: string, palette: { swatches: Triple[]; neutral: Triple; strength: number }): string {
+    const { swatches, neutral, strength } = palette;
+    const lab = RecolorUtil.toLab(RecolorUtil.toRgb(hex));
+    const [lightness, chroma, hue] = RecolorUtil.toLch(lab);
+    if (chroma < RecolorUtil.GRAY_CHROMA) {
+      // Why: a gray moves slightly toward the theme's neutral instead of taking a hue.
+      const pull = strength * RecolorUtil.NEUTRAL_PULL;
+      return RecolorUtil.fromLab([lightness, lab[1] * (1 - strength) + neutral[1] * pull, lab[2] * (1 - strength) + neutral[2] * pull]);
+    }
+    const best = RecolorUtil.nearestSwatch(swatches, chroma, hue);
+    if (!best) {
+      return hex;
+    }
+    const newHue = Math.atan2(Math.sin(hue) * (1 - strength) + Math.sin(best[2]) * strength, Math.cos(hue) * (1 - strength) + Math.cos(best[2]) * strength);
+    const newChroma = chroma * (1 - strength) + Math.min(chroma, best[1]) * strength;
+    const lightnessPull = strength * RecolorUtil.LIGHTNESS_PULL;
+    const newLightness = lightness * (1 - lightnessPull) + best[0] * lightnessPull;
+    return RecolorUtil.fromLab([newLightness, newChroma * Math.cos(newHue), newChroma * Math.sin(newHue)]);
+  }
+
+  private static nearestSwatch(swatches: Triple[], chroma: number, hue: number): Triple | undefined {
+    let best: Triple | undefined = swatches[0];
+    let bestDistance = Infinity;
+    for (const swatch of swatches) {
+      const hueDistance = Math.abs(Math.atan2(Math.sin(hue - swatch[2]), Math.cos(hue - swatch[2])));
+      const distance = hueDistance * RecolorUtil.HUE_WEIGHT + Math.abs(chroma - swatch[1]) / RecolorUtil.CHROMA_DISTANCE_SCALE;
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        best = swatch;
+      }
+    }
+    return best;
+  }
+
+  private static toRgb(hex: string): Triple {
+    let digits = hex.replace("#", "");
+    if (digits.length === 3) {
+      digits = [...digits].map((char) => char + char).join("");
+    }
+    const channel = (start: number): number => parseInt(digits.slice(start, start + 2), 16) / RecolorUtil.CHANNEL_MAX;
+    return [channel(0), channel(2), channel(4)];
+  }
+
+  private static linearize(channel: number): number {
+    return channel <= RecolorUtil.SRGB_KNEE
+      ? channel / RecolorUtil.SRGB_LINEAR_SLOPE
+      : ((channel + RecolorUtil.SRGB_OFFSET) / RecolorUtil.SRGB_GAMMA_DIVISOR) ** RecolorUtil.SRGB_GAMMA;
+  }
+
+  private static delinearize(channel: number): number {
+    return channel <= RecolorUtil.SRGB_INVERSE_KNEE
+      ? RecolorUtil.SRGB_LINEAR_SLOPE * channel
+      : RecolorUtil.SRGB_GAMMA_DIVISOR * channel ** (1 / RecolorUtil.SRGB_GAMMA) - RecolorUtil.SRGB_OFFSET;
+  }
+
+  private static multiply(matrix: Triple[], vector: Triple): Triple {
+    const [row0 = [0, 0, 0], row1 = [0, 0, 0], row2 = [0, 0, 0]] = matrix;
+    const dot = (row: number[]): number => (row[0] ?? 0) * vector[0] + (row[1] ?? 0) * vector[1] + (row[2] ?? 0) * vector[2];
+    return [dot(row0), dot(row1), dot(row2)];
+  }
+
+  private static toLab(rgb: Triple): Triple {
+    const [red, green, blue] = rgb;
+    const [rawX, y, rawZ] = RecolorUtil.multiply(RecolorUtil.RGB_TO_XYZ, [RecolorUtil.linearize(red), RecolorUtil.linearize(green), RecolorUtil.linearize(blue)]);
+    const x = rawX / RecolorUtil.WHITE_X;
+    const z = rawZ / RecolorUtil.WHITE_Z;
+    const curve = (value: number): number => (value > RecolorUtil.LAB_EPSILON ? Math.cbrt(value) : RecolorUtil.LAB_SLOPE * value + RecolorUtil.LAB_OFFSET);
+    return [
+      RecolorUtil.LIGHTNESS_SCALE * curve(y) - RecolorUtil.LIGHTNESS_SHIFT,
+      RecolorUtil.A_SCALE * (curve(x) - curve(y)),
+      RecolorUtil.B_SCALE * (curve(y) - curve(z)),
+    ];
+  }
+
+  private static fromLab(lab: Triple): string {
+    const [lightness, a, b] = lab;
+    const fy = (lightness + RecolorUtil.LIGHTNESS_SHIFT) / RecolorUtil.LIGHTNESS_SCALE;
+    const fx = fy + a / RecolorUtil.A_SCALE;
+    const fz = fy - b / RecolorUtil.B_SCALE;
+    const inverse = (value: number): number => (value ** 3 > RecolorUtil.LAB_EPSILON ? value ** 3 : (value - RecolorUtil.LAB_OFFSET) / RecolorUtil.LAB_SLOPE);
+    const rgb = RecolorUtil.multiply(RecolorUtil.XYZ_TO_RGB, [inverse(fx) * RecolorUtil.WHITE_X, inverse(fy), inverse(fz) * RecolorUtil.WHITE_Z]);
+    const hex = rgb.map((channel) => Math.round(Math.min(1, Math.max(0, RecolorUtil.delinearize(channel))) * RecolorUtil.CHANNEL_MAX).toString(16).padStart(2, "0"));
+    return `#${hex.join("")}`;
+  }
+
+  private static toLch(lab: Triple): Triple {
+    return [lab[0], Math.hypot(lab[1], lab[2]), Math.atan2(lab[2], lab[1])];
   }
 }

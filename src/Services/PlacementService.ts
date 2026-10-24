@@ -3,6 +3,7 @@ import type { CompilationContext, Depth, Placement } from "@/Protocols/Compilati
 import type { SceneObject } from "@/Protocols/SceneProtocol.ts";
 import { AssetService } from "@/Services/AssetService.ts";
 import { DependencyOrderService, type ResolutionOrder } from "@/Services/DependencyOrderService.ts";
+import { RequireUtil } from "@/Utils/RequireUtil.ts";
 import { PersonUtil } from "@/Utils/PersonUtil.ts";
 
 interface Position {
@@ -35,7 +36,7 @@ export class PlacementService {
 
   private static readonly DEPTHS: string[] = ["far", "mid", "near"];
 
-  private static readonly DEPTH_TO_SCALE: Record<string, number> = { near: 1, mid: 0.8, far: 0.6 };
+  private static readonly DEPTH_TO_SCALE: Record<Depth, number> = { near: 1, mid: 0.8, far: 0.6 };
 
   // Why: the height, in drawing units, of the point where a hand grips each object.
   private static readonly ASSET_TO_GRIP_HEIGHT: Partial<Record<AssetId, number>> = { cup: 6, suitcase: 44, books: 8, ball: 12 };
@@ -129,7 +130,7 @@ export class PlacementService {
       }
       return null;
     }
-    const asset = library[resolved.id];
+    const asset = RequireUtil.defined(library[resolved.id], `library asset ${resolved.id}`);
     const size = asset.size ? asset.size(object as AssetParams) : { w: asset.width, h: asset.height };
     const request: PlacementRequest = {
       id, object, asset, assetId: resolved.id, size, sizeFactor: PlacementService.sizeFactor(id, object, warnings),
@@ -147,7 +148,7 @@ export class PlacementService {
       id, asset: resolved.id, kind: asset.kind, x: position.x, y: position.y, scale: position.scale, width, height, z: position.z,
       depth: position.depth, svg: typeof drawn === "string" ? drawn : drawn.svg, bodySvg: "",
       surfaceTop: asset.topOf ? asset.topOf(object as AssetParams) : asset.top,
-      hasHaze: object.haze !== false, hand: typeof drawn === "string" ? undefined : drawn.hand,
+      hasHaze: object.haze !== false, isBackdrop: Boolean(asset.isBackdrop), isHollow: Boolean(asset.isHollow), hand: typeof drawn === "string" ? undefined : drawn.hand,
       boxLeft: position.x - width / 2, boxRight: position.x + width / 2, boxTop: position.y - height, boxBottom: position.y,
       related: DependencyOrderService.dependenciesOf(object).concat(object.holds ?? [], state.heldBy[id] ?? []),
       isOffView: false, isFocus: false,
@@ -275,7 +276,7 @@ export class PlacementService {
       warnings.push(`'${id}' has 'on: ${object.on}', but '${object.on}' was not positioned`);
       return null;
     }
-    const supportAsset = library[support.asset];
+    const supportAsset = RequireUtil.defined(library[support.asset], `library asset ${support.asset}`);
     const scale = support.scale * sizeFactor;
     const isSeated = PlacementService.SEATED_POSES.includes(String(object.pose));
     if (supportAsset.seat && isSeated) {
@@ -304,13 +305,13 @@ export class PlacementService {
   private static positionHeld(request: PlacementRequest, holder: Placement): Position {
     const { sizeFactor, size, asset, assetId } = request;
     const scale = holder.scale * sizeFactor;
-    const hand = holder.hand ?? [0, 0];
-    const side = Math.sign(hand[0]) || 1;
+    const [handX, handY] = holder.hand ?? [0, 0];
+    const side = Math.sign(handX) || 1;
     const anyShift = asset.kind === "any" ? side * size.w * PlacementService.HELD_ANY_WIDTH_FACTOR * scale : 0;
     const grip = PlacementService.ASSET_TO_GRIP_HEIGHT[assetId as AssetId] ?? size.h / 2;
     return {
-      x: holder.x + hand[0] * holder.scale + anyShift,
-      y: holder.y + hand[1] * holder.scale + grip * scale,
+      x: holder.x + handX * holder.scale + anyShift,
+      y: holder.y + handY * holder.scale + grip * scale,
       scale, z: holder.z + PlacementService.ON_Z_STEP, depth: holder.depth,
     };
   }
@@ -325,9 +326,9 @@ export class PlacementService {
     if (!depth) {
       const referenceIndex = PlacementService.DEPTHS.indexOf(reference?.depth ?? "near");
       if (object.behind && reference) {
-        depth = PlacementService.DEPTHS[Math.max(0, referenceIndex - 1)];
+        depth = PlacementService.DEPTHS[Math.max(0, referenceIndex - 1)] ?? "near";
       } else if (object.in_front_of && reference) {
-        depth = PlacementService.DEPTHS[Math.min(PlacementService.DEPTHS.length - 1, referenceIndex + 1)];
+        depth = PlacementService.DEPTHS[Math.min(PlacementService.DEPTHS.length - 1, referenceIndex + 1)] ?? "near";
       } else {
         depth = reference?.depth ?? "near";
       }

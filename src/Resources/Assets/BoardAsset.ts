@@ -22,7 +22,7 @@ export class BoardAsset extends BaseAsset {
       : "#EAF2E6";
     const bars = [30, 52, 40, 70].map((value, index) => {
       const color = [theme.primary, theme.accent,
-        theme.secondary, theme.primary][index]; return ShapeUtil.rect(-60 + index * 26, -18 - value, 16, value, color,
+        theme.secondary, theme.primary][index] ?? theme.primary; return ShapeUtil.rect(-60 + index * 26, -18 - value, 16, value, color,
         { rx: 2 }) + ShapeUtil.rect(-52 + index * 26, -18 - value, 8, value, ColorUtil.sh(color, -0.15),
         { rx: 0 });
     }).join("");

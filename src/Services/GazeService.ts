@@ -26,7 +26,10 @@ export class GazeService {
       const deltaY = target.y - target.height / 2 - (placement.y - placement.height * GazeService.EYE_HEIGHT_FRACTION);
       const length = Math.hypot(deltaX, deltaY) || 1;
       const params = { ...object, gaze: [deltaX / length, deltaY / length] } as AssetParams;
-      placement.svg = (library.person.draw(params, theme) as PersonDrawing).svg;
+      const drawing = library.person?.draw(params, theme) as PersonDrawing | undefined;
+      if (drawing) {
+        placement.svg = drawing.svg;
+      }
     }
   }
 }

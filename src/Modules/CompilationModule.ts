@@ -128,7 +128,7 @@ export class CompilationModule {
         z: placement.z,
         body: SvgUtil.flattenOpacity(placement.bodySvg),
         related: placement.related,
-        ignore: Boolean(context.library[placement.asset].isBackdrop || context.objects[placement.id]?.critique === false),
+        ignore: Boolean(placement.isBackdrop || context.objects[placement.id]?.critique === false),
       })),
     };
   }

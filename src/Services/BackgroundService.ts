@@ -1,4 +1,4 @@
-import type { Background, CompilationContext, HazeLevels } from "@/Protocols/CompilationProtocol.ts";
+import type { Background, CompilationContext, HazeLevels, Rgba } from "@/Protocols/CompilationProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 
@@ -7,7 +7,7 @@ export class BackgroundService {
 
   private static readonly INDOOR_HAZE: HazeLevels = { far: 0.08, mid: 0.04 };
 
-  private static readonly DEFAULT_SHADOW_RGBA = [0, 0, 0, 0.15];
+  private static readonly DEFAULT_SHADOW_ALPHA = 0.15;
 
   private static readonly PLANK_COUNT = 16;
 
@@ -46,18 +46,18 @@ export class BackgroundService {
     return { ...(context.setting === "indoor" ? BackgroundService.INDOOR_HAZE : BackgroundService.OUTDOOR_HAZE) };
   }
 
-  private static shadowRgba(theme: Theme): number[] {
-    const numbers = theme.shadow.match(/[\d.]+/g);
-    return numbers ? numbers.map(Number) : BackgroundService.DEFAULT_SHADOW_RGBA;
+  private static shadowRgba(theme: Theme): Rgba {
+    const [red = 0, green = 0, blue = 0, alpha = BackgroundService.DEFAULT_SHADOW_ALPHA] = (theme.shadow.match(/[\d.]+/g) ?? []).map(Number);
+    return [red, green, blue, alpha];
   }
 
   private static hazeFilter(id: string, strength: number, air: string): string {
-    const [red, green, blue] = [1, 3, 5].map((start) => parseInt(air.slice(start, start + 2), 16) / 255);
+    const [red = 0, green = 0, blue = 0] = [1, 3, 5].map((start) => parseInt(air.slice(start, start + 2), 16) / 255);
     const keep = 1 - strength;
     return `<filter id="${id}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${keep} 0 0 0 ${(red * strength).toFixed(3)} 0 ${keep} 0 0 ${(green * strength).toFixed(3)} 0 0 ${keep} 0 ${(blue * strength).toFixed(3)} 0 0 0 1 0"/></filter>`;
   }
 
-  private static defs(context: CompilationContext, haze: HazeLevels, shadowRgba: number[]): string {
+  private static defs(context: CompilationContext, haze: HazeLevels, shadowRgba: Rgba): string {
     const { theme, setting } = context;
     // Why: far things blend into the air color and lose contrast (atmospheric perspective).
     const air = setting === "indoor" ? theme.wall : theme.skyBottom;

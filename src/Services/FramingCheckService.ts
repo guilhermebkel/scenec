@@ -21,7 +21,7 @@ export class FramingCheckService {
   private static checkFrame(list: Placement[], context: CompilationContext, camera: Camera): void {
     const { library, objects, warnings, width, height, canvas } = context;
     for (const placement of list) {
-      if (library[placement.asset].isBackdrop) {
+      if (placement.isBackdrop) {
         continue;
       }
       const allowCrop = Boolean(objects[placement.id]?.allow_crop);
@@ -68,7 +68,7 @@ export class FramingCheckService {
       return true;
     }
     // Why: tabletops and shelves leave the space under them free.
-    if (library[first.asset].isHollow || library[second.asset].isHollow) {
+    if (first.isHollow || second.isHollow) {
       return true;
     }
     // Why: different layers are a deliberate choice, not a collision.
@@ -81,7 +81,7 @@ export class FramingCheckService {
       for (let second = first + 1; second < blocking.length; second++) {
         const left = blocking[first];
         const right = blocking[second];
-        if (left.depth !== right.depth || FramingCheckService.isOverlapIgnored(left, right, context)) {
+        if (!left || !right || left.depth !== right.depth || FramingCheckService.isOverlapIgnored(left, right, context)) {
           continue;
         }
         const fraction = FramingCheckService.overlapFraction(left, right);

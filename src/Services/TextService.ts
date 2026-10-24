@@ -25,7 +25,9 @@ export interface TextResult {
 export class TextService {
   private static readonly FONT = "Poppins";
 
-  private static readonly ROLE_TO_SIZE: Record<string, number> = { title: 0.075, subtitle: 0.036, label: 0.028, body: 0.032 };
+  private static readonly TITLE_SIZE = 0.075;
+
+  private static readonly ROLE_TO_SIZE: Record<string, number> = { title: TextService.TITLE_SIZE, subtitle: 0.036, label: 0.028, body: 0.032 };
 
   private static readonly ROLE_TO_WEIGHT: Record<string, number> = { title: 700, body: 400 };
 
@@ -70,7 +72,7 @@ export class TextService {
     const { width, height, theme } = context;
     const role = text.role ?? "title";
     const fontSize = text.size ? text.size * height : (TextService.ROLE_TO_SIZE[role] ?? TextService.DEFAULT_SIZE) * height;
-    const [vertical, horizontal] = (text.at ?? "top-left").split("-");
+    const [vertical = "top", horizontal] = (text.at ?? "top-left").split("-");
     const margin = width * TextService.MARGIN;
     const anchor = horizontal === "center" ? "middle" : horizontal === "right" ? "end" : "start";
     const defaultX = horizontal === "center" ? width / 2 : horizontal === "right" ? width - margin : margin;
@@ -103,7 +105,7 @@ export class TextService {
     // Why: a subtitle at the same spot as a title goes below it instead of on top of it.
     const hasTitleAbove = (text.role ?? "title") === "subtitle"
       && texts.some((other) => (other.role ?? "title") === "title" && other.at === text.at && other.y == null);
-    return hasTitleAbove ? base + context.height * TextService.ROLE_TO_SIZE.title * 0.9 + fontSize * 0.8 : base;
+    return hasTitleAbove ? base + context.height * TextService.TITLE_SIZE * 0.9 + fontSize * 0.8 : base;
   }
 
   private static boxOf(text: SceneText, layout: TextLayout, context: CompilationContext, backdrop: string): string {
@@ -123,7 +125,7 @@ export class TextService {
   private static warnCovered(layout: TextLayout, list: Placement[], context: CompilationContext): void {
     const { left, estimatedWidth, y, blockHeight, fontSize, lines } = layout;
     for (const placement of list) {
-      if (context.library[placement.asset].isBackdrop) {
+      if (placement.isBackdrop) {
         continue;
       }
       const overlapX = Math.max(0, Math.min(placement.boxRight, left + estimatedWidth) - Math.max(placement.boxLeft, left));

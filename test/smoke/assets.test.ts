@@ -7,7 +7,7 @@ const kits = listKits().map((kit) => kit.id);
 const cases = listAssets().flatMap((asset) => kits.map((kit) => ({ asset: asset.id, kit })));
 
 function elementNames(svg: string): string[] {
-  return [...new Set([...svg.matchAll(/<([a-zA-Z][a-zA-Z0-9]*)/g)].map((match) => match[1]))];
+  return [...new Set([...svg.matchAll(/<([a-zA-Z][a-zA-Z0-9]*)/g)].map((match) => match[1] ?? ""))];
 }
 
 describe("asset smoke", () => {

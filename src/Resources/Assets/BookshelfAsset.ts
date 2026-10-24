@@ -23,7 +23,7 @@ export class BookshelfAsset extends BaseAsset {
       svg += ShapeUtil.rect(-35, base - 36, 70, 6, "rgba(0,0,0,0.12)");
       while (posX < 26) {
         const width = 6 + ((itemIndex * 5) % 5), height = 22 + ((itemIndex * 7) % 9),
-          color = cols[itemIndex % cols.length]; svg += ShapeUtil.rect(posX, base - height, width, height, color,
+          color = cols[itemIndex % cols.length] ?? theme.primary; svg += ShapeUtil.rect(posX, base - height, width, height, color,
           { rx: 1 }) + ShapeUtil.rect(posX + width * 0.6, base - height, width * 0.4, height, ColorUtil.sh(color,
           -0.15)) + ShapeUtil.rect(posX, base - height + 4, width, 1.5, ColorUtil.sh(color, -0.3)); posX += width
             + 1; itemIndex++;

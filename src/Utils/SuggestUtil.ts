@@ -1,28 +1,30 @@
 export class SuggestUtil {
-  static distance(a: string, b: string): number {
-    const rows = Array.from({ length: a.length + 1 }, (_, i) => [i]);
-    for (let j = 1; j <= b.length; j++) {
-      rows[0][j] = j;
-    }
-    for (let i = 1; i <= a.length; i++) {
-      for (let j = 1; j <= b.length; j++) {
-        rows[i][j] = Math.min(
-          rows[i - 1][j] + 1,
-          rows[i][j - 1] + 1,
-          rows[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
-        );
+  private static readonly MIN_TOLERANCE = 2;
+
+  private static readonly TOLERANCE_DIVISOR = 3;
+
+  private static readonly DEFAULT_LIMIT = 3;
+
+  static distance(first: string, second: string): number {
+    let previous = Array.from({ length: second.length + 1 }, (_, index) => index);
+    for (let row = 1; row <= first.length; row++) {
+      const current = [row];
+      for (let column = 1; column <= second.length; column++) {
+        const substitution = (previous[column - 1] ?? 0) + (first[row - 1] === second[column - 1] ? 0 : 1);
+        current[column] = Math.min((previous[column] ?? 0) + 1, (current[column - 1] ?? 0) + 1, substitution);
       }
+      previous = current;
     }
-    return rows[a.length][b.length];
+    return previous[second.length] ?? 0;
   }
 
-  static closest(name: string, candidates: readonly string[], limit = 3): string[] {
-    const lower = name.toLowerCase();
-    const maxDistance = Math.max(2, Math.ceil(lower.length / 3));
+  static closest(name: string, candidates: readonly string[], limit = SuggestUtil.DEFAULT_LIMIT): string[] {
+    const lowered = name.toLowerCase();
+    const tolerance = Math.max(SuggestUtil.MIN_TOLERANCE, Math.ceil(lowered.length / SuggestUtil.TOLERANCE_DIVISOR));
     return candidates
-      .map((candidate) => ({ candidate, score: SuggestUtil.distance(lower, candidate.toLowerCase()) }))
-      .filter(({ score }) => score <= maxDistance)
-      .sort((a, b) => a.score - b.score)
+      .map((candidate) => ({ candidate, score: SuggestUtil.distance(lowered, candidate.toLowerCase()) }))
+      .filter(({ score }) => score <= tolerance)
+      .sort((first, second) => first.score - second.score)
       .slice(0, limit)
       .map(({ candidate }) => candidate);
   }

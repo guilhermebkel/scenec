@@ -27,7 +27,9 @@ export interface Placement {
   bodySvg: string;
   surfaceTop: number | undefined;
   hasHaze: boolean;
-  hand: number[] | undefined;
+  isBackdrop: boolean;
+  isHollow: boolean;
+  hand: [number, number] | undefined;
   boxLeft: number;
   boxRight: number;
   boxTop: number;
@@ -75,7 +77,7 @@ export interface LightState {
   strength: number;
   direction: number;
   shadowColor: string;
-  shadowRgb: number[];
+  shadowRgb: [number, number, number];
   isNight: boolean;
   isHatch: boolean;
 }
@@ -85,10 +87,12 @@ export interface HazeLevels {
   mid: number;
 }
 
+export type Rgba = [number, number, number, number];
+
 export interface Background {
   svg: string;
   haze: HazeLevels;
-  shadowRgba: number[];
+  shadowRgba: Rgba;
   textBackdrop: string;
 }
 

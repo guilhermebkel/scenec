@@ -131,7 +131,7 @@ export interface AssetSize {
 
 export interface PersonDrawing {
   svg: string;
-  hand: number[];
+  hand: [number, number];
   box: AssetSize;
 }
 

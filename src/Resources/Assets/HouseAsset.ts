@@ -27,7 +27,7 @@ export class HouseAsset extends BaseAsset {
     + ShapeUtil.rect(-15, -56, 30, 56, theme.woodDark, { rx: 3 }) + ShapeUtil.rect(2, -56, 13, 56,
       ColorUtil.sh(theme.woodDark, -0.15), { rx: 0 }) + ShapeUtil.circle(9, -28, 2, theme.accent)
     + ShapeUtil.rect(-19, -2, 38, 3, ColorUtil.sh(body, -0.35))
-    + [[-52, -80], [26, -80]].map(([posX, posY]) => ShapeUtil.rect(posX, posY, 26, 24, theme.glass, { rx: 2,
+    + ([[-52, -80], [26, -80]] as Array<[number, number]>).map(([posX, posY]) => ShapeUtil.rect(posX, posY, 26, 24, theme.glass, { rx: 2,
       extra: `stroke="${theme.paper}" stroke-width="3"` })
     + `<path d="M${posX + 4} ${posY + 18} L${posX + 14} ${posY + 4}" stroke="${theme.paper}" stroke-width="2.5" opacity="0.6"/>`
     + ShapeUtil.rect(posX - 3, posY + 24, 32, 3, theme.paper, { rx: 1 })).join("")

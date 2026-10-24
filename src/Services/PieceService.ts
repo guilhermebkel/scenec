@@ -71,7 +71,7 @@ export class PieceService {
   }
 
   private static isDecorated(placement: Placement, object: SceneObject, context: CompilationContext): boolean {
-    return !context.library[placement.asset].isBackdrop && !PieceService.UNLIT_KINDS.includes(placement.kind) && object.kit !== false;
+    return !placement.isBackdrop && !PieceService.UNLIT_KINDS.includes(placement.kind) && object.kit !== false;
   }
 
   private static piece(placement: Placement, pieceContext: PieceContext, casts: string[]): string {
@@ -148,7 +148,7 @@ export class PieceService {
   ): string {
     const { pieceContext, transform, casts } = parts;
     const { context, light, heldBy } = pieceContext;
-    const isLit = light && !context.library[placement.asset].isBackdrop && !PieceService.UNLIT_KINDS.includes(placement.kind) && object.light !== false;
+    const isLit = light && !placement.isBackdrop && !PieceService.UNLIT_KINDS.includes(placement.kind) && object.light !== false;
     if (!light || !isLit) {
       return "";
     }
