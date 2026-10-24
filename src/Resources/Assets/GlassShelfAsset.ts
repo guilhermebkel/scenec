@@ -23,7 +23,7 @@ export class GlassShelfAsset extends BaseAsset {
 
   draw(p: any, t: any) {
     const w = p.width || 14, h = p.height || 46;
-    return `<path d="M${-w / 2} ${-h + 1.6} L${w / 2} ${-h + 1.6} L${w / 2} ${-h} L${-w / 2 + 2} ${-h} Z" fill="${t.glass}" opacity="0.55"/>` +
-          `<path d="M${-w / 2} ${-h + 1.6} L${w / 2} ${-h + 1.6}" stroke="${ColorUtil.sh(t.glass, -0.35)}" stroke-width="0.5"/>` + ShapeUtil.rect(-w / 2, -h + 1.6, w, 1.2, t.ink, 0, "opacity=\"0.08\"");
+    return `<path d="M${-w / 2} ${-h + 1.6} L${w / 2} ${-h + 1.6} L${w / 2} ${-h} L${-w / 2 + 2} ${-h} Z" fill="${t.glass}" opacity="0.55"/>`
+      + `<path d="M${-w / 2} ${-h + 1.6} L${w / 2} ${-h + 1.6}" stroke="${ColorUtil.sh(t.glass, -0.35)}" stroke-width="0.5"/>` + ShapeUtil.rect(-w / 2, -h + 1.6, w, 1.2, t.ink, 0, "opacity=\"0.08\"");
   }
 }

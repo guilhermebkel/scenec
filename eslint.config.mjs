@@ -9,11 +9,7 @@ import { localRules } from "./scripts/eslint-local-rules.mjs";
 const TEST_FILES = ["src/**/*.test.ts", "test/**/*.ts", "scripts/**/*.test.mjs"];
 
 // Why: the legacy files were ported byte-for-byte from the JavaScript prototype to keep the 108 baselines identical (ADR 0010); they are cleaned up one folder at a time.
-const LEGACY_FILES = [
-  "src/Resources/**/*.ts", "src/Modules/**/*.ts",
-  "src/Services/{CustomAssetService,GroupService,CatalogService,AssetService,KitService,ThemeService}.ts",
-  "src/Utils/{RecolorUtil,ColorUtil,SanitizeUtil,SuggestUtil,PersonUtil,ShapeUtil}.ts",
-];
+const LEGACY_FILES = ["none/**"];
 
 // Why: layer order is Errors, Protocols < Utils < Resources < Services < Modules < Cli; Adapters only see Protocols and Utils, so the core never reaches the native renderer or the file system.
 const LAYER_TO_FORBIDDEN_LAYERS = {
@@ -56,7 +52,7 @@ const MAX_PARAMS = 5;
 const BOOLEAN_PREFIXES = ["is", "has", "should", "can", "must", "was", "did"];
 
 export default tseslint.config(
-  { ignores: ["dist/", "node_modules/", "coverage/", "test/visual/report/", "test/visual/cases/", "skills/**/scripts/", "scripts/fixtures/"] },
+  { ignores: ["dist/", "node_modules/", "coverage/", "test/visual/report/", "test/visual/cases/", "skills/**/scripts/"] },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,

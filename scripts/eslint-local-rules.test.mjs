@@ -1,3 +1,6 @@
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { RuleTester } from "eslint";
 import tseslint from "typescript-eslint";
 import { afterAll, describe, it } from "vitest";
@@ -141,8 +144,24 @@ ruleTester.run("class-matches-file", localRules.rules["class-matches-file"], {
   ],
 });
 
-const TIME_UTIL_TEST = "scripts/fixtures/TimeUtil.test.ts";
-const ADAPTER_TEST = "scripts/fixtures/ClaudeCodeProviderAdapter.test.ts";
+// Why: describe-target reads the class next to the test file, so the sources it checks against are written to a temp folder.
+const FIXTURE_FOLDER = mkdtempSync(join(tmpdir(), "describe-target-"));
+writeFileSync(join(FIXTURE_FOLDER, "TimeUtil.ts"), "export class TimeUtil {\n  static parsePointInTime(value: string): string {\n    return value;\n  }\n}\n");
+writeFileSync(join(FIXTURE_FOLDER, "ClaudeCodeProviderAdapter.ts"), [
+  "export class ClaudeCodeProviderAdapter {",
+  "  parseSession(value: string): string {",
+  "    return this.sessionService(value);",
+  "  }",
+  "  private sessionService(value: string): string {",
+  "    return value;",
+  "  }",
+  "}",
+  "",
+].join("\n"));
+afterAll(() => rmSync(FIXTURE_FOLDER, { recursive: true, force: true }));
+
+const TIME_UTIL_TEST = join(FIXTURE_FOLDER, "TimeUtil.test.ts");
+const ADAPTER_TEST = join(FIXTURE_FOLDER, "ClaudeCodeProviderAdapter.test.ts");
 
 ruleTester.run("describe-target", localRules.rules["describe-target"], {
   valid: [

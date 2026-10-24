@@ -25,8 +25,8 @@ export class DeskSlabAsset extends BaseAsset {
     const w = p.width || 120, h = p.height || 46, th = p.thickness || 4, c = ShapeUtil.col(t, p.color, t.wood);
     let s = ShapeUtil.rect(-w / 2, -h, w, th, c) + ShapeUtil.rect(-w / 2, -h + th - 1.2, w, 1.2, ColorUtil.sh(c, -0.18)) + ShapeUtil.rect(-w / 2, -h, w, 0.8, ColorUtil.sh(c, 0.25));
     const ends = p.ends || "none";
-    if (ends === "left" || ends === "both") s = ShapeUtil.rect(-w / 2, -h, 3, h, ColorUtil.sh(c, -0.06)) + ShapeUtil.rect(-w / 2 + 2, -h, 1, h, ColorUtil.sh(c, -0.2)) + s;
-    if (ends === "right" || ends === "both") s = ShapeUtil.rect(w / 2 - 3, -h, 3, h, ColorUtil.sh(c, -0.12)) + s;
+    if (ends === "left" || ends === "both") { s = ShapeUtil.rect(-w / 2, -h, 3, h, ColorUtil.sh(c, -0.06)) + ShapeUtil.rect(-w / 2 + 2, -h, 1, h, ColorUtil.sh(c, -0.2)) + s; }
+    if (ends === "right" || ends === "both") { s = ShapeUtil.rect(w / 2 - 3, -h, 3, h, ColorUtil.sh(c, -0.12)) + s; }
     return s;
   }
 }

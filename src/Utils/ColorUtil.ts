@@ -1,4 +1,3 @@
-
 export class ColorUtil {
   // Color helpers shared by every layer.
 

@@ -1,4 +1,3 @@
-
 export class RecolorUtil {
   // Recolore um SVG importado para a paleta do tema, preservando a luminosidade relativa.
 // Cada cor é levada para o swatch do tema de matiz mais próximo; cinzas viram neutros do tema.

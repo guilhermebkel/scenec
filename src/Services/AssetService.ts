@@ -98,18 +98,19 @@ export class AssetService {
 
   // Busca por nome ou sinônimo; devolve id ou sugestões
   static resolveAsset(name: any, LIB = AssetService.ASSETS) {
-    if (LIB[name]) return { id: name };
+    if (LIB[name]) { return { id: name }; }
     const n = name.toLowerCase();
-    for (const [id, a] of Object.entries(LIB)) if ((a.tags || []).includes(n)) return { id };
+    for (const [id, a] of Object.entries(LIB)) { if ((a.tags || []).includes(n)) { return { id }; } }
     const lev = (a: any, b: any) => {
       const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
-      for (let j = 1; j <= b.length; j++) d[0][j] = j;
-      for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++)
-        d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      for (let j = 1; j <= b.length; j++) { d[0][j] = j; }
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) { d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); }
+      }
       return d[a.length][b.length];
     };
     const cands: any[] = [];
-    for (const [id, a] of Object.entries(LIB)) for (const k of [id, ...(a.tags || [])]) cands.push([lev(n, k), id]);
+    for (const [id, a] of Object.entries(LIB)) { for (const k of [id, ...(a.tags || [])]) { cands.push([lev(n, k), id]); } }
     cands.sort((x, y) => x[0] - y[0]);
     return { id: null, suggest: [...new Set(cands.slice(0, 6).map((c) => c[1]))].slice(0, 3) };
   }

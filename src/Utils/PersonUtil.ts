@@ -48,14 +48,14 @@ export class PersonUtil {
   }
 
   // Para onde os olhos olham: [gx, gy] em -1..1 (gy < 0 = para cima). Aceita palavras ou o vetor já resolvido pelo compilador.
-  private static readonly LOOK: Record<string, any> = { left: [-1, 0], right: [1, 0], up: [0, -1], down: [0, 1], "up-left": [-0.8, -0.7], "up-right": [0.8, -0.7], "down-left": [-0.8, 0.7], "down-right": [0.8, 0.7], camera: [0, 0], forward: [0, 0] };
+  private static readonly LOOK: Record<string, any> = { "left": [-1, 0], "right": [1, 0], "up": [0, -1], "down": [0, 1], "up-left": [-0.8, -0.7], "up-right": [0.8, -0.7], "down-left": [-0.8, 0.7], "down-right": [0.8, 0.7], "camera": [0, 0], "forward": [0, 0] };
 
   private static readonly POSE_GAZE: Record<string, any> = { pointing: [1, -0.3], presenting: [0.8, 0], thinking: [-0.5, -0.8], celebrating: [0, -0.5], phone: [0.5, 0.4], holding: [0.5, 0.3],
     reading: [0.5, 0.9], typing: [1, 0.15], drinking: [0.6, 0], sitting: [0.6, 0] };
 
   private static gazeOf(p: any, pose: any, f = 1) {
-    if (Array.isArray(p.gaze)) return p.gaze;
-    if (typeof p.look === "string" && PersonUtil.LOOK[p.look]) return PersonUtil.LOOK[p.look];
+    if (Array.isArray(p.gaze)) { return p.gaze; }
+    if (typeof p.look === "string" && PersonUtil.LOOK[p.look]) { return PersonUtil.LOOK[p.look]; }
     const g = PersonUtil.POSE_GAZE[pose];
     return g ? [g[0] * f, g[1]] : [0, 0];
   }
@@ -65,7 +65,7 @@ export class PersonUtil {
     let d = Math.hypot(dx, dy);
     const max = PersonUtil.UPPER + PersonUtil.FORE - 0.01, min = Math.abs(PersonUtil.UPPER - PersonUtil.FORE) + 0.5;
     if (d > max) { dx *= max / d; dy *= max / d; d = max; }
-    if (d < min) d = min;
+    if (d < min) { d = min; }
     const a = Math.acos((PersonUtil.UPPER ** 2 + d ** 2 - PersonUtil.FORE ** 2) / (2 * PersonUtil.UPPER * d));
     const th = Math.atan2(dy, dx);
     const e1 = [S[0] + PersonUtil.UPPER * Math.cos(th + a), S[1] + PersonUtil.UPPER * Math.sin(th + a)];
@@ -83,24 +83,26 @@ export class PersonUtil {
     const ts = n[0] * toBody[0] + n[1] * toBody[1] >= 0 ? 1 : -1;
     const sk = ColorUtil.sh(skin, -0.12);
     const g = (inner: any) => `<g transform="translate(${PersonUtil.r(H[0])} ${PersonUtil.r(H[1])}) rotate(${PersonUtil.r(ang)})">${inner}</g>`;
-    if (!open) return g(`<ellipse cx="1.2" cy="${0.9 * ts}" rx="1.9" ry="1.3" fill="${sk}" transform="rotate(${-30 * ts} 1.2 ${0.9 * ts})"/>` +
-      `<rect x="-1.2" y="-3.1" width="6.4" height="6.2" rx="3" fill="${skin}"/>` +
-      `<ellipse cx="2.4" cy="${2.6 * ts}" rx="2.2" ry="1.25" fill="${skin}" transform="rotate(${-20 * ts} 2.4 ${2.6 * ts})"/>` +
-      `<path d="M4.2 -1.6 L4.2 1.6" stroke="${sk}" stroke-width="0.6" stroke-linecap="round"/>`);
+    if (!open) {
+      return g(`<ellipse cx="1.2" cy="${0.9 * ts}" rx="1.9" ry="1.3" fill="${sk}" transform="rotate(${-30 * ts} 1.2 ${0.9 * ts})"/>`
+        + `<rect x="-1.2" y="-3.1" width="6.4" height="6.2" rx="3" fill="${skin}"/>`
+        + `<ellipse cx="2.4" cy="${2.6 * ts}" rx="2.2" ry="1.25" fill="${skin}" transform="rotate(${-20 * ts} 2.4 ${2.6 * ts})"/>`
+        + `<path d="M4.2 -1.6 L4.2 1.6" stroke="${sk}" stroke-width="0.6" stroke-linecap="round"/>`);
+    }
     const fingers = [-27, -9, 9, 27].map((a, i) => {
       const len = [2.4, 3.1, 2.9, 2.1][i], rad = (a * Math.PI) / 180;
       return `<path d="M3 ${PersonUtil.r(Math.sin(rad) * 1.9)} L${PersonUtil.r(3 + Math.cos(rad) * len)} ${PersonUtil.r(Math.sin(rad) * (1.9 + len))}" stroke="${skin}" stroke-width="2.25" stroke-linecap="round"/>`;
     }).join("");
-    return g(`<ellipse cx="1.3" cy="0" rx="3.7" ry="3.5" fill="${skin}"/>` + fingers +
-      `<path d="M0.6 ${2.2 * ts} L1.8 ${5 * ts}" stroke="${skin}" stroke-width="2.3" stroke-linecap="round"/>`);
+    return g(`<ellipse cx="1.3" cy="0" rx="3.7" ry="3.5" fill="${skin}"/>` + fingers
+      + `<path d="M0.6 ${2.2 * ts} L1.8 ${5 * ts}" stroke="${skin}" stroke-width="2.3" stroke-linecap="round"/>`);
   }
 
   private static armPath(S: any, E: any, H: any, sleeve: any, skin: any, shortSleeve: any) {
     const base = `fill="none" stroke-linecap="round" stroke-linejoin="round"`;
-    if (!shortSleeve) return `<path d="M${PersonUtil.r(S[0])} ${PersonUtil.r(S[1])} L${PersonUtil.r(E[0])} ${PersonUtil.r(E[1])} L${PersonUtil.r(H[0])} ${PersonUtil.r(H[1])}" stroke="${sleeve}" ${base} stroke-width="7"/>`;
+    if (!shortSleeve) { return `<path d="M${PersonUtil.r(S[0])} ${PersonUtil.r(S[1])} L${PersonUtil.r(E[0])} ${PersonUtil.r(E[1])} L${PersonUtil.r(H[0])} ${PersonUtil.r(H[1])}" stroke="${sleeve}" ${base} stroke-width="7"/>`; }
     const mid = [S[0] + (E[0] - S[0]) * 0.6, S[1] + (E[1] - S[1]) * 0.6];
-    return `<path d="M${PersonUtil.r(mid[0])} ${PersonUtil.r(mid[1])} L${PersonUtil.r(E[0])} ${PersonUtil.r(E[1])} L${PersonUtil.r(H[0])} ${PersonUtil.r(H[1])}" stroke="${skin}" ${base} stroke-width="6"/>` +
-      `<path d="M${PersonUtil.r(S[0])} ${PersonUtil.r(S[1])} L${PersonUtil.r(mid[0])} ${PersonUtil.r(mid[1])}" stroke="${sleeve}" ${base} stroke-width="8"/>`;
+    return `<path d="M${PersonUtil.r(mid[0])} ${PersonUtil.r(mid[1])} L${PersonUtil.r(E[0])} ${PersonUtil.r(E[1])} L${PersonUtil.r(H[0])} ${PersonUtil.r(H[1])}" stroke="${skin}" ${base} stroke-width="6"/>`
+      + `<path d="M${PersonUtil.r(S[0])} ${PersonUtil.r(S[1])} L${PersonUtil.r(mid[0])} ${PersonUtil.r(mid[1])}" stroke="${sleeve}" ${base} stroke-width="8"/>`;
   }
 
   private static head(p: any, t: any, side: any, back: any, gz = [0, 0]) {
@@ -130,8 +132,8 @@ export class PersonUtil {
       // de costas: cabelo cobre a cabeça, sem rosto
       const cover = style === "bald"
         ? `<circle cx="0" cy="${cy}" r="11" fill="${skin}"/>`
-        : `<circle cx="0" cy="${cy}" r="11" fill="${skin}"/><path d="M-11.3 -88 Q-12 -103 0 -103 Q12 -103 11.3 -88 Q0 -84 -11.3 -88 Z" fill="${hair}"/>` +
-          (style === "long" ? `<path d="M-11 -90 Q-13 -70 -9 -68 L9 -68 Q13 -70 11 -90 Z" fill="${hair}"/>` : "") + (style === "bun" ? `<circle cx="0" cy="-104" r="6" fill="${hair}"/>` : "");
+        : `<circle cx="0" cy="${cy}" r="11" fill="${skin}"/><path d="M-11.3 -88 Q-12 -103 0 -103 Q12 -103 11.3 -88 Q0 -84 -11.3 -88 Z" fill="${hair}"/>`
+          + (style === "long" ? `<path d="M-11 -90 Q-13 -70 -9 -68 L9 -68 Q13 -70 11 -90 Z" fill="${hair}"/>` : "") + (style === "bun" ? `<circle cx="0" cy="-104" r="6" fill="${hair}"/>` : "");
       return neck + backHair + cover;
     }
     const expr = p.expr || "happy";
@@ -162,8 +164,8 @@ export class PersonUtil {
     const beard = p.beard ? `<path d="M-10 -89 Q-10 -76 0 -76 Q10 -76 10 -89 Q8 -83 ${mx + 4} ${cy + 3} L${mx - 4} ${cy + 3} Q-8 -83 -10 -89 Z" fill="${hair}"/>` : "";
     const lines = p.age === "elder" ? `<path d="M${PersonUtil.r(-8.2 + ex)} ${cy - 1.5} l-1.4 -0.6 M${PersonUtil.r(8.2 + ex)} ${cy - 1.5} l1.4 -0.6 M${PersonUtil.r(-5 + ex)} ${cy - 7.5} L${PersonUtil.r(5 + ex)} ${cy - 7.5}" stroke="${ColorUtil.sh(skin, -0.25)}" stroke-width="0.6" stroke-linecap="round"/>` : "";
     const ear = side ? `<ellipse cx="${-side * 10}" cy="${cy + 1}" rx="2" ry="3" fill="${ColorUtil.sh(skin, -0.08)}"/>` : "";
-    return neck + backHair + ear + `<circle cx="${cx}" cy="${cy}" r="11" fill="${skin}"/>` +
-      front + beard + lines + eyes + brows + mouth + blush + glasses;
+    return neck + backHair + ear + `<circle cx="${cx}" cy="${cy}" r="11" fill="${skin}"/>`
+      + front + beard + lines + eyes + brows + mouth + blush + glasses;
   }
 
   static person(p: any, t: any) {
@@ -190,15 +192,15 @@ export class PersonUtil {
       const f = p.facing === "left" ? -1 : 1;
       const T = PersonUtil.SIDE_POSES[pose] || PersonUtil.SIDE_POSES.typing;
       const legColor = bottom === "pants" ? bottomC : skin;
-      let legs = `<path d="M0 -45 L${f * 24} -45 L${f * 24} -4" stroke="${legColor}" stroke-width="11" fill="none" stroke-linejoin="round"/>` +
-        `<path d="M${f * 2} -41 L${f * 24} -41" stroke="${ColorUtil.sh(legColor, -0.12)}" stroke-width="3" fill="none"/>` +
-        `<path d="M${f * 21} -3 L${f * 32} -3 Q${f * 32} -8 ${f * 25} -8 L${f * 21} -8 Z" fill="${shoes}"/>`;
-      if (bottom === "shorts") legs += `<path d="M0 -45 L${f * 14} -45" stroke="${bottomC}" stroke-width="12" stroke-linecap="butt"/>`;
-      if (bottom === "skirt" || bottom === "dress") legs += `<path d="M${-f * 6} -52 L${f * 18} -50 L${f * 20} -39 L${-f * 7} -40 Z" fill="${bottom === "dress" ? top : bottomC}"/>`;
+      let legs = `<path d="M0 -45 L${f * 24} -45 L${f * 24} -4" stroke="${legColor}" stroke-width="11" fill="none" stroke-linejoin="round"/>`
+        + `<path d="M${f * 2} -41 L${f * 24} -41" stroke="${ColorUtil.sh(legColor, -0.12)}" stroke-width="3" fill="none"/>`
+        + `<path d="M${f * 21} -3 L${f * 32} -3 Q${f * 32} -8 ${f * 25} -8 L${f * 21} -8 Z" fill="${shoes}"/>`;
+      if (bottom === "shorts") { legs += `<path d="M0 -45 L${f * 14} -45" stroke="${bottomC}" stroke-width="12" stroke-linecap="butt"/>`; }
+      if (bottom === "skirt" || bottom === "dress") { legs += `<path d="M${-f * 6} -52 L${f * 18} -50 L${f * 20} -39 L${-f * 7} -40 Z" fill="${bottom === "dress" ? top : bottomC}"/>`; }
       const torsoC = jacket || top;
-      const torso = `<rect x="-10" y="-81" width="20" height="40" rx="7" fill="${torsoC}"/>` +
-        `<path d="M${-f * 10} -74 Q${-f * 10} -81 ${-f * 4} -81 L${-f * 3} -81 L${-f * 3} -41 L${-f * 10} -41 Z" fill="${ColorUtil.sh(torsoC, -0.13)}"/>` +
-        (jacket ? `<path d="M${f * 5} -80 L${f * 9} -76 L${f * 9} -44 L${f * 4} -44 Z" fill="${top}"/>` : "");
+      const torso = `<rect x="-10" y="-81" width="20" height="40" rx="7" fill="${torsoC}"/>`
+        + `<path d="M${-f * 10} -74 Q${-f * 10} -81 ${-f * 4} -81 L${-f * 3} -81 L${-f * 3} -41 L${-f * 10} -41 Z" fill="${ColorUtil.sh(torsoC, -0.13)}"/>`
+        + (jacket ? `<path d="M${f * 5} -80 L${f * 9} -76 L${f * 9} -44 L${f * 4} -44 Z" fill="${top}"/>` : "");
       // braço de trás (mais escuro) + braço da frente
       const S = [f * 2, -75];
       const back = PersonUtil.ik(S, [T[0] * f - f * 4, T[1] + 2], f, "down");
@@ -220,62 +222,61 @@ export class PersonUtil {
     let legs = "";
     const legC = bottom === "pants" ? bottomC : skin;
     if (walk) {
-      legs = `<path d="M-3 -45 L-12 -3" stroke="${legC}" stroke-width="8" stroke-linecap="round"/><path d="M3 -45 L11 -3" stroke="${ColorUtil.sh(legC, -0.12)}" stroke-width="8" stroke-linecap="round"/>` +
-        `<ellipse cx="-14" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/><ellipse cx="14" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/>`;
+      legs = `<path d="M-3 -45 L-12 -3" stroke="${legC}" stroke-width="8" stroke-linecap="round"/><path d="M3 -45 L11 -3" stroke="${ColorUtil.sh(legC, -0.12)}" stroke-width="8" stroke-linecap="round"/>`
+        + `<ellipse cx="-14" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/><ellipse cx="14" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/>`;
     } else {
       const lw = bottom === "pants" ? 8 : 6.5;
-      legs = `<rect x="${-1 - lw}" y="-47" width="${lw}" height="45" rx="3" fill="${legC}"/><rect x="1" y="-47" width="${lw}" height="45" rx="3" fill="${legC}"/>` +
-        `<rect x="${1 + lw * 0.45}" y="-47" width="${lw * 0.55}" height="45" rx="2" fill="${ColorUtil.sh(legC, -0.12)}"/>` +
-        `<ellipse cx="-5.5" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/><ellipse cx="5.5" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/>`;
+      legs = `<rect x="${-1 - lw}" y="-47" width="${lw}" height="45" rx="3" fill="${legC}"/><rect x="1" y="-47" width="${lw}" height="45" rx="3" fill="${legC}"/>`
+        + `<rect x="${1 + lw * 0.45}" y="-47" width="${lw * 0.55}" height="45" rx="2" fill="${ColorUtil.sh(legC, -0.12)}"/>`
+        + `<ellipse cx="-5.5" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/><ellipse cx="5.5" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/>`;
     }
-    if (bottom === "shorts") legs += `<path d="M-11 -47 L11 -47 L12 -30 L1 -30 L0 -36 L-1 -30 L-12 -30 Z" fill="${bottomC}"/><path d="M4 -47 L11 -47 L12 -30 L5 -30 Z" fill="${ColorUtil.sh(bottomC, -0.12)}"/>`;
-    if (bottom === "skirt") legs += `<path d="M-12 -48 L12 -48 L17 -27 L-17 -27 Z" fill="${bottomC}"/><path d="M4 -48 L12 -48 L17 -27 L7 -27 Z" fill="${ColorUtil.sh(bottomC, -0.12)}"/>`;
-    if (bottom === "dress") legs += `<path d="M-12 -48 L12 -48 L18 -24 L-18 -24 Z" fill="${top}"/><path d="M4 -48 L12 -48 L18 -24 L7 -24 Z" fill="${ColorUtil.sh(top, -0.12)}"/>`;
+    if (bottom === "shorts") { legs += `<path d="M-11 -47 L11 -47 L12 -30 L1 -30 L0 -36 L-1 -30 L-12 -30 Z" fill="${bottomC}"/><path d="M4 -47 L11 -47 L12 -30 L5 -30 Z" fill="${ColorUtil.sh(bottomC, -0.12)}"/>`; }
+    if (bottom === "skirt") { legs += `<path d="M-12 -48 L12 -48 L17 -27 L-17 -27 Z" fill="${bottomC}"/><path d="M4 -48 L12 -48 L17 -27 L7 -27 Z" fill="${ColorUtil.sh(bottomC, -0.12)}"/>`; }
+    if (bottom === "dress") { legs += `<path d="M-12 -48 L12 -48 L18 -24 L-18 -24 Z" fill="${top}"/><path d="M4 -48 L12 -48 L18 -24 L7 -24 Z" fill="${ColorUtil.sh(top, -0.12)}"/>`; }
     const torsoC = jacket || top;
     const heavy = p.build === "heavy";
     let torso = heavy
-      ? `<path d="M-13 -74 Q-13 -81 -6 -81 L6 -81 Q13 -81 13 -74 Q18 -58 13 -44 L-13 -44 Q-18 -58 -13 -74 Z" fill="${torsoC}"/>` +
-        `<path d="M5 -81 L6 -81 Q13 -81 13 -74 Q18 -58 13 -44 L5 -44 Z" fill="${ColorUtil.sh(torsoC, -0.13)}"/>`
-      : `<path d="M-13 -74 Q-13 -81 -6 -81 L6 -81 Q13 -81 13 -74 L12 -44 L-12 -44 Z" fill="${torsoC}"/>` +
-        `<path d="M5 -81 L6 -81 Q13 -81 13 -74 L12 -44 L5 -44 Z" fill="${ColorUtil.sh(torsoC, -0.13)}"/>`;
-    if (jacket && !back) torso += `<path d="M-5 -81 L5 -81 L3 -45 L-3 -45 Z" fill="${top}"/><path d="M-5 -81 L-1 -70 L-4 -60 M5 -81 L1 -70 L4 -60" stroke="${ColorUtil.sh(jacket, -0.25)}" stroke-width="1.2" fill="none"/>`;
-    if (!jacket && outfit === "sweater" && !back) torso += `<path d="M-6 -81 Q0 -76 6 -81" stroke="${ColorUtil.sh(top, -0.25)}" stroke-width="1.5" fill="none"/>`;
-    if (outfit === "tshirt" && !jacket && !back) torso += `<path d="M-5 -81 Q0 -77 5 -81" fill="${ColorUtil.sh(skin, -0.12)}"/>`;
+      ? `<path d="M-13 -74 Q-13 -81 -6 -81 L6 -81 Q13 -81 13 -74 Q18 -58 13 -44 L-13 -44 Q-18 -58 -13 -74 Z" fill="${torsoC}"/>`
+      + `<path d="M5 -81 L6 -81 Q13 -81 13 -74 Q18 -58 13 -44 L5 -44 Z" fill="${ColorUtil.sh(torsoC, -0.13)}"/>`
+      : `<path d="M-13 -74 Q-13 -81 -6 -81 L6 -81 Q13 -81 13 -74 L12 -44 L-12 -44 Z" fill="${torsoC}"/>`
+        + `<path d="M5 -81 L6 -81 Q13 -81 13 -74 L12 -44 L5 -44 Z" fill="${ColorUtil.sh(torsoC, -0.13)}"/>`;
+    if (jacket && !back) { torso += `<path d="M-5 -81 L5 -81 L3 -45 L-3 -45 Z" fill="${top}"/><path d="M-5 -81 L-1 -70 L-4 -60 M5 -81 L1 -70 L4 -60" stroke="${ColorUtil.sh(jacket, -0.25)}" stroke-width="1.2" fill="none"/>`; }
+    if (!jacket && outfit === "sweater" && !back) { torso += `<path d="M-6 -81 Q0 -76 6 -81" stroke="${ColorUtil.sh(top, -0.25)}" stroke-width="1.5" fill="none"/>`; }
+    if (outfit === "tshirt" && !jacket && !back) { torso += `<path d="M-5 -81 Q0 -77 5 -81" fill="${ColorUtil.sh(skin, -0.12)}"/>`; }
     // beca (gown) e jaleco (labcoat) por cima de tudo
     if (gownC) {
-      torso += `<path d="M-13 -76 Q-13 -81 -6 -81 L6 -81 Q13 -81 13 -76 L18 -14 L-18 -14 Z" fill="${gownC}"/><path d="M5 -81 L6 -81 Q13 -81 13 -76 L18 -14 L6 -14 Z" fill="${ColorUtil.sh(gownC, -0.15)}"/>` +
-        (back ? "" : `<path d="M-6 -81 L-3 -81 L-4 -46 L-7 -46 Z M3 -81 L6 -81 L7 -46 L4 -46 Z" fill="${t[p.stole] || t.accent}"/><path d="M-5 -81 Q0 -74 5 -81" fill="${ColorUtil.sh(skin, -0.12)}"/>`);
+      torso += `<path d="M-13 -76 Q-13 -81 -6 -81 L6 -81 Q13 -81 13 -76 L18 -14 L-18 -14 Z" fill="${gownC}"/><path d="M5 -81 L6 -81 Q13 -81 13 -76 L18 -14 L6 -14 Z" fill="${ColorUtil.sh(gownC, -0.15)}"/>`
+        + (back ? "" : `<path d="M-6 -81 L-3 -81 L-4 -46 L-7 -46 Z M3 -81 L6 -81 L7 -46 L4 -46 Z" fill="${t[p.stole] || t.accent}"/><path d="M-5 -81 Q0 -74 5 -81" fill="${ColorUtil.sh(skin, -0.12)}"/>`);
     }
     if (outfit === "labcoat") {
       const lc = "#FBFBF8";
-      torso += `<path d="M-13 -76 Q-13 -81 -6 -81 L6 -81 Q13 -81 13 -76 L15 -27 L-15 -27 Z" fill="${lc}"/><path d="M5 -81 L6 -81 Q13 -81 13 -76 L15 -27 L5 -27 Z" fill="${ColorUtil.sh(lc, -0.1)}"/>` +
-        (back
+      torso += `<path d="M-13 -76 Q-13 -81 -6 -81 L6 -81 Q13 -81 13 -76 L15 -27 L-15 -27 Z" fill="${lc}"/><path d="M5 -81 L6 -81 Q13 -81 13 -76 L15 -27 L5 -27 Z" fill="${ColorUtil.sh(lc, -0.1)}"/>`
+        + (back
           ? ""
-          : `<path d="M-5 -81 L5 -81 L1 -60 L-1 -60 Z" fill="${top}"/><path d="M0 -60 L0 -27" stroke="${ColorUtil.sh(lc, -0.25)}" stroke-width="1"/>` +
-          `<rect x="-11" y="-42" width="7" height="6" rx="1" fill="none" stroke="${ColorUtil.sh(lc, -0.25)}" stroke-width="1"/><path d="M6 -72 L6 -66" stroke="${t.primary}" stroke-width="1.6"/>`);
+          : `<path d="M-5 -81 L5 -81 L1 -60 L-1 -60 Z" fill="${top}"/><path d="M0 -60 L0 -27" stroke="${ColorUtil.sh(lc, -0.25)}" stroke-width="1"/>`
+            + `<rect x="-11" y="-42" width="7" height="6" rx="1" fill="none" stroke="${ColorUtil.sh(lc, -0.25)}" stroke-width="1"/><path d="M6 -72 L6 -66" stroke="${t.primary}" stroke-width="1.6"/>`);
     }
     let pack = "";
     if (p.backpack) {
       const bc = t[p.backpack] || (p.backpack === true ? t.accent : p.backpack);
       pack = back ? "" : `<rect x="-16" y="-79" width="32" height="32" rx="7" fill="${ColorUtil.sh(bc, -0.2)}"/>`;
-      if (back) torso += `<rect x="-11" y="-78" width="22" height="30" rx="7" fill="${bc}"/><rect x="-7" y="-62" width="14" height="10" rx="3" fill="${ColorUtil.sh(bc, -0.15)}"/>`;
-      else torso += `<path d="M-8 -81 L-9 -50 M8 -81 L9 -50" stroke="${ColorUtil.sh(bc, -0.1)}" stroke-width="2.5" stroke-linecap="round"/>`;
+      if (back) { torso += `<rect x="-11" y="-78" width="22" height="30" rx="7" fill="${bc}"/><rect x="-7" y="-62" width="14" height="10" rx="3" fill="${ColorUtil.sh(bc, -0.15)}"/>`; } else { torso += `<path d="M-8 -81 L-9 -50 M8 -81 L9 -50" stroke="${ColorUtil.sh(bc, -0.1)}" stroke-width="2.5" stroke-linecap="round"/>`; }
     }
     const hat = p.hat === "grad_cap"
-      ? `<path d="M-9 -103 L9 -103 L9 -98 Q0 -95 -9 -98 Z" fill="${t.ink}"/><path d="M-18 -103 L0 -110 L18 -103 L0 -96 Z" fill="${t.ink}"/><path d="M-18 -103 L0 -96 L18 -103 L0 -98.5 Z" fill="${ColorUtil.sh(t.ink, 0.15)}"/>` +
-      `<path d="M0 -103 L13 -102 L14 -93" stroke="${t.accent}" stroke-width="1.3" fill="none"/><circle cx="14" cy="-92" r="1.8" fill="${t.accent}"/>`
+      ? `<path d="M-9 -103 L9 -103 L9 -98 Q0 -95 -9 -98 Z" fill="${t.ink}"/><path d="M-18 -103 L0 -110 L18 -103 L0 -96 Z" fill="${t.ink}"/><path d="M-18 -103 L0 -96 L18 -103 L0 -98.5 Z" fill="${ColorUtil.sh(t.ink, 0.15)}"/>`
+      + `<path d="M0 -103 L13 -102 L14 -93" stroke="${t.accent}" stroke-width="1.3" fill="none"/><circle cx="14" cy="-92" r="1.8" fill="${t.accent}"/>`
       : p.hat === "cap" ? `<path d="M-11 -97 Q-11 -108 0 -108 Q11 -108 11 -97 Z" fill="${t[p.hat_color] || t.primary}"/><path d="M${side >= 0 ? 4 : -18} -98 L${side >= 0 ? 18 : -4} -98 L${side >= 0 ? 16 : -6} -95 L${side >= 0 ? 4 : -4} -95 Z" fill="${ColorUtil.sh(t[p.hat_color] || t.primary, -0.2)}"/>` : "";
     const SL = [-12, -76], SR = [12, -76];
     const L = PersonUtil.ik(SL, P.L, -1, P.bendL), R = PersonUtil.ik(SR, P.R, 1, P.bendR);
-    const arms = PersonUtil.armPath(SL, L.E, L.H, sleeve, skin, shortSleeve) + PersonUtil.hand(L.H, skin, P.openL, -1, L.E) +
-      PersonUtil.armPath(SR, R.E, R.H, sleeve, skin, shortSleeve) + PersonUtil.hand(R.H, skin, P.openR, 1, R.E);
+    const arms = PersonUtil.armPath(SL, L.E, L.H, sleeve, skin, shortSleeve) + PersonUtil.hand(L.H, skin, P.openL, -1, L.E)
+      + PersonUtil.armPath(SR, R.E, R.H, sleeve, skin, shortSleeve) + PersonUtil.hand(R.H, skin, P.openR, 1, R.E);
     // braço que cruza o corpo (pensando) vai na frente; demais também na frente do tronco
     const gz = PersonUtil.gazeOf(p, pose, side || 1);
     const tilt = side ? side * gz[1] * 6 : gz[0] * 4;
     // bengala (idoso): apoiada na mão esquerda quando ela está em repouso
     const cane = p.cane && Math.abs(P.L[1] + 46) < 6
-      ? `<path d="M${PersonUtil.r(L.H[0] - 1)} ${PersonUtil.r(L.H[1] + 2)} L${PersonUtil.r(L.H[0] - 4)} -1" stroke="${t.trunk || "#6B4A33"}" stroke-width="2.4" stroke-linecap="round"/>` +
-      `<path d="M${PersonUtil.r(L.H[0] - 1)} ${PersonUtil.r(L.H[1] + 2)} Q${PersonUtil.r(L.H[0] + 1)} ${PersonUtil.r(L.H[1] - 4)} ${PersonUtil.r(L.H[0] + 5)} ${PersonUtil.r(L.H[1] - 1)}" stroke="${t.trunk || "#6B4A33"}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
+      ? `<path d="M${PersonUtil.r(L.H[0] - 1)} ${PersonUtil.r(L.H[1] + 2)} L${PersonUtil.r(L.H[0] - 4)} -1" stroke="${t.trunk || "#6B4A33"}" stroke-width="2.4" stroke-linecap="round"/>`
+      + `<path d="M${PersonUtil.r(L.H[0] - 1)} ${PersonUtil.r(L.H[1] + 2)} Q${PersonUtil.r(L.H[0] + 1)} ${PersonUtil.r(L.H[1] - 4)} ${PersonUtil.r(L.H[0] + 5)} ${PersonUtil.r(L.H[1] - 1)}" stroke="${t.trunk || "#6B4A33"}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
       : "";
     const phone = pose === "phone" && !back ? `<rect x="${PersonUtil.r(R.H[0] - 1.5)}" y="${PersonUtil.r(R.H[1] - 8)}" width="4.6" height="8.5" rx="1.2" fill="${t.ink}"/><rect x="${PersonUtil.r(R.H[0] - 0.8)}" y="${PersonUtil.r(R.H[1] - 7.2)}" width="3.2" height="6.4" rx="0.6" fill="${t.glass || "#BFD7EA"}"/>` : "";
     const svg = back

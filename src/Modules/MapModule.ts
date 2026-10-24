@@ -40,8 +40,8 @@ export class MapModule {
   // ícones dos meios de transporte (desenhados em ~24 un., centrados)
   private static readonly ICON: Record<string, any> = {
     plane: (c: any) => `<path d="M12 0 Q12 1.6 10 1.6 L3 1.6 L-3 9 L-5.5 9 L-2 1.6 L-7 1.6 L-9 4 L-10.5 4 L-9.5 0.5 Q-11 0 -9.5 -0.5 L-10.5 -4 L-9 -4 L-7 -1.6 L-2 -1.6 L-5.5 -9 L-3 -9 L3 -1.6 L10 -1.6 Q12 -1.6 12 0 Z" fill="${c}"/>`,
-    train: (c: any, bg: any) => `<rect x="-7" y="-10" width="14" height="16" rx="4" fill="${c}"/><rect x="-5" y="-8" width="10" height="6" rx="1.5" fill="${bg}"/>` +
-      `<circle cx="-3.6" cy="2" r="1.4" fill="${bg}"/><circle cx="3.6" cy="2" r="1.4" fill="${bg}"/><path d="M-5 6 L-8 10 M5 6 L8 10" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>`,
+    train: (c: any, bg: any) => `<rect x="-7" y="-10" width="14" height="16" rx="4" fill="${c}"/><rect x="-5" y="-8" width="10" height="6" rx="1.5" fill="${bg}"/>`
+      + `<circle cx="-3.6" cy="2" r="1.4" fill="${bg}"/><circle cx="3.6" cy="2" r="1.4" fill="${bg}"/><path d="M-5 6 L-8 10 M5 6 L8 10" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>`,
     car: (c: any, bg: any) => `<path d="M-10 3 L-10 -1 L-7 -2 L-4 -7 L5 -7 L8 -2 L10 -1 L10 3 Z" fill="${c}"/><rect x="-3" y="-6" width="7" height="4" rx="1" fill="${bg}"/><circle cx="-5.5" cy="3.5" r="2.6" fill="${c}" stroke="${bg}" stroke-width="1.2"/><circle cx="5.5" cy="3.5" r="2.6" fill="${c}" stroke="${bg}" stroke-width="1.2"/>`,
     bus: (c: any, bg: any) => `<rect x="-9" y="-9" width="18" height="16" rx="3" fill="${c}"/><rect x="-7" y="-7" width="14" height="6" rx="1" fill="${bg}"/><circle cx="-5" cy="8" r="2" fill="${c}"/><circle cx="5" cy="8" r="2" fill="${c}"/>`,
     boat: (c: any) => `<path d="M-11 1 L11 1 L7 7 L-7 7 Z" fill="${c}"/><path d="M0 1 L0 -10 L8 -1 Z" fill="${c}"/>`,
@@ -49,7 +49,7 @@ export class MapModule {
 
   private static readonly TRANSPORT_PT: Record<string, any> = { plane: "avião", train: "trem", car: "carro", bus: "ônibus", boat: "barco" };
 
-  private static readonly TRANSPORT_ALIAS: Record<string, any> = { aviao: "plane", "avião": "plane", voo: "plane", trem: "train", carro: "car", onibus: "bus", "ônibus": "bus", barco: "boat", navio: "boat", ferry: "boat" };
+  private static readonly TRANSPORT_ALIAS: Record<string, any> = { aviao: "plane", avião: "plane", voo: "plane", trem: "train", carro: "car", onibus: "bus", ônibus: "bus", barco: "boat", navio: "boat", ferry: "boat" };
 
   private static lambert(lon0 = 10, lat0 = 50, p1 = 43, p2 = 62) {
     const r = Math.PI / 180, q = (p: any) => Math.tan(Math.PI / 4 + (p * r) / 2);
@@ -70,21 +70,21 @@ export class MapModule {
     for (const [i, item] of (scene.route || []).entries()) {
       if (item.by) {
         const by = MapModule.TRANSPORT_ALIAS[MapModule.norm(item.by)] || item.by;
-        if (!MapModule.ICON[by]) warnings.push(`transport '${item.by}' is unknown (use plane, train, car, bus or boat)`);
+        if (!MapModule.ICON[by]) { warnings.push(`transport '${item.by}' is unknown (use plane, train, car, bus or boat)`); }
         pendingBy = by; continue;
       }
       const key = MapModule.norm(item.city || "");
       const g = item.at ? [item.at[0], item.at[1], item.city] : MapModule.CITIES[key.replace(/\s+/g, "")];
       if (!g) { warnings.push(`city '${item.city}' is not in the dictionary; set 'at: [lon, lat]'`); continue; }
       const country = item.country ? MapModule.byPt[MapModule.norm(item.country)] : null;
-      if (item.country && !country) warnings.push(`country '${item.country}' not found on the map`);
+      if (item.country && !country) { warnings.push(`country '${item.country}' not found on the map`); }
       const stop = { i, lon: g[0], lat: g[1], city: item.label || g[2] || item.city, country, note: item.note };
-      if (stops.length) legs.push({ a: stops[stops.length - 1], b: stop, by: pendingBy || "car" });
-      if (stops.length && !pendingBy) warnings.push(`leg to '${stop.city}' has no transport; used car (add '- {by: ...}')`);
+      if (stops.length) { legs.push({ a: stops[stops.length - 1], b: stop, by: pendingBy || "car" }); }
+      if (stops.length && !pendingBy) { warnings.push(`leg to '${stop.city}' has no transport; used car (add '- {by: ...}')`); }
       pendingBy = null;
       stops.push(stop);
     }
-    if (stops.length < 2) warnings.push("the route needs at least 2 cities");
+    if (stops.length < 2) { warnings.push("the route needs at least 2 cities"); }
 
     // ---------- projeção e enquadramento ----------
     const lon0 = m.center?.[0] ?? (stops.reduce((s, p) => s + p.lon, 0) / (stops.length || 1));
@@ -105,28 +105,28 @@ export class MapModule {
 
     // ---------- países ----------
     const visited: any[] = [];
-    for (const s of stops) if (s.country && !visited.includes(s.country)) visited.push(s.country);
-    for (const name of m.highlight || []) { const cc = MapModule.byPt[MapModule.norm(name)]; if (cc && !visited.includes(cc)) visited.push(cc); }
+    for (const s of stops) { if (s.country && !visited.includes(s.country)) { visited.push(s.country); } }
+    for (const name of m.highlight || []) { const cc = MapModule.byPt[MapModule.norm(name)]; if (cc && !visited.includes(cc)) { visited.push(cc); } }
     const palette = m.palette || ["#9DB8F0", "#F7C98A", "#9ED39A", "#E9A0B4", "#B9A3E3", "#8FD3D1", "#F2A68F", "#D8C27A"];
     const colorOf = new Map(visited.map((cc, i) => [cc, palette[i % palette.length]]));
     const sea = ColorUtil.sh(t.glass, 0.25), land = ColorUtil.sh(t.paper, -0.05), border = "#FFFFFF";
     const toPath = (polys: any) => polys.map((poly: any) => {
       const rings = poly.map((ring: any) => ring.map(([lo, la]: number[]) => proj(lo, la)));
       const xs = rings[0].map((p: any) => p[0]), ys = rings[0].map((p: any) => p[1]);
-      if (Math.max(...xs) < -50 || Math.min(...xs) > W + 50 || Math.max(...ys) < -50 || Math.min(...ys) > H + 50) return "";
+      if (Math.max(...xs) < -50 || Math.min(...xs) > W + 50 || Math.max(...ys) < -50 || Math.min(...ys) > H + 50) { return ""; }
       return rings.map((r: any) => "M" + r.map((p: any) => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") + "Z").join("");
     }).join("");
 
     let mapSvg = `<rect x="0" y="0" width="${W}" height="${H}" fill="${sea}"/>`;
     // ondas sutis no mar
-    for (let yy = 30; yy < H; yy += 46) for (let xx = (yy / 46 % 2) * 40 + 20; xx < W - PW; xx += 90) mapSvg += `<path d="M${xx} ${yy} q8 -4 16 0 t16 0" stroke="${ColorUtil.sh(sea, -0.1)}" stroke-width="1.5" fill="none" opacity="0.5"/>`;
+    for (let yy = 30; yy < H; yy += 46) { for (let xx = (yy / 46 % 2) * 40 + 20; xx < W - PW; xx += 90) { mapSvg += `<path d="M${xx} ${yy} q8 -4 16 0 t16 0" stroke="${ColorUtil.sh(sea, -0.1)}" stroke-width="1.5" fill="none" opacity="0.5"/>`; } }
     // graticule leve
     let grat = "";
     // só os trechos visíveis (caminhos muito fora do quadro derrubam o renderizador)
     const inView = (p: any) => p[0] > -60 && p[0] < W + 60 && p[1] > -60 && p[1] < H + 60;
     const gline = (pts: any) => { const v = pts.filter(inView); return v.length > 1 ? `<path d="M${v.map((p: any) => p.map(MapModule.f1).join(" ")).join("L")}" stroke="${t.paper}" stroke-width="0.8" fill="none" opacity="0.35"/>` : ""; };
-    for (let lo = -30; lo <= 50; lo += 5) { const pts: any[] = []; for (let la = 30; la <= 72; la += 1) pts.push(proj(lo, la)); grat += gline(pts); }
-    for (let la = 30; la <= 72; la += 5) { const pts: any[] = []; for (let lo = -30; lo <= 50; lo += 1) pts.push(proj(lo, la)); grat += gline(pts); }
+    for (let lo = -30; lo <= 50; lo += 5) { const pts: any[] = []; for (let la = 30; la <= 72; la += 1) { pts.push(proj(lo, la)); } grat += gline(pts); }
+    for (let la = 30; la <= 72; la += 5) { const pts: any[] = []; for (let lo = -30; lo <= 50; lo += 1) { pts.push(proj(lo, la)); } grat += gline(pts); }
     mapSvg += grat;
     const others = MapModule.EUROPE.countries.filter((cc) => !colorOf.has(cc));
     mapSvg += `<g stroke="${border}" stroke-width="1" stroke-linejoin="round">` + others.map((cc) => `<path d="${toPath(cc.polys)}" fill="${land}"/>`).join("") + "</g>";
@@ -143,11 +143,11 @@ export class MapModule {
     let countryLabels = "";
     const fsC = Math.max(12, H * 0.017);
     for (const cc of MapModule.EUROPE.countries) {
-      const isV = colorOf.has(cc); if (!isV && cc.area < 0.004) continue;
+      const isV = colorOf.has(cc); if (!isV && cc.area < 0.004) { continue; }
       const [lx, ly] = proj(cc.label[0], cc.label[1]); const fs = isV ? fsC * 1.05 : fsC * 0.9;
       const txt = (isV ? cc.pt.toUpperCase() : cc.pt), w = txt.length * fs * (isV ? 0.66 : 0.58);
       const b = { x0: lx - w / 2, x1: lx + w / 2, y0: ly - fs, y1: ly + fs * 0.3, kind: "country", visited: isV, cc, txt, fs, lx, ly };
-      if (!inArea(b)) continue;
+      if (!inArea(b)) { continue; }
       occupied.push(b);
     }
 
@@ -169,9 +169,7 @@ export class MapModule {
       const d = `M${MapModule.f1(a.x)} ${MapModule.f1(a.y)} Q${MapModule.f1(cx)} ${MapModule.f1(cy)} ${MapModule.f1(b.x)} ${MapModule.f1(b.y)}`;
       const col = L.by === "plane" ? t.primary : L.by === "train" ? t.secondary : t.accent;
       let s = "";
-      if (L.by === "train") s += `<path d="${d}" stroke="${col}" stroke-width="7" fill="none" stroke-linecap="round"/><path d="${d}" stroke="${t.paper}" stroke-width="2.6" fill="none" stroke-dasharray="7 6"/>`;
-      else if (L.by === "plane") s += `<path d="${d}" stroke="${t.paper}" stroke-width="6.5" fill="none" stroke-linecap="round" opacity="0.8"/><path d="${d}" stroke="${col}" stroke-width="3.2" fill="none" stroke-dasharray="10 7" stroke-linecap="round"/>`;
-      else s += `<path d="${d}" stroke="${col}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+      if (L.by === "train") { s += `<path d="${d}" stroke="${col}" stroke-width="7" fill="none" stroke-linecap="round"/><path d="${d}" stroke="${t.paper}" stroke-width="2.6" fill="none" stroke-dasharray="7 6"/>`; } else if (L.by === "plane") { s += `<path d="${d}" stroke="${t.paper}" stroke-width="6.5" fill="none" stroke-linecap="round" opacity="0.8"/><path d="${d}" stroke="${col}" stroke-width="3.2" fill="none" stroke-dasharray="10 7" stroke-linecap="round"/>`; } else { s += `<path d="${d}" stroke="${col}" stroke-width="4" fill="none" stroke-linecap="round"/>`; }
       // seta de sentido
       const [axp, ayp] = pt(0.78), [tx, ty] = tan(0.78), ang = Math.atan2(ty, tx) * 180 / Math.PI;
       s += `<path d="M-6 -6 L4 0 L-6 6" transform="translate(${MapModule.f1(axp)} ${MapModule.f1(ayp)}) rotate(${MapModule.f1(ang)})" stroke="${col}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
@@ -190,7 +188,7 @@ export class MapModule {
     const groups: any[] = [];
     for (const [n, s] of stops.entries()) {
       const g = groups.find((gg) => Math.hypot(gg.x - s.x, gg.y - s.y) < 2);
-      if (g) g.nums.push(n + 1); else groups.push({ ...s, nums: [n + 1] });
+      if (g) { g.nums.push(n + 1); } else { groups.push({ ...s, nums: [n + 1] }); }
     }
     const pinR = Math.max(11, H * 0.016);
     // números extras de uma mesma cidade vão para o lado com mais espaço
@@ -214,10 +212,10 @@ export class MapModule {
       for (const [x0, y0] of cands) {
         const b = { x0, y0, x1: x0 + w, y1: y0 + h };
         let sc = inArea(b) ? 0 : 1e7;
-        for (const o of occupied) sc += ov(b, o) * (o.kind === "city" ? 6 : o.kind === "pin" ? 5 : o.kind === "badge" ? 4 : o.kind === "line" ? 3 : o.visited ? 1.5 : 0.6);
+        for (const o of occupied) { sc += ov(b, o) * (o.kind === "city" ? 6 : o.kind === "pin" ? 5 : o.kind === "badge" ? 4 : o.kind === "line" ? 3 : o.visited ? 1.5 : 0.6); }
         if (sc < bs) { bs = sc; best = b; }
       }
-      if (bs > 0.12 * w * h) warnings.push(`label of city '${name}' overlaps (${Math.round(bs / (w * h) * 100)}%); adjust the map 'padding' or use 'label_side'`);
+      if (bs > 0.12 * w * h) { warnings.push(`label of city '${name}' overlaps (${Math.round(bs / (w * h) * 100)}%); adjust the map 'padding' or use 'label_side'`); }
       best.kind = "city"; best.name = name; best.sub = sub; best.g = g;
       occupied.push(best); cityLabels.push(best);
     }
@@ -225,7 +223,7 @@ export class MapModule {
     // rótulos de países que não colidem com elementos da rota
     for (const b of occupied.filter((o) => o.kind === "country")) {
       const hit = occupied.some((o) => o !== b && o.kind !== "country" && o.kind !== "line" && ov(b, o) > 0.02 * (b.x1 - b.x0) * (b.y1 - b.y0));
-      if (hit && (!b.visited || b.cc.area < 0.002)) continue;
+      if (hit && (!b.visited || b.cc.area < 0.002)) { continue; }
       let moved = !hit;
       let { lx, ly } = b;
       if (hit) { // tenta deslocar o nome do país visitado
@@ -234,7 +232,7 @@ export class MapModule {
           if (!occupied.some((o) => o !== b && o.kind !== "country" && o.kind !== "line" && ov(nb, o) > 0)) { lx += ddx; ly += ddy; moved = true; break; }
         }
       }
-      if (!moved) continue;
+      if (!moved) { continue; }
       countryLabels += b.visited
         ? `<text x="${MapModule.f1(lx)}" y="${MapModule.f1(ly)}" font-family="${MapModule.FONT}" font-weight="700" font-size="${MapModule.f1(b.fs)}" letter-spacing="2" fill="${ColorUtil.sh(colorOf.get(b.cc), -0.55)}" text-anchor="middle" opacity="0.8">${MapModule.esc(b.txt)}</text>`
         : `<text x="${MapModule.f1(lx)}" y="${MapModule.f1(ly)}" font-family="${MapModule.FONT}" font-weight="500" font-size="${MapModule.f1(b.fs)}" fill="${ColorUtil.sh(land, -0.4)}" text-anchor="middle">${MapModule.esc(b.txt)}</text>`;
@@ -244,19 +242,19 @@ export class MapModule {
     const badgeSvg = badges.map((bd) => {
       const rot = bd.by === "plane" ? ` rotate(${MapModule.f1(bd.ang)})` : "";
       const s = bd.r / 14;
-      return `<circle cx="${MapModule.f1(bd.x)}" cy="${MapModule.f1(bd.y + 2)}" r="${MapModule.f1(bd.r)}" fill="${t.ink}" opacity="0.18"/><circle cx="${MapModule.f1(bd.x)}" cy="${MapModule.f1(bd.y)}" r="${MapModule.f1(bd.r)}" fill="${t.paper}" stroke="${bd.col}" stroke-width="2.5"/>` +
-        `<g transform="translate(${MapModule.f1(bd.x)} ${MapModule.f1(bd.y)})${rot} scale(${s.toFixed(3)})">${MapModule.ICON[bd.by] ? MapModule.ICON[bd.by](bd.col, t.paper) : ""}</g>`;
+      return `<circle cx="${MapModule.f1(bd.x)}" cy="${MapModule.f1(bd.y + 2)}" r="${MapModule.f1(bd.r)}" fill="${t.ink}" opacity="0.18"/><circle cx="${MapModule.f1(bd.x)}" cy="${MapModule.f1(bd.y)}" r="${MapModule.f1(bd.r)}" fill="${t.paper}" stroke="${bd.col}" stroke-width="2.5"/>`
+        + `<g transform="translate(${MapModule.f1(bd.x)} ${MapModule.f1(bd.y)})${rot} scale(${s.toFixed(3)})">${MapModule.ICON[bd.by] ? MapModule.ICON[bd.by](bd.col, t.paper) : ""}</g>`;
     }).join("");
     const pinSvg = groups.map((g: any) => g.nums.map((n: any, j: any) => {
       const x = g.x + g.dir * j * pinR * 1.6, last = n === stops.length, first = n === 1;
       const col = last ? t.accent : first ? t.secondary : t.primary;
-      return `<circle cx="${MapModule.f1(x)}" cy="${MapModule.f1(g.y + 2.5)}" r="${MapModule.f1(pinR)}" fill="${t.ink}" opacity="0.2"/><circle cx="${MapModule.f1(x)}" cy="${MapModule.f1(g.y)}" r="${MapModule.f1(pinR)}" fill="${col}" stroke="${t.paper}" stroke-width="2.5"/>` +
-        `<text x="${MapModule.f1(x)}" y="${MapModule.f1(g.y + pinR * 0.4)}" font-family="${MapModule.FONT}" font-weight="700" font-size="${MapModule.f1(pinR * 1.15)}" fill="${t.paper}" text-anchor="middle">${n}</text>`;
+      return `<circle cx="${MapModule.f1(x)}" cy="${MapModule.f1(g.y + 2.5)}" r="${MapModule.f1(pinR)}" fill="${t.ink}" opacity="0.2"/><circle cx="${MapModule.f1(x)}" cy="${MapModule.f1(g.y)}" r="${MapModule.f1(pinR)}" fill="${col}" stroke="${t.paper}" stroke-width="2.5"/>`
+        + `<text x="${MapModule.f1(x)}" y="${MapModule.f1(g.y + pinR * 0.4)}" font-family="${MapModule.FONT}" font-weight="700" font-size="${MapModule.f1(pinR * 1.15)}" fill="${t.paper}" text-anchor="middle">${n}</text>`;
     }).join("")).join("");
-    const cityLabelSvg = cityLabels.map((b) => `<rect x="${MapModule.f1(b.x0 + 1.5)}" y="${MapModule.f1(b.y0 + 2.5)}" width="${MapModule.f1(b.x1 - b.x0)}" height="${MapModule.f1(b.y1 - b.y0)}" rx="8" fill="${t.ink}" opacity="0.14"/>` +
-      `<rect x="${MapModule.f1(b.x0)}" y="${MapModule.f1(b.y0)}" width="${MapModule.f1(b.x1 - b.x0)}" height="${MapModule.f1(b.y1 - b.y0)}" rx="8" fill="${t.paper}"/>` +
-      `<text x="${MapModule.f1(b.x0 + fsCity * 0.6)}" y="${MapModule.f1(b.y0 + fsCity * 1.15)}" font-family="${MapModule.FONT}" font-weight="700" font-size="${MapModule.f1(fsCity)}" fill="${t.text === t.paper ? t.ink : t.text}">${MapModule.esc(b.name)}</text>` +
-      (b.sub ? `<text x="${MapModule.f1(b.x0 + fsCity * 0.6)}" y="${MapModule.f1(b.y0 + fsCity * 1.95)}" font-family="${MapModule.FONT}" font-weight="500" font-size="${MapModule.f1(fsCity * 0.68)}" fill="${ColorUtil.sh(t.ink, 0.35)}">${MapModule.esc(b.sub)}</text>` : "")).join("");
+    const cityLabelSvg = cityLabels.map((b) => `<rect x="${MapModule.f1(b.x0 + 1.5)}" y="${MapModule.f1(b.y0 + 2.5)}" width="${MapModule.f1(b.x1 - b.x0)}" height="${MapModule.f1(b.y1 - b.y0)}" rx="8" fill="${t.ink}" opacity="0.14"/>`
+      + `<rect x="${MapModule.f1(b.x0)}" y="${MapModule.f1(b.y0)}" width="${MapModule.f1(b.x1 - b.x0)}" height="${MapModule.f1(b.y1 - b.y0)}" rx="8" fill="${t.paper}"/>`
+      + `<text x="${MapModule.f1(b.x0 + fsCity * 0.6)}" y="${MapModule.f1(b.y0 + fsCity * 1.15)}" font-family="${MapModule.FONT}" font-weight="700" font-size="${MapModule.f1(fsCity)}" fill="${t.text === t.paper ? t.ink : t.text}">${MapModule.esc(b.name)}</text>`
+      + (b.sub ? `<text x="${MapModule.f1(b.x0 + fsCity * 0.6)}" y="${MapModule.f1(b.y0 + fsCity * 1.95)}" font-family="${MapModule.FONT}" font-weight="500" font-size="${MapModule.f1(fsCity * 0.68)}" fill="${ColorUtil.sh(t.ink, 0.35)}">${MapModule.esc(b.sub)}</text>` : "")).join("");
 
     // ---------- painel do roteiro ----------
     let panel = "";
@@ -267,7 +265,7 @@ export class MapModule {
       const subtitle = (scene.text || []).find((x: any) => x.role === "subtitle")?.content;
       const tfs = H * 0.034;
       const words = title.split(" "); const lines: any[] = []; let cur = "";
-      for (const wd of words) { if ((cur + " " + wd).trim().length * tfs * 0.58 > PW - 44) { lines.push(cur.trim()); cur = wd; } else cur += " " + wd; }
+      for (const wd of words) { if ((cur + " " + wd).trim().length * tfs * 0.58 > PW - 44) { lines.push(cur.trim()); cur = wd; } else { cur += " " + wd; } }
       lines.push(cur.trim());
       let yy = py + 28 + tfs;
       for (const ln of lines) { panel += `<text x="${MapModule.f1(px + 24)}" y="${MapModule.f1(yy)}" font-family="${MapModule.FONT}" font-weight="700" font-size="${MapModule.f1(tfs)}" fill="${t.text === t.paper ? t.ink : t.text}">${MapModule.esc(ln)}</text>`; yy += tfs * 1.15; }
@@ -281,11 +279,11 @@ export class MapModule {
         if (n < legs.length) {
           const L = legs[n], lc = L.by === "plane" ? t.primary : L.by === "train" ? t.secondary : t.accent;
           panel += `<path d="M${MapModule.f1(px + 24 + rr)} ${MapModule.f1(cy + rr)} L${MapModule.f1(px + 24 + rr)} ${MapModule.f1(cy + stepH - rr)}" stroke="${lc}" stroke-width="3" ${L.by === "plane" ? "stroke-dasharray=\"5 4\"" : ""}/>`;
-          panel += `<g transform="translate(${MapModule.f1(px + 24 + rr * 2 + 22)} ${MapModule.f1(cy + stepH / 2)}) scale(${(rr / 15).toFixed(3)})">${MapModule.ICON[L.by] ? MapModule.ICON[L.by](lc, t.paper) : ""}</g>` +
-            `<text x="${MapModule.f1(px + 24 + rr * 2 + 38)}" y="${MapModule.f1(cy + stepH / 2 + 4)}" font-family="${MapModule.FONT}" font-size="${MapModule.f1(rr * 0.85)}" fill="${ColorUtil.sh(t.ink, 0.4)}">${MapModule.TRANSPORT_PT[L.by] || L.by}</text>`;
+          panel += `<g transform="translate(${MapModule.f1(px + 24 + rr * 2 + 22)} ${MapModule.f1(cy + stepH / 2)}) scale(${(rr / 15).toFixed(3)})">${MapModule.ICON[L.by] ? MapModule.ICON[L.by](lc, t.paper) : ""}</g>`
+            + `<text x="${MapModule.f1(px + 24 + rr * 2 + 38)}" y="${MapModule.f1(cy + stepH / 2 + 4)}" font-family="${MapModule.FONT}" font-size="${MapModule.f1(rr * 0.85)}" fill="${ColorUtil.sh(t.ink, 0.4)}">${MapModule.TRANSPORT_PT[L.by] || L.by}</text>`;
         }
-        panel += `<circle cx="${MapModule.f1(px + 24 + rr)}" cy="${MapModule.f1(cy)}" r="${MapModule.f1(rr)}" fill="${col}"/><text x="${MapModule.f1(px + 24 + rr)}" y="${MapModule.f1(cy + rr * 0.4)}" font-family="${MapModule.FONT}" font-weight="700" font-size="${MapModule.f1(rr * 1.1)}" fill="${t.paper}" text-anchor="middle">${n + 1}</text>` +
-          `<text x="${MapModule.f1(px + 24 + rr * 2 + 12)}" y="${MapModule.f1(cy + rr * 0.42)}" font-family="${MapModule.FONT}" font-weight="600" font-size="${MapModule.f1(rr * 1.15)}" fill="${t.text === t.paper ? t.ink : t.text}">${MapModule.esc(s.city)}${s.country ? `<tspan dx="${MapModule.f1(rr * 0.6)}" font-weight="400" fill="${ColorUtil.sh(t.ink, 0.4)}">${MapModule.esc(s.country.pt)}</tspan>` : ""}</text>`;
+        panel += `<circle cx="${MapModule.f1(px + 24 + rr)}" cy="${MapModule.f1(cy)}" r="${MapModule.f1(rr)}" fill="${col}"/><text x="${MapModule.f1(px + 24 + rr)}" y="${MapModule.f1(cy + rr * 0.4)}" font-family="${MapModule.FONT}" font-weight="700" font-size="${MapModule.f1(rr * 1.1)}" fill="${t.paper}" text-anchor="middle">${n + 1}</text>`
+          + `<text x="${MapModule.f1(px + 24 + rr * 2 + 12)}" y="${MapModule.f1(cy + rr * 0.42)}" font-family="${MapModule.FONT}" font-weight="600" font-size="${MapModule.f1(rr * 1.15)}" fill="${t.text === t.paper ? t.ink : t.text}">${MapModule.esc(s.city)}${s.country ? `<tspan dx="${MapModule.f1(rr * 0.6)}" font-weight="400" fill="${ColorUtil.sh(t.ink, 0.4)}">${MapModule.esc(s.country.pt)}</tspan>` : ""}</text>`;
       });
       // legenda
       const usedBy = [...new Set(legs.map((l) => l.by))];
@@ -295,8 +293,8 @@ export class MapModule {
         const lc = by === "plane" ? t.primary : by === "train" ? t.secondary : t.accent;
         panel += (by === "train"
           ? `<path d="M${MapModule.f1(lx)} ${MapModule.f1(ly - 5)} L${MapModule.f1(lx + 30)} ${MapModule.f1(ly - 5)}" stroke="${lc}" stroke-width="6"/><path d="M${MapModule.f1(lx)} ${MapModule.f1(ly - 5)} L${MapModule.f1(lx + 30)} ${MapModule.f1(ly - 5)}" stroke="${t.paper}" stroke-width="2" stroke-dasharray="5 4"/>`
-          : `<path d="M${MapModule.f1(lx)} ${MapModule.f1(ly - 5)} L${MapModule.f1(lx + 30)} ${MapModule.f1(ly - 5)}" stroke="${lc}" stroke-width="3" stroke-dasharray="7 5"/>`) +
-          `<text x="${MapModule.f1(lx + 38)}" y="${MapModule.f1(ly)}" font-family="${MapModule.FONT}" font-size="${MapModule.f1(H * 0.016)}" fill="${ColorUtil.sh(t.ink, 0.3)}">${MapModule.TRANSPORT_PT[by] || by}</text>`;
+          : `<path d="M${MapModule.f1(lx)} ${MapModule.f1(ly - 5)} L${MapModule.f1(lx + 30)} ${MapModule.f1(ly - 5)}" stroke="${lc}" stroke-width="3" stroke-dasharray="7 5"/>`)
+        + `<text x="${MapModule.f1(lx + 38)}" y="${MapModule.f1(ly)}" font-family="${MapModule.FONT}" font-size="${MapModule.f1(H * 0.016)}" fill="${ColorUtil.sh(t.ink, 0.3)}">${MapModule.TRANSPORT_PT[by] || by}</text>`;
         lx += 38 + (MapModule.TRANSPORT_PT[by] || by).length * H * 0.011 + 26;
       }
     }

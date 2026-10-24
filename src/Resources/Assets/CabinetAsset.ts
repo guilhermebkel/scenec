@@ -23,7 +23,7 @@ export class CabinetAsset extends BaseAsset {
       const x = -w / 2 + 0.5 + i * dw;
       s += ShapeUtil.rect(x + 0.3, -h + 0.5, dw - 0.6, h - plinth - 0.8, c, 0.4) + ShapeUtil.rect(x + dw - 1.2, -h + 0.5, 0.9, h - plinth - 0.8, ColorUtil.sh(c, -0.12));
       const hx = i < n / 2 ? x + dw - 2.6 : x + 1.8;
-      if (n > 1 || p.handle !== false) s += ShapeUtil.rect(hx, -h * 0.72, 0.8, h * 0.3, t.metal, 0.4);
+      if (n > 1 || p.handle !== false) { s += ShapeUtil.rect(hx, -h * 0.72, 0.8, h * 0.3, t.metal, 0.4); }
     }
     return s;
   }

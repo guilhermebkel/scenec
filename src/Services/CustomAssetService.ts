@@ -29,27 +29,27 @@ export class CustomAssetService {
   }
 
   private static readText(io: CompileOptions, file: string): string {
-    if (!io.files) throw new Error("this call does not read files; pass the SVG inline or use the CLI");
+    if (!io.files) { throw new Error("this call does not read files; pass the SVG inline or use the CLI"); }
     return io.files.readText(file);
   }
 
   private static readBytes(io: CompileOptions, file: string): Uint8Array {
-    if (!io.files) throw new Error("this call does not read files; pass the image through a file reader or use the CLI");
+    if (!io.files) { throw new Error("this call does not read files; pass the image through a file reader or use the CLI"); }
     return io.files.readBytes(file);
   }
 
   private static toBase64(bytes: Uint8Array): string {
     let binary = "";
-    for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    for (let i = 0; i < bytes.length; i += 0x8000) { binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); }
     return btoa(binary);
   }
 
   private static rasterSize(buf: Uint8Array, ext: string): [number, number] | null {
     const view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
-    if (ext === ".png") return [view.getUint32(16), view.getUint32(20)];
+    if (ext === ".png") { return [view.getUint32(16), view.getUint32(20)]; }
     if (ext === ".jpg" || ext === ".jpeg") {
       let i = 2;
-      while (i < buf.length) { const m = buf[i + 1], len = view.getUint16(i + 2); if (m >= 0xc0 && m <= 0xc3) return [view.getUint16(i + 7), view.getUint16(i + 5)]; i += 2 + len; }
+      while (i < buf.length) { const m = buf[i + 1], len = view.getUint16(i + 2); if (m >= 0xc0 && m <= 0xc3) { return [view.getUint16(i + 7), view.getUint16(i + 5)]; } i += 2 + len; }
     }
     return null;
   }
@@ -68,22 +68,22 @@ export class CustomAssetService {
           let src = d.svg.trim().startsWith("<") ? d.svg : CustomAssetService.readText(io, d.svg);
           src = SanitizeUtil.sanitizeSvg(src);
           const open = src.match(/<svg[^>]*>/i);
-          if (!open) throw new Error("does not look like an SVG");
+          if (!open) { throw new Error("does not look like an SVG"); }
           const vb = open[0].match(/viewBox="([^"]+)"/i);
           const wAttr = open[0].match(/\swidth="([\d.]+)/), hAttr = open[0].match(/\sheight="([\d.]+)/);
           const view = vb ? vb[1].split(/[\s,]+/).map(Number) : [0, 0, +(wAttr?.[1] || 100), +(hAttr?.[1] || 100)];
           inner = CustomAssetService.prefixIds(src.slice(src.indexOf(open[0]) + open[0].length, src.lastIndexOf("</svg>")), `c${n}-`);
           const probe = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="${view.join(" ")}" width="${view[2]}" height="${view[3]}">${inner}</svg>`;
           const b = io.measure ? io.measure(probe) : { x: view[0], y: view[1], width: view[2], height: view[3] };
-          if (!b?.width) throw new Error("desenho vazio");
+          if (!b?.width) { throw new Error("desenho vazio"); }
           box = d.trim === false ? { x: view[0], y: view[1], width: view[2], height: view[3] } : b;
         } else if (d.image) {
           const ext = CustomAssetService.extname(d.image);
           const buf = CustomAssetService.readBytes(io, d.image);
           const mime = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp" }[ext];
-          if (!mime) throw new Error(`format ${ext} is not supported (use png, jpg or webp)`);
+          if (!mime) { throw new Error(`format ${ext} is not supported (use png, jpg or webp)`); }
           const size = (d.size_px && [d.size_px[0], d.size_px[1]]) || CustomAssetService.rasterSize(buf, ext);
-          if (!size) throw new Error("could not read the dimensions; set size_px: [width, height]");
+          if (!size) { throw new Error("could not read the dimensions; set size_px: [width, height]"); }
           inner = `<image width="${size[0]}" height="${size[1]}" href="data:${mime};base64,${CustomAssetService.toBase64(buf)}"/>`;
           box = { x: 0, y: 0, width: size[0], height: size[1] };
         } else {

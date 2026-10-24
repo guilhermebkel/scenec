@@ -21,8 +21,8 @@ export class DrawerUnitAsset extends BaseAsset {
     const dh = (h - plinth - 1) / n;
     for (let i = 0; i < n; i++) {
       const y = -h + 0.6 + i * dh;
-      s += ShapeUtil.rect(-w / 2 + 0.8, y, w - 1.6, dh - 0.7, c, 0.6) + ShapeUtil.rect(-w / 2 + 0.8, y + dh - 1.4, w - 1.6, 0.7, ColorUtil.sh(c, -0.15)) +
-            ShapeUtil.rect(-w * 0.28, y + dh * 0.42, w * 0.56, 0.8, t.metal, 0.4) + ShapeUtil.rect(-w * 0.28, y + dh * 0.42 + 0.6, w * 0.56, 0.35, ColorUtil.sh(t.metal, -0.3));
+      s += ShapeUtil.rect(-w / 2 + 0.8, y, w - 1.6, dh - 0.7, c, 0.6) + ShapeUtil.rect(-w / 2 + 0.8, y + dh - 1.4, w - 1.6, 0.7, ColorUtil.sh(c, -0.15))
+        + ShapeUtil.rect(-w * 0.28, y + dh * 0.42, w * 0.56, 0.8, t.metal, 0.4) + ShapeUtil.rect(-w * 0.28, y + dh * 0.42 + 0.6, w * 0.56, 0.35, ColorUtil.sh(t.metal, -0.3));
     }
     return s;
   }
