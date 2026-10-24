@@ -66,8 +66,8 @@ jobs:
           git push origin HEAD:main "v$VERSION"
       - name: Publish to npm with provenance
         run: |
-          if npm view "scenec@$VERSION" version > /dev/null 2>&1; then
-            echo "scenec@$VERSION is already on npm (published by hand); skipping."
+          if npm view "@guilhermebkel/scenec@$VERSION" version > /dev/null 2>&1; then
+            echo "@guilhermebkel/scenec@$VERSION is already on npm (published by hand); skipping."
           else
             npm publish --provenance --access public
           fi

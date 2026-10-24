@@ -16,7 +16,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **Classes, not loose functions (pending).** Utils are classes with static methods only. Services are classes whose dependencies come in through the constructor. Runtime constants belong to the class that owns them as `static readonly` members.
 - **One class per file, named after it (pending).** `max-classes-per-file`, `local/class-matches-file`.
 - **Protocols hold only types and schemas.** No logic. A type used by one file stays in that file.
-- **Three public entries.** `scenec`, `scenec/render` and `scenec/schema`. Anything else is internal; a test snapshots the exports.
+- **Three public entries.** `@guilhermebkel/scenec`, `@guilhermebkel/scenec/render` and `@guilhermebkel/scenec/schema`. Anything else is internal; a test snapshots the exports.
 
 ## Naming
 
