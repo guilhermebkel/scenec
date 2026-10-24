@@ -6,20 +6,23 @@ An AI writes a YAML scene; the compiler returns an SVG plus warnings, art-direct
 
 | Folder | What lives there |
 | --- | --- |
-| `src/protocols/` | Zod scene schema, option types, theme type. Imports nothing from the project. |
-| `src/utils/` | Pure helpers: color, svg, suggest, recolor, sanitize. |
-| `src/drawing/` | Themes, people, the 86 assets and the kits. |
-| `src/modes/` | The two layouts: `plane` (2.5D) and `map`. |
-| `src/pipeline/` | Parse, groups, custom assets, compile, catalog and schema services. |
-| `src/render/` | Needs the native renderer: critic, `check`, PNG, fonts, sandboxed file reader. |
+| `src/Errors/` | `SceneError`, `UnsafeSvgError`: one `<Name>Error.ts` per error. |
+| `src/Protocols/` | Zod scene schema and the option, result, theme and command types. |
+| `src/Utils/` | Pure helpers: color, svg, shapes, suggest, recolor, sanitize, person drawing. |
+| `src/Resources/` | `Assets/` (86), `Kits/`, `Themes/`, `Groups/`: one class per file, each extending a `Base` class that fixes its shape. |
+| `src/Services/` | Registries and lookups: `AssetService`, `KitService`, `ThemeService`, `GroupService`, `CustomAssetService`, `CatalogService`, `SchemaService`. |
+| `src/Modules/` | The files that need the most attention: `CompilationModule`, `ParsingModule`, `PlaneModule` (2.5D), `MapModule`, `CritiqueModule`, `CheckModule`. |
+| `src/Adapters/` | The outside world: resvg, fonts, the sandboxed file reader. |
+| `src/Data/` | Static data (the Europe map outlines). |
+| `src/Commands/` | One class per CLI command, all extending `BaseCommand`. |
 | `src/index.ts`, `src/render.ts`, `src/schema.ts` | The three public entries: thin facades over the classes. |
-| `src/cli.ts` | `scenec render|check|catalog|schema`. |
+| `src/cli.ts` | The CLI entry: parses the arguments and runs a command from `src/Commands/`. |
 | `fonts/` | Poppins (OFL-1.1). |
 | `skills/draw-scene/` | The agent skill shipped in the package. |
 | `test/visual/` | 108 base generations with baselines. |
 | `test/smoke/` | Every asset in every kit. |
 
-Layers: protocols < utils < drawing < modes < pipeline < render < cli. A layer imports only the ones below it (lint enforces it). Files are classes in `PascalCase` (`ColorUtil.ts`), imported with `@/` (`@/utils/ColorUtil.ts`).
+Layers: Errors and Protocols < Utils < Resources < Services < Modules < Commands. A layer imports only the ones below it (lint enforces it); Adapters see only Protocols and Utils, and only the critique and check modules may use them. Files are classes in `PascalCase` (`ColorUtil.ts`) in `PascalCase` folders, imported with `@/` (`@/Utils/ColorUtil.ts`).
 
 ## Commands
 
@@ -40,7 +43,7 @@ pnpm check:licenses  # runtime dependency licenses
 - One commit per task, after `pnpm check` is clean. Never raise a limit or silence a rule to pass.
 - Work on a branch from `main` and open a pull request.
 - Code, docs and commit messages are in English. Runtime messages for the scene author are in English too.
-- The core (`protocols` to `pipeline`) is pure: no clock, randomness, file system or process. Files come through the `FileReader` option and measurements through `measure`.
+- The core (`Errors` to `Modules`, except the critique and check modules) is pure: no clock, randomness, file system or process. Files come through the `FileReader` option and measurements through `measure`.
 - A change that moves any baseline is deliberate: run `pnpm test:visual --update`, look at `test/visual/report/`, and say in the PR why each case changed.
 - Anything that goes into an SVG from outside passes `sanitizeSvg`. Never loosen its allowlist without a test for the new element.
 - When the DSL changes, regenerate the skill references (`pnpm skill:refs`) in the same PR.

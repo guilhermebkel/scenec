@@ -1,4 +1,4 @@
-import { UnsafeSvgError } from "@/Protocols/UnsafeSvgError.ts";
+import { UnsafeSvgError } from "@/Errors/UnsafeSvgError.ts";
 
 interface Tag {
   name: string;

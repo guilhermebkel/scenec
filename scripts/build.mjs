@@ -8,7 +8,7 @@ const distRoot = path.resolve("dist");
 rmSync(distRoot, { recursive: true, force: true });
 const sources = globSync("src/**/*.ts").filter((file) => !file.endsWith(".test.ts"));
 await build({ entryPoints: sources, outdir: "dist", outbase: "src", format: "esm", platform: "node", target: "node20", logLevel: "warning" });
-cpSync("src/Data", path.join(distRoot, "data"), { recursive: true });
+cpSync("src/Data", path.join(distRoot, "Data"), { recursive: true });
 execFileSync("npx", ["tsc", "-p", "tsconfig.build.json"], { stdio: "inherit" });
 const outputs = globSync("dist/**/*.{js,d.ts}");
 for (const file of outputs) {

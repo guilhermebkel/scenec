@@ -8,11 +8,11 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 
 ## Architecture
 
-- **Layers (lint).** Inside `src/`, folders form layers and a layer imports only the ones below it: `protocols` (types and Zod schemas) < `utils` < `drawing` < `modes` < `pipeline` < `render` < `cli`. Tests may import any layer: nothing imports them. Import cycles fail `pnpm quality` (dpdm, `import type` ignored).
-- **A pure core (lint).** `protocols` to `pipeline` have no clock, randomness, file system or process: the same scene gives the same SVG on any machine (ADR 0004). Files come in through the `FileReader` option and measurements through `measure`; only `render` and `cli` touch the outside.
-- **Native code behind `render`.** Code that knows resvg lives in `src/render/`. The core depends on the `measure` contract, never on the renderer.
-- **Imports use `@/` and the real file name (lint).** `@/` points to `src/`. Every import is `@/utils/ColorUtil.ts`: never `../` or `./`. One style means searching for a file's `@/` path finds every importer.
-- **Names say the folder.** Files are `PascalCase` and end in their role: `ColorUtil`, `SanitizeUtil`, `CompilationModule`, `ResvgAdapter`. Folders are lowercase layer names.
+- **Layers (lint).** Inside `src/`, folders form layers and a layer imports only the ones below it: `Errors` and `Protocols` (types, Zod schemas, errors) < `Utils` < `Resources` < `Services` < `Modules` < `Commands`; `Adapters` see only `Protocols` and `Utils`. Tests may import any layer: nothing imports them. Import cycles fail `pnpm quality` (dpdm, `import type` ignored).
+- **A pure core (lint).** `Errors` to `Modules` have no clock, randomness, file system or process: the same scene gives the same SVG on any machine (ADR 0004). Files come in through the `FileReader` option and measurements through `measure`; only the adapters, the critique and check modules and the commands touch the outside.
+- **Native code behind `Adapters`.** Code that knows resvg lives in `src/Adapters/`. The core depends on the `measure` contract, never on the renderer.
+- **Imports use `@/` and the real file name (lint).** `@/` points to `src/`. Every import is `@/Utils/ColorUtil.ts`: never `../` or `./`. One style means searching for a file's `@/` path finds every importer.
+- **Names say the folder.** Files are `PascalCase` and end in their role: `ColorUtil`, `SanitizeUtil`, `CompilationModule`, `ResvgAdapter`. Folders are `PascalCase` layer names. Resources end in their kind (`HouseAsset`, `FlatKit`, `NightTheme`, `WorkspaceGroup`) and extend a `Base` class.
 - **Classes, not loose functions (lint).** Utils are classes with static methods only. The three public entries (`src/index.ts`, `src/render.ts`, `src/schema.ts`) are the only files with loose functions: thin facades over the classes. Services are classes whose dependencies come in through the constructor. Runtime constants belong to the class that owns them as `static readonly` members.
 - **One class per file, named after it (lint).** `max-classes-per-file`, `local/class-matches-file`.
 - **Protocols hold only types and schemas.** No logic. A type used by one file stays in that file.
@@ -58,7 +58,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **No nested ternaries (lint).**
 - **Name intermediate steps.** Complex conditions go into a named boolean.
 - **One responsibility per function, and the name says it.** `readX` doesn't write; `findX` doesn't create.
-- **No duplicated logic.** Search before adding a helper; reuse or extract to `src/utils/`. `pnpm quality` (jscpd) catches copies.
+- **No duplicated logic.** Search before adding a helper; reuse or extract to `src/Utils/`. `pnpm quality` (jscpd) catches copies.
 - **Unmapped values stay visible.** An unknown asset, theme or field is never dropped or guessed: it becomes a warning with the closest valid names, and the scene still compiles.
 - **No `console` (lint).** Only `src/cli.ts` writes to the terminal.
 - **Floating promises (lint).** Every promise is awaited or returned.

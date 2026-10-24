@@ -1,6 +1,6 @@
 import { ParsingModule } from "@/Modules/ParsingModule.ts";
 import { describe, expect, it } from "vitest";
-import { SceneError } from "@/Protocols/SceneError.ts";
+import { SceneError } from "@/Errors/SceneError.ts";
 
 function errorsOf(input: unknown): string[] {
   try {

@@ -4,7 +4,7 @@ import { z } from "zod";
 import type { ZodType } from "zod";
 import { canvasSchema, objectSchema, OBJECT_PARAM_KEYS, MAX_OBJECTS, SIZE_NAMES, SLOT_NAMES, sceneSchema, textSchema } from "@/Protocols/SceneProtocol.ts";
 import type { Scene } from "@/Protocols/SceneProtocol.ts";
-import { SceneError } from "@/Protocols/SceneError.ts";
+import { SceneError } from "@/Errors/SceneError.ts";
 
 export interface ParsedScene {
   scene: Scene;

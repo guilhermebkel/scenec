@@ -4,7 +4,7 @@ import type { ParsedScene } from "@/Modules/ParsingModule.ts";
 import type { CompileOptions } from "@/Protocols/OptionsProtocol.ts";
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 
-export { SceneError } from "@/Protocols/SceneError.ts";
+export { SceneError } from "@/Errors/SceneError.ts";
 export type { ParsedScene, CompileResult };
 export type { LayoutEntry } from "@/Protocols/ResultProtocol.ts";
 export type { Scene } from "@/Protocols/SceneProtocol.ts";

@@ -10,13 +10,14 @@ const TEST_FILES = ["src/**/*.test.ts", "test/**/*.ts", "scripts/**/*.test.mjs"]
 
 // Why: the legacy files were ported byte-for-byte from the JavaScript prototype to keep the 108 baselines identical (ADR 0010); they are cleaned up one folder at a time.
 const LEGACY_FILES = [
-  "src/Resources/**/*.ts", "src/Modules/**/*.ts", "src/cli.ts",
+  "src/Resources/**/*.ts", "src/Modules/**/*.ts",
   "src/Services/{CustomAssetService,GroupService,CatalogService,AssetService,KitService,ThemeService}.ts",
   "src/Utils/{RecolorUtil,ColorUtil,SanitizeUtil,SuggestUtil,PersonUtil,ShapeUtil}.ts",
 ];
 
-// Why: layer order is Protocols < Utils < Resources < Services < Modules < Cli; Adapters only see Protocols and Utils, so the core never reaches the native renderer or the file system.
+// Why: layer order is Errors, Protocols < Utils < Resources < Services < Modules < Cli; Adapters only see Protocols and Utils, so the core never reaches the native renderer or the file system.
 const LAYER_TO_FORBIDDEN_LAYERS = {
+  Errors: ["Protocols", "Utils", "Resources", "Services", "Modules", "Adapters"],
   Protocols: ["Utils", "Resources", "Services", "Modules", "Adapters"],
   Utils: ["Resources", "Services", "Modules", "Adapters"],
   Resources: ["Services", "Modules", "Adapters"],
@@ -128,7 +129,7 @@ export default tseslint.config(
   coreModulesConfig,
   {
     // Why: the core never touches the clock, randomness, the file system or the process; only render and cli do.
-    files: ["src/Protocols/**", "src/Utils/**", "src/Resources/**", "src/Services/**", "src/Modules/**"],
+    files: ["src/Errors/**", "src/Protocols/**", "src/Utils/**", "src/Resources/**", "src/Services/**", "src/Modules/**"],
     ignores: [...TEST_FILES, "src/Modules/CritiqueModule.ts", "src/Modules/CheckModule.ts"],
     rules: {
       "no-restricted-properties": ["error",
@@ -143,7 +144,7 @@ export default tseslint.config(
     rules: { "local/describe-target": "error" },
   },
   {
-    files: ["src/cli.ts", "scripts/**", "test/**"],
+    files: ["src/cli.ts", "src/Commands/**", "scripts/**", "test/**"],
     rules: { "no-console": "off", "@typescript-eslint/no-magic-numbers": "off" },
   },
   {
