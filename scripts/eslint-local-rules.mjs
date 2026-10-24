@@ -398,12 +398,17 @@ function hasOnlyFixedStrings(arrayNode) {
     && arrayNode.elements.every((element) => element?.type === "Literal" && typeof element.value === "string");
 }
 
+const MIN_TABLE_ENTRIES = 2;
+
 const knownKeys = {
   meta: {
     type: "suggestion",
+    schema: [{ type: "object", properties: { inferred: { type: "boolean" } }, additionalProperties: false }],
     messages: {
       keys: "The keys here are all known: type them as a union (Record<SomeName, ...>) instead of string, so a typo fails to compile.",
       values: "The values here are all known: type the list as an array of a union (readonly SomeName[]) instead of string[].",
+      inferredList: "An untyped list of string literals is inferred as string[]: annotate it with a union (readonly SomeName[]).",
+      inferredTable: "An untyped table of string literals is inferred as { key: string }: annotate it (Record<SomeName, SomeValue>).",
     },
   },
   create(context) {
@@ -415,15 +420,34 @@ const knownKeys = {
         context.report({ node: reportNode, messageId: "values" });
       }
     };
+    const checkInferred = (typeNode, init, reportNode) => {
+      if (typeNode || !init) {
+        return;
+      }
+      if (init.type === "ArrayExpression" && hasOnlyFixedStrings(init)) {
+        context.report({ node: reportNode, messageId: "inferredList" });
+      }
+      if (init.type === "ObjectExpression" && hasOnlyFixedKeys(init) && init.properties.length >= MIN_TABLE_ENTRIES
+        && init.properties.every((property) => property.value.type === "Literal" && typeof property.value.value === "string")) {
+        context.report({ node: reportNode, messageId: "inferredTable" });
+      }
+    };
     return {
       "VariableDeclarator"(node) {
         check(node.id.typeAnnotation?.typeAnnotation, node.init, node.id);
+        if (context.options[0]?.inferred) {
+          checkInferred(node.id.typeAnnotation, node.init, node.id);
+        }
       },
       "PropertyDefinition"(node) {
         check(node.typeAnnotation?.typeAnnotation, node.value, node.key);
+        if (context.options[0]?.inferred) {
+          checkInferred(node.typeAnnotation, node.value, node.key);
+        }
       },
     };
   },
+  defaultOptions: [{ inferred: false }],
 };
 
 export const localRules = {

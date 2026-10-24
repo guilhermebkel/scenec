@@ -331,3 +331,26 @@ tsRuleTester.run("known-keys", localRules.rules["known-keys"], {
     },
   ],
 });
+
+tsRuleTester.run("known-keys with inferred types", localRules.rules["known-keys"], {
+  valid: [
+    { name: "a list annotated with a union", code: "const KINDS: readonly AssetKind[] = [\"ground\"];", options: [{ inferred: true }] },
+    { name: "a list kept literal with as const", code: "const KINDS = [\"ground\", \"any\"] as const;", options: [{ inferred: true }] },
+    { name: "a table with a single entry is a config object", code: "const theme = { shadow: \"#000\" };", options: [{ inferred: true }] },
+    { name: "an untyped list is allowed when the option is off", code: "const KINDS = [\"ground\", \"any\"];" },
+  ],
+  invalid: [
+    {
+      name: "an untyped list of strings",
+      code: "class A { static readonly KINDS = [\"ground\", \"any\"]; }",
+      options: [{ inferred: true }],
+      errors: [{ messageId: "inferredList" }],
+    },
+    {
+      name: "an untyped table of strings",
+      code: "const NAME_TO_MIME = { png: \"image/png\", jpg: \"image/jpeg\" };",
+      options: [{ inferred: true }],
+      errors: [{ messageId: "inferredTable" }],
+    },
+  ],
+});

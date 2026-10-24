@@ -1,6 +1,6 @@
 import type { CompilationContext, LayoutLines } from "@/Protocols/CompilationProtocol.ts";
 import type { CompileOptions } from "@/Protocols/OptionsProtocol.ts";
-import { SETTING_NAMES, type Scene, type SettingName } from "@/Protocols/SceneProtocol.ts";
+import { SETTING_NAMES, type ModeName, type Scene, type SettingName } from "@/Protocols/SceneProtocol.ts";
 import { KIT_IDS, type KitId } from "@/Protocols/KitProtocol.ts";
 import { THEME_IDS, type Theme, type ThemeId } from "@/Protocols/ThemeProtocol.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
@@ -22,7 +22,7 @@ export class ContextService {
 
   private static readonly TALL_HEIGHT = 900;
 
-  private static readonly TALL_MODES = ["2.5d", "board"];
+  private static readonly TALL_MODES: readonly ModeName[] = ["2.5d", "board"];
 
   // Why: the unit is the pixel size of one asset unit, where a person is 100 units tall.
   private static readonly UNIT_PER_HEIGHT = 0.0034;
@@ -41,7 +41,7 @@ export class ContextService {
   static create(scene: Scene, options: CompileOptions, warnings: string[]): CompilationContext {
     const canvas = scene.canvas ?? {};
     const width = canvas.width ?? ContextService.DEFAULT_WIDTH;
-    const height = canvas.height ?? (ContextService.TALL_MODES.includes(canvas.mode ?? "") ? ContextService.TALL_HEIGHT : ContextService.CLASSIC_HEIGHT);
+    const height = canvas.height ?? (IdUtil.isOneOf(ContextService.TALL_MODES, canvas.mode) ? ContextService.TALL_HEIGHT : ContextService.CLASSIC_HEIGHT);
     const kit = ContextService.kitOf(canvas.kit, warnings);
     const theme: Theme = { ...ContextService.themeOf(canvas.theme, warnings), ...(kit.colors ?? {}), ...(canvas.colors ?? {}) };
     const setting = canvas.setting ?? ContextService.DEFAULT_SETTING;

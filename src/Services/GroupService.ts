@@ -15,7 +15,7 @@ import type { SceneObject, SizeName } from "@/Protocols/SceneProtocol.ts";
 
 export class GroupService {
   // Why: these are the keys that name another object, so a group has to prefix them with its own id.
-  private static readonly REFERENCE_KEYS = [
+  private static readonly REFERENCE_KEYS: readonly (keyof GroupPart)[] = [
     "left_of", "right_of", "behind", "in_front_of", "on", "under", "above", "holds", "look",
   ];
 

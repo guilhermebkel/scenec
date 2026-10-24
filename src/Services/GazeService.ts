@@ -1,8 +1,11 @@
 import type { AssetParams, PersonDrawing } from "@/Protocols/AssetProtocol.ts";
 import type { CompilationContext, Placement } from "@/Protocols/CompilationProtocol.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
+
+type GazeDirection = "left" | "right" | "up" | "down" | "up-left" | "up-right" | "down-left" | "down-right" | "camera" | "forward";
 
 export class GazeService {
-  private static readonly DIRECTION_NAMES = [
+  private static readonly DIRECTION_NAMES: readonly GazeDirection[] = [
     "left", "right", "up", "down", "up-left", "up-right", "down-left", "down-right", "camera", "forward",
   ];
 
@@ -17,7 +20,7 @@ export class GazeService {
       }
       const target = placed[object.look];
       if (!target) {
-        if (!GazeService.DIRECTION_NAMES.includes(object.look)) {
+        if (!IdUtil.isOneOf(GazeService.DIRECTION_NAMES, object.look)) {
           warnings.push(`'${placement.id}' looks at '${object.look}', which does not exist in the scene`);
         }
         continue;

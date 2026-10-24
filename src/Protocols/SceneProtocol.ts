@@ -4,6 +4,8 @@ export const SLOT_NAMES = ["far-left", "left", "center-left", "center", "center-
 export const SIZE_NAMES = ["tiny", "small", "medium", "large", "huge"] as const;
 export const DEPTH_NAMES = ["far", "mid", "near"] as const;
 export const MODE_NAMES = ["classic", "2.5d", "board", "map"] as const;
+
+export type ModeName = (typeof MODE_NAMES)[number];
 export const SETTING_NAMES = ["outdoor", "indoor", "beach", "city"] as const;
 export const SHOT_NAMES = ["wide", "full", "medium", "close"] as const;
 export const MAX_OBJECTS = 200;

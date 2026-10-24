@@ -1,5 +1,6 @@
 import type { AssetId, AssetParams, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
 import type { CompilationContext, Depth, Placement } from "@/Protocols/CompilationProtocol.ts";
+import type { SeatedPoseName } from "@/Protocols/PersonProtocol.ts";
 import { DEPTH_NAMES } from "@/Protocols/SceneProtocol.ts";
 import type { ObjectLayer, SceneObject, SizeName, SlotName } from "@/Protocols/SceneProtocol.ts";
 import { AssetService } from "@/Services/AssetService.ts";
@@ -7,6 +8,8 @@ import { DependencyOrderService, type ResolutionOrder } from "@/Services/Depende
 import { IdUtil } from "@/Utils/IdUtil.ts";
 import { RequireUtil } from "@/Utils/RequireUtil.ts";
 import { PersonUtil } from "@/Utils/PersonUtil.ts";
+
+type SeatedPose = SeatedPoseName | "sitting_floor" | "hugging_knees";
 
 interface Position {
   x: number;
@@ -43,7 +46,7 @@ export class PlacementService {
   // Why: the height, in drawing units, of the point where a hand grips each object.
   private static readonly ASSET_TO_GRIP_HEIGHT: Partial<Record<AssetId, number>> = { cup: 6, suitcase: 44, books: 8, ball: 12 };
 
-  private static readonly SEATED_POSES = ["sitting", "typing", "reading", "drinking", "sitting_floor", "hugging_knees"];
+  private static readonly SEATED_POSES: readonly SeatedPose[] = ["sitting", "typing", "reading", "drinking", "sitting_floor", "hugging_knees"];
 
   private static readonly SEAT_ALIGN_TO_OFFSET: Record<"left" | "right" | "center", number> = { left: -0.28, right: 0.28, center: 0 };
 
@@ -280,7 +283,7 @@ export class PlacementService {
     }
     const supportAsset = RequireUtil.defined(library[support.asset], `library asset ${support.asset}`);
     const scale = support.scale * sizeFactor;
-    const isSeated = PlacementService.SEATED_POSES.includes(String(object.pose));
+    const isSeated = IdUtil.isOneOf(PlacementService.SEATED_POSES, object.pose);
     if (supportAsset.seat && isSeated) {
       const offset = PlacementService.alignOffset(object.align, PlacementService.SEAT_ALIGN_TO_OFFSET);
       const backset = object.facing === "left" ? 1 : -1;

@@ -108,7 +108,7 @@ export default tseslint.config(
       "local/comment-marker": "error",
       "local/comment-placement": "error",
       "local/map-name": "error",
-      "local/known-keys": "error",
+      "local/known-keys": ["error", { inferred: true }],
       "local/literal-dispatch": "error",
       "max-classes-per-file": ["error", 1],
       "local/class-matches-file": "error",
@@ -143,6 +143,11 @@ export default tseslint.config(
   {
     files: ["src/cli.ts", "src/Commands/**", "scripts/**", "test/**"],
     rules: { "no-console": "off", "@typescript-eslint/no-magic-numbers": "off" },
+  },
+  {
+    // Why: a resource class fills fields that its Base class already types, so an untyped literal there is not a lost union.
+    files: ["src/Resources/**"],
+    rules: { "local/known-keys": ["error", { inferred: false }] },
   },
   {
     // Why: in drawing code a number is a coordinate, size or angle of a shape, not a business rule; naming each one would hide the drawing behind constants. Logic code (Services, Modules, Commands) keeps the rule on.
