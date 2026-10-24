@@ -1,8 +1,31 @@
 import { z } from "zod";
-import { sceneSchema } from "./protocols/scene.ts";
+import { CatalogService } from "@/pipeline/CatalogService.ts";
+import type { AssetEntry, CatalogKind } from "@/pipeline/CatalogService.ts";
+import { sceneSchema } from "@/protocols/scene.ts";
 
-export { catalog, CATALOG_KINDS, listAssets, listGroups, listKits, listThemes } from "./catalog.ts";
-export type { AssetEntry, CatalogKind } from "./catalog.ts";
+export type { AssetEntry, CatalogKind };
+
+export const CATALOG_KINDS = CatalogService.CATALOG_KINDS;
+
+export function catalog(kind: CatalogKind): unknown {
+  return CatalogService.catalog(kind);
+}
+
+export function listAssets(): AssetEntry[] {
+  return CatalogService.listAssets();
+}
+
+export function listGroups(): ReturnType<typeof CatalogService.listGroups> {
+  return CatalogService.listGroups();
+}
+
+export function listKits(): ReturnType<typeof CatalogService.listKits> {
+  return CatalogService.listKits();
+}
+
+export function listThemes(): string[] {
+  return CatalogService.listThemes();
+}
 
 export function sceneJsonSchema(): Record<string, unknown> {
   return z.toJSONSchema(sceneSchema, { target: "draft-2020-12" });

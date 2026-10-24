@@ -1,6 +1,7 @@
-import type { CompileOptions } from "../protocols/options.ts";
-import { compileInternal } from "./compile.ts";
-import { parseScene } from "./parse.ts";
+import { ParseService } from "@/pipeline/ParseService.ts";
+import type { ParsedScene } from "@/pipeline/ParseService.ts";
+import { CompileService } from "@/pipeline/CompileService.ts";
+import type { CompileOptions } from "@/protocols/options.ts";
 
 export interface LayoutEntry {
   id: string;
@@ -19,7 +20,11 @@ export interface CompileResult {
 }
 
 export function compile(input: unknown, options: CompileOptions = {}): CompileResult {
-  const { scene, warnings } = parseScene(input);
-  const { critiqueInput: _ignored, ...result } = compileInternal(scene, options);
+  const { scene, warnings } = ParseService.parseScene(input);
+  const { critiqueInput: _ignored, ...result } = CompileService.compileInternal(scene, options);
   return { ...result, warnings: [...warnings, ...result.warnings] } as CompileResult;
+}
+
+export function parseScene(input: unknown): ParsedScene {
+  return ParseService.parseScene(input);
 }

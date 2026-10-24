@@ -11,7 +11,6 @@
     "resolveJsonModule": true,
     "types": ["node"],
     "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
     "declaration": true,
     "outDir": "dist",
     "rootDir": ".",

@@ -1,25 +1,25 @@
+import { ParseService } from "@/pipeline/ParseService.ts";
 import { describe, expect, it } from "vitest";
-import { parseScene } from "./parse.ts";
-import { SceneError } from "./SceneError.ts";
+import { SceneError } from "@/pipeline/SceneError.ts";
 
 function errorsOf(input: unknown): string[] {
   try {
-    parseScene(input);
+    ParseService.parseScene(input);
   } catch (error) {
     return (error as SceneError).errors;
   }
   return [];
 }
 
-describe("parse.parseScene()", () => {
+describe("ParseService.parseScene()", () => {
   it("reads a scene from YAML text", () => {
-    const { scene, warnings } = parseScene("canvas:\n  width: 800\nobjects:\n  tree:\n    at: left\n");
+    const { scene, warnings } = ParseService.parseScene("canvas:\n  width: 800\nobjects:\n  tree:\n    at: left\n");
 
     expect([scene, warnings]).toStrictEqual([{ canvas: { width: 800 }, objects: { tree: { at: "left" } } }, []]);
   });
 
   it("reads a scene that is already an object", () => {
-    expect(parseScene({ canvas: { theme: "night" } }).scene).toStrictEqual({ canvas: { theme: "night" } });
+    expect(ParseService.parseScene({ canvas: { theme: "night" } }).scene).toStrictEqual({ canvas: { theme: "night" } });
   });
 
   it("reports broken YAML with the position", () => {
@@ -64,13 +64,13 @@ describe("parse.parseScene()", () => {
   });
 
   it("warns about an unknown field and suggests the close name, without refusing the scene", () => {
-    const { warnings } = parseScene({ objects: { tree: { asset: "tree", siz: "small" } } });
+    const { warnings } = ParseService.parseScene({ objects: { tree: { asset: "tree", siz: "small" } } });
 
     expect(warnings).toStrictEqual(["campo 'siz' desconhecido em objects.tree; você quis dizer 'size'?"]);
   });
 
   it("warns that an unknown field with no close name will be ignored", () => {
-    const { warnings } = parseScene({ canvas: { zzzzzzzz: 1 } });
+    const { warnings } = ParseService.parseScene({ canvas: { zzzzzzzz: 1 } });
 
     expect(warnings).toStrictEqual(["campo 'zzzzzzzz' desconhecido em canvas; ele será ignorado"]);
   });

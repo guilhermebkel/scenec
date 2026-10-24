@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { compile } from "./index.ts";
+import { compile } from "@/pipeline/index.ts";
 
 const FRAME = { width: 1000, height: 500 };
 

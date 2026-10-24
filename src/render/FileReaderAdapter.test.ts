@@ -1,9 +1,8 @@
+import { FileReaderAdapter } from "@/render/FileReaderAdapter.ts";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createFileReader } from "./files.ts";
-
 let root = "";
 
 beforeAll(() => {
@@ -17,9 +16,9 @@ afterAll(() => {
   fs.rmSync(root, { recursive: true, force: true });
 });
 
-describe("files.createFileReader()", () => {
+describe("FileReaderAdapter.createFileReader()", () => {
   it("reads text and bytes inside the scene folder", () => {
-    const reader = createFileReader(path.join(root, "scene"));
+    const reader = FileReaderAdapter.createFileReader(path.join(root, "scene"));
 
     expect([reader.readText("custom/a.svg"), reader.readBytes("custom/a.svg")]).toStrictEqual([
       "<svg/>",
@@ -28,20 +27,20 @@ describe("files.createFileReader()", () => {
   });
 
   it("refuses a path that climbs out of the scene folder", () => {
-    const reader = createFileReader(path.join(root, "scene"));
+    const reader = FileReaderAdapter.createFileReader(path.join(root, "scene"));
 
     expect(() => reader.readText("../secret.txt")).toThrow("caminho '../secret.txt' fora da pasta da cena; use um caminho relativo dentro dela");
   });
 
   it("refuses an absolute path", () => {
-    const reader = createFileReader(path.join(root, "scene"));
+    const reader = FileReaderAdapter.createFileReader(path.join(root, "scene"));
     const absolute = path.join(root, "secret.txt");
 
     expect(() => reader.readText(absolute)).toThrow(`caminho '${absolute}' fora da pasta da cena; use um caminho relativo dentro dela`);
   });
 
   it("reports a missing file with the ENOENT code", () => {
-    const reader = createFileReader(path.join(root, "scene"));
+    const reader = FileReaderAdapter.createFileReader(path.join(root, "scene"));
 
     expect(() => reader.readText("custom/missing.svg")).toThrow(expect.objectContaining({ code: "ENOENT" }));
   });

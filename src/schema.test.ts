@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { catalog, listAssets, listGroups, sceneJsonSchema } from "./schema.ts";
+import { catalog, listAssets, listGroups, sceneJsonSchema } from "@/schema.ts";
 
 describe("schema.sceneJsonSchema()", () => {
   it("describes canvas, objects and text as the top-level fields", () => {

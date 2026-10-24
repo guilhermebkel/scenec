@@ -54,7 +54,7 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.build.json && node scripts/rewrite-aliases.mjs",
+    "build": "node scripts/build.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -84,6 +84,7 @@
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitest/eslint-plugin": "^1.6.28",
     "dpdm": "^4.3.0",
+    "esbuild": "0.28.2",
     "eslint": "^10.13.0",
     "eslint-plugin-sonarjs": "^4.2.2",
     "globals": "^17.13.0",

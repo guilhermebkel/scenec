@@ -2,10 +2,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parseArgs } from "node:util";
-import { CATALOG_KINDS, catalog, sceneJsonSchema } from "./schema.ts";
-import type { CatalogKind } from "./schema.ts";
-import { SceneError } from "./pipeline/SceneError.ts";
-import { check, createFileReader, renderPng } from "./render.ts";
+import { CATALOG_KINDS, catalog, sceneJsonSchema } from "@/schema.ts";
+import type { CatalogKind } from "@/schema.ts";
+import { SceneError } from "@/pipeline/SceneError.ts";
+import { check, createFileReader, renderPng } from "@/render.ts";
 
 const SCHEMA_VERSION = 1;
 const CHARS_PER_TOKEN = 3.6;
