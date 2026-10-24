@@ -18,7 +18,7 @@ export class CatalogService {
 
   static listAssets(): AssetEntry[] {
     return Object.entries(AssetService.ASSETS).map(([id, asset]) => ({
-      id, kind: asset.kind as string, width: asset.w as number, height: asset.h as number, synonyms: (asset.tags ?? []) as string[],
+      id, kind: asset.kind, width: asset.w, height: asset.h, synonyms: (asset.tags ?? []) as string[],
     }));
   }
 
@@ -26,12 +26,12 @@ export class CatalogService {
     return Object.entries(GroupService.GROUPS).map(([id, group]) => {
       const built = group.build({ at: 0.5 }) as Record<string, { asset: string }>;
       const parts = Object.fromEntries(Object.entries(built).map(([part, def]) => [part, def.asset]));
-      return { id, description: group.desc as string, parts };
+      return { id, description: group.desc, parts };
     });
   }
 
   static listKits(): { id: string; description: string }[] {
-    return Object.entries(KitService.KITS).map(([id, kit]) => ({ id, description: kit.desc as string }));
+    return Object.entries(KitService.KITS).map(([id, kit]) => ({ id, description: kit.desc }));
   }
 
   static listThemes(): string[] {

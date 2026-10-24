@@ -1,3 +1,11 @@
+import { FlatKit } from "@/Resources/Kits/FlatKit.ts";
+import { OutlineKit } from "@/Resources/Kits/OutlineKit.ts";
+import { HatchKit } from "@/Resources/Kits/HatchKit.ts";
+import { RisoKit } from "@/Resources/Kits/RisoKit.ts";
+import { PaperKit } from "@/Resources/Kits/PaperKit.ts";
+import { SketchKit } from "@/Resources/Kits/SketchKit.ts";
+import { BaseKit } from "@/Resources/Kits/BaseKit.ts";
+
 
 export class KitService {
   // Kits de estilo: a mesma cena com outra linguagem visual (não só outra paleta).
@@ -5,31 +13,9 @@ export class KitService {
 // Cada kit decide: cores de base, como a luz aparece (gradiente, hachura ou nada), contorno por objeto,
 // filtro de cena inteira e textura por cima (abaixo do texto). Tudo SVG puro, renderizável no resvg.
 
-  static readonly KITS: Record<string, any> = {
-    flat: { desc: "flat vector with soft light (default)" },
-    outline: {
-      desc: "cartoon outline: thick border on the silhouette and a thin line inside",
-      outline: { w: 2.6, inner: 0.9 }, light: { strength: 0.45 },
-    },
-    hatch: {
-      desc: "engraving/comics: ink outline, hatched shadows instead of gradients, light paper",
-      outline: { w: 2.4, inner: 1.0 }, light: { mode: "hatch" }, texture: "paper",
-      colors: { shadow: "rgba(40,30,30,0.18)" },
-    },
-    riso: {
-      desc: "risograph: few vivid inks, print grain and slightly misaligned registration",
-      colors: { primary: "#0078BF", accent: "#FF48B0", secondary: "#1F3A93", paper: "#FFF8EC", text: "#1A1F4A", ink: "#1A1F4A" },
-      light: { mode: "none" }, scene: "riso",
-    },
-    paper: {
-      desc: "paper cut-out: each piece with its own shadow and fiber texture",
-      light: { strength: 0.18, casts: false }, drop: true, texture: "fiber",
-    },
-    sketch: {
-      desc: "sketch: watercolor-washed colors and pencil lines on the edges",
-      light: { mode: "none" }, scene: "sketch", texture: "paper",
-    },
-  };
+  static readonly KITS: Record<string, BaseKit> = Object.fromEntries(
+    [new FlatKit(), new OutlineKit(), new HatchKit(), new RisoKit(), new PaperKit(), new SketchKit()].map((kit) => [kit.id, kit]),
+  );
 
   private static readonly n = (v: any) => (+v).toFixed(3);
 
@@ -58,6 +44,7 @@ export class KitService {
     return `<pattern id="hatchP" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect x="0" y="0" width="1.5" height="7" fill="${ink}" fill-opacity="0.5"/></pattern>` +
       `<pattern id="hatchC" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-35)"><rect x="0" y="0" width="1.4" height="6" fill="${ink}" fill-opacity="0.42"/><rect x="0" y="0" width="6" height="1.2" fill="${ink}" fill-opacity="0.22"/></pattern>`;
   }
+
 
   // filtros de cena inteira
   static sceneFilter(kind: any, t: any) {

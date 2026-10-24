@@ -1,3 +1,11 @@
+import { WorkspaceGroup } from "@/Resources/Groups/WorkspaceGroup.ts";
+import { ReadingCornerGroup } from "@/Resources/Groups/ReadingCornerGroup.ts";
+import { DiningGroup } from "@/Resources/Groups/DiningGroup.ts";
+import { ConversationGroup } from "@/Resources/Groups/ConversationGroup.ts";
+import { ParkBenchGroup } from "@/Resources/Groups/ParkBenchGroup.ts";
+import { CelebrationGroup } from "@/Resources/Groups/CelebrationGroup.ts";
+import { MeetingGroup } from "@/Resources/Groups/MeetingGroup.ts";
+import { BaseGroup } from "@/Resources/Groups/BaseGroup.ts";
 
 export class GroupService {
   // Grupos prontos: um objeto `group: <nome>` vira várias peças já arrumadas entre si.
@@ -7,99 +15,9 @@ export class GroupService {
 
   private static readonly REL = ["left_of", "right_of", "behind", "in_front_of", "on", "under", "above", "holds", "look"];
 
-  static readonly GROUPS: Record<string, any> = {
-    // canto de trabalho: mesa, cadeira, pessoa digitando, tela, luminária, caneca e planta
-    workspace: {
-      anchor: "mesa", desc: "work desk with a person typing, screen, lamp, mug and plant",
-      build: (g: any) => ({
-        mesa: { asset: "desk", at: g.at, color: g.color },
-        cadeira: { asset: "chair", left_of: "mesa", gap: -0.04, facing: "right" },
-        pessoa: { asset: "person", pose: "typing", on: "cadeira", facing: "right", ...g.person },
-        tela: g.screen === "monitor" ? { asset: "monitor", on: "mesa", align: -0.1, size: 0.8 } : { asset: "laptop", on: "mesa", align: "left", facing: "left" },
-        luminaria: { asset: "lamp", on: "mesa", align: "right" },
-        caneca: { asset: "cup", on: "mesa", align: 0.12, color: "accent" },
-        planta: { asset: "big_plant", right_of: "mesa", gap: 0.015, size: "small" },
-      }),
-    },
-    // canto de leitura: sofá, pessoa lendo, abajur de chão e prateleira acima
-    reading_corner: {
-      anchor: "sofa", desc: "sofa with a person reading, floor lamp and shelf",
-      build: (g: any) => ({
-        sofa: { asset: "sofa", at: g.at, color: g.color || "secondary" },
-        pessoa: { asset: "person", pose: "reading", on: "sofa", align: "left", facing: "right", pants: "metal", ...g.person },
-        abajur: { asset: "floor_lamp", right_of: "sofa", gap: 0.005 },
-        prateleira: { asset: "shelf_wall", above: "sofa", offset: 0.18, elevation: 45 },
-      }),
-    },
-    // mesa de refeição: duas pessoas sentadas frente a frente, olhando uma para a outra
-    dining: {
-      anchor: "mesa", desc: "table with two seated people talking, food and drinks",
-      build: (g: any) => {
-        const [a = {}, b = {}] = g.people || [];
-        return {
-          mesa: { asset: "table", at: g.at, color: g.color },
-          cadeira1: { asset: "chair", left_of: "mesa", gap: -0.004, facing: "right" },
-          cadeira2: { asset: "chair", right_of: "mesa", gap: -0.004, facing: "left" },
-          pessoa1: { asset: "person", pose: "sitting", on: "cadeira1", facing: "right", look: "pessoa2", ...a },
-          pessoa2: { asset: "person", pose: "drinking", on: "cadeira2", facing: "left", look: "pessoa1", ...b },
-          prato: { asset: g.food || "pizza", on: "mesa", align: 0 },
-          copo1: { asset: "cup", on: "mesa", align: -0.32, steam: false },
-        };
-      },
-    },
-    // conversa em pé: um fala (apresentando), o outro escuta; os dois se olham
-    conversation: {
-      anchor: "pessoa1", desc: "two standing people talking, looking at each other",
-      build: (g: any) => {
-        const [a = {}, b = {}] = g.people || [];
-        return {
-          pessoa1: { asset: "person", at: g.at, pose: "presenting", facing: "right", look: "pessoa2", expr: "happy", ...a },
-          pessoa2: { asset: "person", right_of: "pessoa1", gap: g.gap ?? 0.04, pose: "standing", facing: "left", look: "pessoa1", expr: "neutral", ...b },
-        };
-      },
-    },
-    // banco de praça: banco, árvore, pessoa sentada lendo e cachorro
-    park_bench: {
-      anchor: "banco", desc: "park bench with a tree, a seated person and a dog",
-      build: (g: any) => ({
-        banco: { asset: "bench", at: g.at, color: g.color },
-        arvore: { asset: "tree", right_of: "banco", gap: -0.02, depth: "mid" },
-        pessoa: { asset: "person", pose: "reading", on: "banco", align: "left", facing: "right", ...g.person },
-        cachorro: { asset: "dog", left_of: "banco", gap: 0.01, facing: "right", look: "pessoa" },
-      }),
-    },
-    // comemoração: mesa com bolo, balões e duas pessoas festejando
-    celebration: {
-      anchor: "mesa", desc: "table with cake, balloons and two people celebrating",
-      build: (g: any) => {
-        const [a = {}, b = {}] = g.people || [];
-        return {
-          mesa: { asset: "table", at: g.at, color: g.color },
-          bolo: { asset: "cake", on: "mesa", size: 1.4 },
-          baloes: { asset: "balloons", right_of: "mesa", gap: 0.01 },
-          pessoa1: { asset: "person", left_of: "mesa", gap: 0.01, pose: "celebrating", expr: "laughing", look: "bolo", ...a },
-          pessoa2: { asset: "person", right_of: "baloes", gap: 0.0, pose: "waving", expr: "happy", facing: "left", look: "pessoa1", ...b },
-        };
-      },
-    },
-    // reunião: quadro na parede, uma pessoa apresenta e duas assistem sentadas
-    meeting: {
-      anchor: "mesa", desc: "meeting table with a board, one person presenting and two seated",
-      build: (g: any) => {
-        const [a = {}, b = {}, c = {}] = g.people || [];
-        return {
-          quadro: { asset: "board", above: "mesa", offset: 0.1, elevation: 70 },
-          mesa: { asset: "desk", at: g.at, color: g.color },
-          cadeira1: { asset: "chair", left_of: "mesa", gap: -0.03, facing: "right" },
-          cadeira2: { asset: "chair", right_of: "mesa", gap: -0.03, facing: "left" },
-          pessoa1: { asset: "person", pose: "sitting", on: "cadeira1", facing: "right", look: "quadro", ...a },
-          pessoa2: { asset: "person", behind: "mesa", offset: 0.05, layer: "back", pose: "presenting", look: "pessoa1", ...b },
-          pessoa3: { asset: "person", pose: "sitting", on: "cadeira2", facing: "left", look: "pessoa2", ...c },
-          notebook: { asset: "laptop", on: "mesa", align: "left", facing: "left" },
-        };
-      },
-    },
-  };
+  static readonly GROUPS: Record<string, BaseGroup> = Object.fromEntries(
+    [new WorkspaceGroup(), new ReadingCornerGroup(), new DiningGroup(), new ConversationGroup(), new ParkBenchGroup(), new CelebrationGroup(), new MeetingGroup()].map((group) => [group.id, group]),
+  );
 
   private static readonly SIZES: Record<string, any> = { tiny: 0.5, small: 0.75, medium: 1, large: 1.3, huge: 1.7 };
 

@@ -12,7 +12,7 @@ const TEST_FILES = ["src/**/*.test.ts", "test/**/*.ts", "scripts/**/*.test.mjs"]
 const LEGACY_FILES = [
   "src/Resources/**/*.ts", "src/Modules/**/*.ts", "src/cli.ts",
   "src/Services/{CustomAssetService,GroupService,CatalogService,AssetService,KitService,ThemeService}.ts",
-  "src/Utils/{RecolorUtil,ColorUtil,SanitizeUtil,SuggestUtil,PersonUtil}.ts",
+  "src/Utils/{RecolorUtil,ColorUtil,SanitizeUtil,SuggestUtil,PersonUtil,ShapeUtil}.ts",
 ];
 
 // Why: layer order is Protocols < Utils < Resources < Services < Modules < Cli; Adapters only see Protocols and Utils, so the core never reaches the native renderer or the file system.
