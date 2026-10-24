@@ -145,6 +145,16 @@ export default tseslint.config(
     rules: { "no-console": "off", "@typescript-eslint/no-magic-numbers": "off" },
   },
   {
+    // Why: the config and the build scripts are plain JavaScript with no types to narrow.
+    files: ["eslint.config.mjs", "scripts/**"],
+    rules: { "local/known-keys": "off" },
+  },
+  {
+    // Why: the Oklab conversion is a published table of coefficients; each number has no meaning apart from its place in the matrix.
+    files: ["src/Utils/OklabUtil.ts"],
+    rules: { "@typescript-eslint/no-magic-numbers": "off" },
+  },
+  {
     // Why: a resource class fills fields that its Base class already types, so an untyped literal there is not a lost union.
     files: ["src/Resources/**"],
     rules: { "local/known-keys": ["error", { inferred: false }] },

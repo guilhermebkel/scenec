@@ -252,6 +252,6 @@
     "art: 'quadro_rosa' and 'foto' almost touch (tangency); move them apart a little or overlap them on purpose",
     "art: 'foto' and 'quadro_txt' almost touch (tangency); move them apart a little or overlap them on purpose",
     "art: 'foto' and 'bone' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'interruptor' touches the edge (direita); move it away from the edge or let it crop on purpose"
+    "art: 'interruptor' touches the edge (right); move it away from the edge or let it crop on purpose"
   ]
 }

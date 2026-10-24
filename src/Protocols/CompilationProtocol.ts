@@ -99,7 +99,7 @@ export interface Background {
 export interface CritiqueObject {
   id: string;
   asset: string;
-  kind: string;
+  kind: AssetKind;
   z: number;
   body: string;
   related: string[];
