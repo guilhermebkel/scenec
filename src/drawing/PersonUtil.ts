@@ -36,7 +36,7 @@ export class PersonUtil {
   static readonly POSE_NAMES = { standing: Object.keys(PersonUtil.FRONT_POSES), seated: Object.keys(PersonUtil.SIDE_POSES) };
 
   // Proporções do corpo. age: child | teen | adult | elder; build: slim | average | broad | heavy;
-// height: multiplicador da altura do corpo (0.85 a 1.15). A cabeça escala menos que o corpo (criança tem cabeça grande).
+  // height: multiplicador da altura do corpo (0.85 a 1.15). A cabeça escala menos que o corpo (criança tem cabeça grande).
   private static readonly AGE: Record<string, any> = { child: { bx: 0.8, by: 0.58, hs: 0.93 }, teen: { bx: 0.9, by: 0.86, hs: 0.97 }, adult: { bx: 1, by: 1, hs: 1 }, elder: { bx: 1, by: 0.95, hs: 1 } };
 
   private static readonly BUILD: Record<string, any> = { slim: 0.88, average: 1, broad: 1.12, heavy: 1.16 };
@@ -184,7 +184,7 @@ export class PersonUtil {
     const HD = (x: any, tilt = 0) => `<g transform="translate(0 ${PersonUtil.r(-81 * k.by + 81 * k.hs)}) scale(${PersonUtil.r(k.hs)}) rotate(${PersonUtil.r(tilt)} 0 -82)">${x}</g>`;
     const box = { w: 40 * k.bx, h: 81 * k.by + 27 * k.hs };
     const out = (svg: any, H: any) => ({ svg, hand: [H[0] * k.bx, H[1] * k.by], box });
-  
+
     // ---------- sentado (perfil) ----------
     if (PersonUtil.SIDE_POSES[pose] || pose === "sitting_typing") {
       const f = p.facing === "left" ? -1 : 1;
@@ -211,7 +211,7 @@ export class PersonUtil {
       const gz = PersonUtil.gazeOf(p, pose, f);
       return out(shadow + B(armsBack + legs + torso) + HD(PersonUtil.head(p, t, f, false, gz), f * gz[1] * 7) + B(armsFront + prop), front.H);
     }
-  
+
     // ---------- em pé (frente ou costas) ----------
     const back = p.view === "back";
     const P = PersonUtil.FRONT_POSES[pose] || PersonUtil.FRONT_POSES.standing;

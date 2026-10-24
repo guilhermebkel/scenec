@@ -2,12 +2,10 @@
 
 How tests in this repository are written. `pnpm lint` enforces the rules marked **(lint)**, through `@vitest/eslint-plugin` and the rules in `docs/code-standards.md`, which apply to tests too; the rest are checked in review. Every rule here serves one of two questions: would this test fail if the code broke, and is it testing the real code?
 
-Rules marked **(pending)** wait for the class refactor in [issue #1](https://github.com/guilhermebkel/scenec/issues/1).
-
 ## Where tests live
 
 - **Next to the code.** A unit test lives beside the file it tests and shares its name: `ColorUtil.ts` → `ColorUtil.test.ts`. Suites that cut across files live in `test/`: `test/visual/` (baselines), `test/smoke/` (every asset in every kit) and `test/package/` (public exports, the skill).
-- **The outer describe names what is tested (pending).** Every unit test sits under a top-level `describe("ClassName.method()")`: the class the file tests and the public method the tests go through. Situations go in describes inside it, worded as a context (`describe("when the hex color has three digits")`). Lint (`local/describe-target`) checks that the class is the file's and that the method exists and is public, so renaming a method without its tests fails. Until the refactor, the outer describe is `file.function()`.
+- **The outer describe names what is tested (lint).** Every unit test sits under a top-level `describe("ClassName.method()")`: the class the file tests and the public method the tests go through. Situations go in describes inside it, worded as a context (`describe("when the hex color has three digits")`). Lint (`local/describe-target`) checks that the class is the file's and that the method exists and is public, so renaming a method without its tests fails.
 - **Through the highest seam.** Test behavior through `parseScene`, `compile`, `check` and the CLI. Test a lower module directly only for logic with many cases (color math, suggestions, the sanitizer).
 - **Fixtures in the real format.** Scenes are real YAML; custom SVG fixtures are real SVG, including hostile ones (scripts, entities, external links).
 - **Every new behavior brings its test.** Each new asset, field, rule or output path gets a test. A new asset also enters the smoke suite on its own, because it iterates the catalog.

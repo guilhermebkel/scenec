@@ -1,4 +1,3 @@
-
 export class SvgUtil {
   private static readonly SHAPE_OP = /<(rect|path|circle|ellipse|polygon|polyline|line)\b([^>]*?)\sopacity="([\d.]+)"([^>]*?)\/>/g;
 

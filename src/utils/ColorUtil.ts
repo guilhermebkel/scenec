@@ -2,7 +2,7 @@
 export class ColorUtil {
   // Color helpers shared by every layer.
 
-/** Darkens (k < 0) or lightens (k > 0) a hex color by mixing it with black or white. */
+  /** Darkens (k < 0) or lightens (k > 0) a hex color by mixing it with black or white. */
   static sh(hex: string, k: number): string {
     if (!hex.startsWith("#")) {
       return hex;

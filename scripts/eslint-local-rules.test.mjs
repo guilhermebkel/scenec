@@ -112,6 +112,94 @@ ruleTester.run("comment-marker", localRules.rules["comment-marker"], {
   ],
 });
 
+ruleTester.run("class-matches-file", localRules.rules["class-matches-file"], {
+  valid: [
+    {
+      name: "one exported class named after its file",
+      filename: TIME_UTIL_FILE,
+      code: "export class TimeUtil {}",
+    },
+    {
+      name: "a class expression inside a function is not the file's class",
+      filename: TIME_UTIL_FILE,
+      code: "export class TimeUtil { static make() { return class {}; } }",
+    },
+  ],
+  invalid: [
+    {
+      name: "a second class in the file",
+      filename: "src/Providers/ClaudeCode/Services/ClaudeCodeInventoryService.ts",
+      code: "class InventoryBuilder {} export class ClaudeCodeInventoryService {}",
+      errors: [{ messageId: "mismatch", data: { name: "InventoryBuilder", file: "ClaudeCodeInventoryService" } }],
+    },
+    {
+      name: "a file named after something else",
+      filename: "src/Shared/Utils/SessionFactsFixtureUtil.ts",
+      code: "export class SessionFactsBuilder {}",
+      errors: [{ messageId: "mismatch", data: { name: "SessionFactsBuilder", file: "SessionFactsFixtureUtil" } }],
+    },
+  ],
+});
+
+const TIME_UTIL_TEST = "scripts/fixtures/TimeUtil.test.ts";
+const ADAPTER_TEST = "scripts/fixtures/ClaudeCodeProviderAdapter.test.ts";
+
+ruleTester.run("describe-target", localRules.rules["describe-target"], {
+  valid: [
+    {
+      name: "the outer describe names the class and a public static method, with contexts inside",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"TimeUtil.parsePointInTime()\", () => { describe(\"on a period\", () => { it(\"reads days\", () => {}); }); });",
+    },
+    {
+      name: "a public instance method, next to hooks at the top level",
+      filename: ADAPTER_TEST,
+      code: "beforeEach(() => {}); describe(\"ClaudeCodeProviderAdapter.parseSession()\", () => {});",
+    },
+  ],
+  invalid: [
+    {
+      name: "a method without the class",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"parsePointInTime\", () => {});",
+      errors: [{ messageId: "format", data: { className: "TimeUtil" } }],
+    },
+    {
+      name: "a theme instead of a method",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"TimeUtil\", () => {});",
+      errors: [{ messageId: "format", data: { className: "TimeUtil" } }],
+    },
+    {
+      name: "another class than the file's",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"RedactUtil.redact()\", () => {});",
+      errors: [{ messageId: "otherClass", data: { className: "TimeUtil", named: "RedactUtil" } }],
+    },
+    {
+      name: "a private method",
+      filename: ADAPTER_TEST,
+      code: "describe(\"ClaudeCodeProviderAdapter.sessionService()\", () => {});",
+      errors: [{
+        messageId: "notPublic",
+        data: { className: "ClaudeCodeProviderAdapter", method: "sessionService", source: "ClaudeCodeProviderAdapter.ts" },
+      }],
+    },
+    {
+      name: "a method the class doesn't have, as after a rename",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"TimeUtil.parseDate()\", () => {});",
+      errors: [{ messageId: "notPublic", data: { className: "TimeUtil", method: "parseDate", source: "TimeUtil.ts" } }],
+    },
+    {
+      name: "a test outside any describe",
+      filename: TIME_UTIL_TEST,
+      code: "it(\"reads days\", () => {});",
+      errors: [{ messageId: "outside", data: { className: "TimeUtil" } }],
+    },
+  ],
+});
+
 const tsRuleTester = new RuleTester({ languageOptions: { parser: tseslint.parser, ecmaVersion: 2024, sourceType: "module" } });
 
 tsRuleTester.run("comment-placement", localRules.rules["comment-placement"], {
@@ -128,7 +216,7 @@ tsRuleTester.run("comment-placement", localRules.rules["comment-placement"], {
     },
     {
       name: "tool directives anywhere, even in a type file",
-      filename: "src/Shared/protocols/SessionProtocol.ts",
+      filename: "src/protocols/SessionProtocol.ts",
       code: "// eslint-disable-next-line no-var\nexport interface ThreadRef { id: string }",
     },
   ],
@@ -141,7 +229,7 @@ tsRuleTester.run("comment-placement", localRules.rules["comment-placement"], {
     },
     {
       name: "any comment in a type file",
-      filename: "src/Shared/protocols/ConfigProtocol.ts",
+      filename: "src/protocols/ConfigProtocol.ts",
       code: "export interface ModelPrice {\n  // Why: USD per million tokens.\n  input: number;\n}",
       errors: [{ messageId: "protocol" }],
     },

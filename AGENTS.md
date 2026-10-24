@@ -10,15 +10,16 @@ An AI writes a YAML scene; the compiler returns an SVG plus warnings, art-direct
 | `src/utils/` | Pure helpers: color, svg, suggest, recolor, sanitize. |
 | `src/drawing/` | Themes, people, the 86 assets and the kits. |
 | `src/modes/` | The two layouts: `plane` (2.5D) and `map`. |
-| `src/pipeline/` | parse, groups, custom assets, compile. Public `compile` is in `index.ts`. |
+| `src/pipeline/` | Parse, groups, custom assets, compile, catalog and schema services. |
 | `src/render/` | Needs the native renderer: critic, `check`, PNG, fonts, sandboxed file reader. |
+| `src/index.ts`, `src/render.ts`, `src/schema.ts` | The three public entries: thin facades over the classes. |
 | `src/cli.ts` | `scenec render|check|catalog|schema`. |
 | `fonts/` | Poppins (OFL-1.1). |
 | `skills/scenec/` | The agent skill shipped in the package. |
 | `test/visual/` | 108 base generations with baselines. |
 | `test/smoke/` | Every asset in every kit. |
 
-Layers: protocols < utils < drawing < modes < pipeline < render < cli. A layer imports only the ones below it (lint enforces it).
+Layers: protocols < utils < drawing < modes < pipeline < render < cli. A layer imports only the ones below it (lint enforces it). Files are classes in `PascalCase` (`ColorUtil.ts`), imported with `@/` (`@/utils/ColorUtil.ts`).
 
 ## Commands
 
@@ -27,7 +28,7 @@ pnpm typecheck       # tsc --noEmit (TypeScript 7)
 pnpm lint            # eslint (typescript-eslint runs on the TypeScript 6 alias)
 pnpm quality         # knip + jscpd + dpdm
 pnpm test            # unit, smoke and package tests
-pnpm build           # tsc -p tsconfig.build.json
+pnpm build           # esbuild per file, tsc for declarations, then @/ rewritten to relative paths
 pnpm test:visual     # the 108 baselines; add --update to rewrite them
 pnpm check           # everything above; what CI runs
 pnpm check:pack      # package size and contents
@@ -48,7 +49,7 @@ pnpm check:licenses  # runtime dependency licenses
 
 ## Legacy debt
 
-The files ported from the JavaScript prototype (`src/drawing`, `src/modes`, `src/pipeline/{compile,custom,groups,parse,index}.ts`, `src/render/{critic,check}.ts`, `src/utils/{recolor,color,sanitize,suggest}.ts`, `src/catalog.ts`, `src/cli.ts`) have relaxed lint rules, listed in `eslint.config.mjs` under `LEGACY_FILES`. `noUncheckedIndexedAccess` is off, the code is functions where the standards ask for classes, and the `@/` alias is not set up. All of it is tracked in https://github.com/guilhermebkel/scenec/issues/1; clean one file at a time and keep the baselines identical. See ADR 0010.
+Files ported from the JavaScript prototype keep relaxed lint rules, listed in `eslint.config.mjs` under `LEGACY_FILES`: `any`, naming, complexity and magic numbers. `noUncheckedIndexedAccess` is off and the runtime messages are still Portuguese. All of it is tracked in https://github.com/guilhermebkel/scenec/issues/1; clean one file at a time, remove it from the list, and keep the baselines identical. See ADR 0010.
 
 ## Agent skills
 

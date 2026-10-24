@@ -74,11 +74,11 @@ export class PlaneService {
     const hazeLevel = (z: any) => { if (!HAZE) return 0; let lv = 0; HAZE.forEach(([zz], i) => { if (z >= zz) lv = i + 1; }); return lv; };
     const air = t.skyBottom;
     const [ar, ag, ab] = [1, 3, 5].map((i) => parseInt(air.slice(i, i + 2), 16) / 255);
-  
+
     const sprites: any[] = []; // objetos desenhados (ordenados por profundidade)
     const anchors: Record<string, any> = {}; // id -> [x, z]
     const footprints: any[] = []; // { x, z, r, id } para checar espaço livre
-  
+
     // ---------- caminho ----------
     const pathDef = scene.path || null;
     let samples: any[] = [], cps: any[] = [], arc: any[] = [];
@@ -109,7 +109,7 @@ export class PlaneService {
       const tg = [b[0] - a[0], b[1] - a[1]], n = Math.hypot(...tg) || 1;
       return { p, normal: [-tg[1] / n, tg[0] / n] };
     };
-  
+
     // ---------- espaço livre ----------
     const free = (x: any, z: any, r: any, ignore: any[] = []) => {
       if (x - r < 0.02 || x + r > 0.98 || z < -0.04 || z > 1.08) return false;
@@ -142,7 +142,7 @@ export class PlaneService {
       }
       return null;
     };
-  
+
     // ---------- adicionar sprite ----------
     const addSprite = (id: any, o: any, x: any, z: any, opts: any = {}) => {
       const res = resolveAsset(o.asset || id, LIB);
@@ -163,7 +163,7 @@ export class PlaneService {
       anchors[id] = [x, z];
       return sp;
     };
-  
+
     // ---------- zonas (decoração automática perto do checkpoint) ----------
     const zoneDefs = { ...PlaneService.ZONE_PRESETS, ...(scene.zones || {}) };
     const tints: any[] = [];
@@ -175,7 +175,7 @@ export class PlaneService {
       tints.push({ x: cp.at[0], z: cp.at[1], r: Z.radius ?? 0.24, color: tint });
       cp.tint = tint;
     }
-  
+
     // ---------- caixas com volume (móveis, bancadas, construções) ----------
     const boxes: any[] = [];
     for (const [id, b] of Object.entries<any>(scene.boxes || {})) {
@@ -200,7 +200,7 @@ export class PlaneService {
       const ix = Math.min(a2.x1, b2.x1) - Math.max(a2.x0, b2.x0), iz = Math.min(a2.z1, b2.z1) - Math.max(a2.z0, b2.z0);
       if (ix > 0 && iz > 0 && a2.h <= b2.e + 0.5 && a2.key <= b2.key) a2.key = b2.key + 1e-4;
     }
-  
+
     // ---------- objetos explícitos do autor ----------
     const objs = scene.objects || {};
     const order = Object.keys(objs);
@@ -245,7 +245,7 @@ export class PlaneService {
       if (sp) protectedSprites.push(sp);
       if (sp && samples.length && !sp.person && !["sky"].includes(sp.kind) && o.on_path !== true && distToRoad(x, z) < roadW / 2) warnings.push(`'${id}' está em cima do caminho; mova-o ou use 'on_path: true' se for intencional`);
     }
-  
+
     // decoração das zonas (depois dos objetos do autor, para respeitar o espaço deles)
     for (const cp of cps) {
       const Z = cp.zone && zoneDefs[cp.zone]; if (!Z || cp.decor === false) continue;
@@ -258,7 +258,7 @@ export class PlaneService {
         if (sp && i === 0) protectedSprites.push(sp);
       });
     }
-  
+
     // espalhamento (vegetação etc.)
     for (const [si, sc] of (scene.scatter || []).entries()) {
       const R = PlaneService.rng(sc.seed ?? 7 + si), list = sc.assets || ["tree", "bush"];
@@ -273,9 +273,9 @@ export class PlaneService {
         placedN++;
       }
     }
-  
+
     for (const cp of cps) cp.occupied = sprites.some((sp) => sp.person && Math.hypot(sp.x - cp.at[0], sp.z - cp.at[1]) < cpR);
-  
+
     // ---------- desenho: céu, horizonte, chão ----------
     const zH = c.horizon_z ?? 1.45, yH = Y(zH);
     let defs = `<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${t.skyTop}"/><stop offset="1" stop-color="${t.skyBottom}"/></linearGradient>` +
@@ -284,7 +284,7 @@ export class PlaneService {
     defs += `<radialGradient id="cshadow"><stop offset="0" stop-color="rgb(${sm[0]},${sm[1]},${sm[2]})" stop-opacity="${sm[3] * 1.5}"/><stop offset="0.55" stop-color="rgb(${sm[0]},${sm[1]},${sm[2]})" stop-opacity="${sm[3] * 1.1}"/><stop offset="1" stop-color="rgb(${sm[0]},${sm[1]},${sm[2]})" stop-opacity="0"/></radialGradient>`;
     if (HAZE) HAZE.forEach(([, k], i) => { defs += `<filter id="haze${i + 1}" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${1 - k} 0 0 0 ${(ar * k).toFixed(3)} 0 ${1 - k} 0 0 ${(ag * k).toFixed(3)} 0 0 ${1 - k} 0 ${(ab * k).toFixed(3)} 0 0 0 1 0"/></filter>`; });
     tints.forEach((tn, i) => { defs += `<radialGradient id="zone${i}"><stop offset="0" stop-color="${tn.color}" stop-opacity="1"/><stop offset="0.62" stop-color="${tn.color}" stop-opacity="0.9"/><stop offset="1" stop-color="${tn.color}" stop-opacity="0"/></radialGradient>`; });
-  
+
     let bg = ROOM ? "" : `<rect width="${W}" height="${H}" fill="url(#sky)"/>`;
     const poly = (pts: any, fill: any, extra = "") => `<polygon points="${pts.map((p: any) => PlaneService.f1(p[0]) + "," + PlaneService.f1(p[1])).join(" ")}" fill="${fill}" ${extra}/>`;
     if (ROOM) {
@@ -329,7 +329,7 @@ export class PlaneService {
       const cx = X(tn.x, tn.z), cy = Y(tn.z), rx = tn.r * W * 0.98 * xs(tn.z), ry = (Y(tn.z - tn.r) - Y(tn.z + tn.r)) / 2;
       bg += `<ellipse cx="${PlaneService.f1(cx)}" cy="${PlaneService.f1(cy)}" rx="${PlaneService.f1(rx)}" ry="${PlaneService.f1(ry)}" fill="url(#zone${i})"/>`;
     });
-  
+
     // caminho: espessura, base, casas e checkpoints
     let road = "";
     if (samples.length) {
@@ -369,7 +369,7 @@ export class PlaneService {
         if (!cp.occupied) road += `<text x="${PlaneService.f1(cx)}" y="${PlaneService.f1(cy + ry * 0.35)}" font-family="${PlaneService.FONT}" font-weight="700" font-size="${PlaneService.f1(ry * 1.1)}" fill="${t.paper}" text-anchor="middle">${cp.finish ? "★" : idx + 1}</text>`;
       });
     }
-  
+
     // ---------- sprites ordenados por profundidade ----------
     const groundSprites = sprites.filter((s) => !s.sky).sort((a, b) => b.z - a.z || a.sy - b.sy);
     const skySprites = sprites.filter((s) => s.sky);
@@ -379,7 +379,7 @@ export class PlaneService {
         m.includes(t.shadow) ? `<ellipse cx="${cx}" cy="0" rx="${(rx * 1.25).toFixed(1)}" ry="${(ry * 1.6).toFixed(1)}" fill="url(#cshadow)"/>` : m);
       return `<g id="${s.id}" transform="translate(${PlaneService.f1(s.sx)} ${PlaneService.f1(s.sy)}) scale(${s.ppu.toFixed(3)})"${lv ? ` filter="url(#haze${lv})"` : ""}>${art}</g>`;
     };
-  
+
     // ---------- caixas: só as faces visíveis, com detalhes de portas/gavetas na face escolhida ----------
     const camX = ROOM ? cam.cx : 0.5;
     const drawBox = (bx: any) => {
@@ -428,7 +428,7 @@ export class PlaneService {
       }
       return `<g id="${bx.id}"${b.opacity != null ? ` opacity="${b.opacity}"` : ""}>${g}</g>`;
     };
-  
+
     // ---------- ordem de desenho (pintor com relações par a par) ----------
     // Cada item vira um volume no mundo: caixa = [x0,x1]×[z0,z1]×[e,h]; recorte = pé fino em z com largura do desenho.
     // Para cada par que se sobrepõe na tela decidimos quem está atrás (separação em z, depois em x vista da câmera,
@@ -474,7 +474,7 @@ export class PlaneService {
       }
       return out.map((i) => items[i].svg()).join("\n");
     };
-  
+
     // ---------- rótulos dos checkpoints ----------
     const labels: any[] = [];
     const labelBlockers = groundSprites.filter((s) => !s.decor || s.h > 40).map((s) => ({ x0: s.bx0, x1: s.bx1, y0: s.by0, y1: s.by1, id: s.id }));
@@ -515,7 +515,7 @@ export class PlaneService {
         `<text x="${PlaneService.f1(b.x0 + (b.y1 - b.y0) / 2)}" y="${PlaneService.f1((b.y0 + b.y1) / 2 + b.fs * 0.36)}" font-family="${PlaneService.FONT}" font-weight="700" font-size="${PlaneService.f1(b.fs)}" fill="${t.paper}" text-anchor="middle">${PlaneService.esc(b.txt.split("  ")[0])}</text>` +
         `<text x="${PlaneService.f1(b.x0 + (b.y1 - b.y0) + b.fs * 0.35)}" y="${PlaneService.f1((b.y0 + b.y1) / 2 + b.fs * 0.36)}" font-family="${PlaneService.FONT}" font-weight="600" font-size="${PlaneService.f1(b.fs)}" fill="${t.text === t.paper ? t.ink : t.text}">${PlaneService.esc(b.txt.split("  ")[1])}</text>`;
     }).join("");
-  
+
     // ---------- título ----------
     let textSvg = "";
     for (const tx of scene.text || []) {
@@ -539,13 +539,13 @@ export class PlaneService {
       for (const l of labels) if (overlap(tb, l) > 0) warnings.push(`texto "${tx.content}" cobre o rótulo '${l.txt.split("  ")[1]}'`);
       textSvg += `<text x="${PlaneService.f1(xx)}" y="${PlaneService.f1(yy)}" font-family="${PlaneService.FONT}" font-size="${PlaneService.f1(fs)}" font-weight="${role === "title" ? 700 : 500}" fill="${color}" text-anchor="${anchor}">${PlaneService.esc(tx.content)}</text>`;
     }
-  
+
     // ---------- verificações ----------
     for (const s of groundSprites) {
       if (s.decor) continue;
       if (s.bx0 < -s.w * 0.05 || s.bx1 > W + s.w * 0.05 || s.by0 < -s.h * 0.05) warnings.push(`'${s.id}' sai do quadro`);
     }
-  
+
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">\n<defs>${defs}</defs>\n${bg}\n` +
       skySprites.map(drawSprite).join("\n") + "\n" + road + "\n" + drawOrdered() + "\n" + labelSvg + "\n" + textSvg + "\n</svg>";
     const description = [

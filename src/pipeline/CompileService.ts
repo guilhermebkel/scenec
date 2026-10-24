@@ -1,3 +1,5 @@
+import { ParseService } from "@/pipeline/ParseService.ts";
+import type { CompileResult } from "@/protocols/result.ts";
 import { GroupService } from "@/pipeline/GroupService.ts";
 import { CustomAssetService } from "@/pipeline/CustomAssetService.ts";
 import { SvgUtil } from "@/utils/SvgUtil.ts";
@@ -38,6 +40,12 @@ export class CompileService {
 
   private static readonly DEPTH_SCALE: Record<string, any> = { near: 1, mid: 0.8, far: 0.6 };
 
+  static compile(input: unknown, options: CompileOptions = {}): CompileResult {
+    const { scene, warnings } = ParseService.parseScene(input);
+    const { critiqueInput: _ignored, ...result } = CompileService.compileInternal(scene, options);
+    return { ...result, warnings: [...warnings, ...result.warnings] } as CompileResult;
+  }
+
   static compileInternal(scene: any, opts: CompileOptions = {}): any {
     const warnings: string[] = [];
     const c = scene.canvas || {};
@@ -72,7 +80,7 @@ export class CompileService {
     if (c.mode === "2.5d" || c.mode === "board") return wholeKit(PlaneService.compilePlane(scene, { LIB, theme, warnings, W, H: c.height || 900, resolveAsset: AssetUtil.resolveAsset, contrast: ColorUtil.contrast }));
     const objs = GroupService.expandGroups(scene.objects || {}, warnings);
     const placed: Record<string, any> = {};
-  
+
     // ---- ordem de resolução (dependências) ----
     const deps = (o: any) => ["left_of", "right_of", "behind", "in_front_of", "on", "under", "above"].map((k) => o[k]).filter(Boolean);
     const order: string[] = [], seen = new Set<string>(), visiting = new Set<string>();
@@ -91,7 +99,7 @@ export class CompileService {
     }
     const final = order.filter((id) => !heldBy[id]);
     for (const id of order) if (heldBy[id]) final.splice(final.indexOf(heldBy[id]) + 1, 0, id);
-  
+
     // ---- posicionamento ----
     for (const id of final) {
       const o = objs[id];
@@ -102,7 +110,7 @@ export class CompileService {
       const sizeK = typeof o.size === "number" ? o.size : (CompileService.SIZES[o.size || "medium"] ?? (warnings.push(`size '${o.size}' inválido em '${id}' (use ${Object.keys(CompileService.SIZES).join(", ")})`), 1));
       let depth = o.depth || null, x = null, y = null, scale = null, z = 0;
       const ref = (k: any) => placed[o[k]];
-  
+
       if (A.kind === "sky") {
         scale = U * sizeK * 0.9;
         const slot = o.at || "top-right";
@@ -180,7 +188,7 @@ export class CompileService {
       placed[id] = { id, asset: res.id, kind: A.kind, x, y, scale, w, h, z, depth, svg, top: A.topOf ? A.topOf(o) : A.top, noHaze: o.haze === false,
         hand: drawn.hand, bx0: x - w / 2, bx1: x + w / 2, by0: y - h, by1: y, related: deps(o).concat(o.holds || [], heldBy[id] || []) };
     }
-  
+
     // ---- olhar: `look: <id>` faz o personagem olhar para outro objeto da cena ----
     for (const p of Object.values(placed)) {
       const o = objs[p.id];
@@ -191,7 +199,7 @@ export class CompileService {
       const drawn = LIB.person.draw({ ...o, gaze: [dx / len, dy / len] }, theme);
       p.svg = drawn.svg;
     }
-  
+
     // ---- enquadramento (câmera) ----
     // canvas.shot: wide (padrão) | full | medium | close; canvas.focus: id(s) ou grupo(s); canvas.frame: left | center | right | 0..1
     const shot = c.shot || "wide";
@@ -235,7 +243,7 @@ export class CompileService {
         }
       }
     }
-  
+
     // ---- verificações (feedback em texto) ----
     const list = Object.values(placed);
     for (const p of list) {
@@ -262,7 +270,7 @@ export class CompileService {
       const frac = (ix * iy) / Math.min(a.w * a.h, b.w * b.h);
       if (frac > 0.2) warnings.push(`'${a.id}' sobrepõe '${b.id}' em ${Math.round(frac * 100)}%; use left_of/right_of ou depth diferente`);
     }
-  
+
     // ---- fundo ----
     const t = theme;
     const hz = H * lines.horizon;
@@ -304,7 +312,7 @@ export class CompileService {
       if (setting === "city") bg += `<rect y="${H * 0.86}" width="${W}" height="${H * 0.14}" fill="${t.groundDark}"/>` +
         Array.from({ length: 10 }, (_, i) => `<rect x="${i * W / 10 + 20}" y="${H * 0.925}" width="${W / 20}" height="5" fill="${t.primary}" opacity="0.5"/>`).join("");
     }
-  
+
     // ---- texto ----
     // Campos: content (\n quebra linha), at (top|bottom-left|center|right), role (title|subtitle|label|body),
     // opcionais: y (fração da altura, linha de base), size (fração da altura), weight, color, box (cor de fundo), pad.
@@ -344,7 +352,7 @@ export class CompileService {
       textSvg += `<text x="${xx.toFixed(1)}" y="${yy.toFixed(1)}" font-family="${CompileService.FONT}" font-size="${fs.toFixed(1)}" font-weight="${weight}" fill="${color}" text-anchor="${anchor}">` +
         lines.map((l, i) => i === 0 ? `<tspan x="${xx.toFixed(1)}">${esc(l)}</tspan>` : `<tspan x="${xx.toFixed(1)}" dy="${lh.toFixed(1)}">${esc(l)}</tspan>`).join("") + `</text>`;
     }
-  
+
     // ---- luz global ----
     // canvas.light: false | { from: left|right|front|0..1, strength: 0..1 }. Sem valor: segue o sol/lua/janela da cena.
     const KL = KIT.light || {};
@@ -376,7 +384,7 @@ export class CompileService {
       if (hatch) { /* gravura: sem brilhos e degradês de ambiente */ } else if (setting === "indoor") bg += `<rect width="${W}" height="${hz}" fill="url(#glow)"/><rect width="${W}" height="${H}" fill="url(#falloff)"/>`;
       else bg += `<rect width="${W}" height="${H * 0.75}" fill="url(#glow)"/>`;
     }
-  
+
     // ---- montagem ----
     if (cam.k !== 1) bg = `<g transform="translate(${cam.tx.toFixed(1)} ${cam.ty.toFixed(1)}) scale(${cam.k.toFixed(4)})">${bg}</g>`;
     const SHADOW_RE = /<ellipse cx="([-\d.]+)" cy="0" rx="([\d.]+)" ry="([\d.]+)" fill="[^"]*"( stroke="none")?\s*\/>/;
@@ -440,13 +448,13 @@ export class CompileService {
     // filtro de cena (riso/sketch) envolve fundo + objetos; textura vai por cima, abaixo do texto
     const sceneArt = KIT.scene ? `<defs>${KitUtil.sceneFilter(KIT.scene, t)}</defs><g filter="url(#kitScene)">${bg}\n${castLayer}\n${body}\n${vignette}</g>` : `${bg}\n${castLayer}\n${body}\n${vignette}`;
     const svg = SvgUtil.flattenOpacity(`${head}\n${sceneArt}\n${KitUtil.texture(KIT.texture, W, H)}\n${grain}\n${textSvg}\n</svg>`);
-  
+
     // ---- entrada do diretor de arte (a crítica em si roda em scenec/render, que usa o resvg) ----
     const critiqueInput = c.critique === false
       ? null
       : { W, H, head, bg: SvgUtil.flattenOpacity(bg), scene: SvgUtil.flattenOpacity(sceneArt), theme: t, scale: c.scale ?? 1, textRects, skip: KIT.scene === "sketch" ? ["silhouette"] : [],
           objects: list.filter((p: any) => !p.offView).map((p: any) => ({ id: p.id, asset: p.asset, kind: p.kind, z: p.z, body: SvgUtil.flattenOpacity(p.bodySvg), related: p.related, ignore: !!(LIB[p.asset].backdrop || objs[p.id].critique === false) })) };
-  
+
     const description = list.map((p) => `${p.id} (${p.asset}): x=${Math.round((p.x / W) * 100)}%, base=${Math.round((p.y / H) * 100)}%, ` +
       `${Math.round((p.w / W) * 100)}%×${Math.round((p.h / H) * 100)}% do quadro${p.depth ? ", " + p.depth : ""}`).join("\n");
     const pct = (v: any, d: any) => +((v / d) * 100).toFixed(1);

@@ -1,7 +1,6 @@
-import { z } from "zod";
 import { CatalogService } from "@/pipeline/CatalogService.ts";
 import type { AssetEntry, CatalogKind } from "@/pipeline/CatalogService.ts";
-import { sceneSchema } from "@/protocols/scene.ts";
+import { SchemaService } from "@/pipeline/SchemaService.ts";
 
 export type { AssetEntry, CatalogKind };
 
@@ -28,5 +27,5 @@ export function listThemes(): string[] {
 }
 
 export function sceneJsonSchema(): Record<string, unknown> {
-  return z.toJSONSchema(sceneSchema, { target: "draft-2020-12" });
+  return SchemaService.sceneJsonSchema();
 }

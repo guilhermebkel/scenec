@@ -34,7 +34,7 @@ export class CriticService {
     const lab = (px: any) => { const L = new Float32Array(N * 3); for (let i = 0; i < N; i++) { const o = CriticService.oklab(px[i * 4], px[i * 4 + 1], px[i * 4 + 2]); L[i * 3] = o[0]; L[i * 3 + 1] = o[1]; L[i * 3 + 2] = o[2]; } return L; };
     const FL = lab(full), BL = lab(back);
     const dE = (A: any, i: any, B: any, j: any) => Math.hypot(A[i * 3] - B[j * 3], A[i * 3 + 1] - B[j * 3 + 1], A[i * 3 + 2] - B[j * 3 + 2]);
-  
+
     const objs = objects.filter((o: any) => !o.ignore).sort((a: any, b: any) => a.z - b.z);
     for (const o of objs) {
       const px = render(defs + o.body);
@@ -49,10 +49,10 @@ export class CriticService {
     // dono visível de cada pixel (objeto mais à frente)
     const owner = new Int16Array(N).fill(-1);
     objs.forEach((o: any, k: any) => { for (let i = 0; i < N; i++) if (o.alpha[i] > 128) owner[i] = k; });
-  
+
     const out: any[] = [];
     const pct = (v: any) => Math.round(v * 100) + "%";
-  
+
     // 1) ocupação e faixas vazias
     const occ = new Uint8Array(N);
     let objCov = 0;
@@ -75,7 +75,7 @@ export class CriticService {
       const a = (bestEnd - best + 1) / Rh, b = (bestEnd + 1) / Rh;
       out.push(`faixa vazia de ${pct(best / Rh)} da altura (de y=${pct(a)} a y=${pct(b)}); suba o grupo principal, aumente a escala ou ocupe a faixa (texto, objeto de parede, elemento de céu)`);
     }
-  
+
     // 2) equilíbrio de peso visual (o que difere do fundo, ponderado pela diferença de cor)
     let sw = 0, sx = 0;
     const perObj = objs.map(() => 0);
@@ -95,7 +95,7 @@ export class CriticService {
           (side ? `aproxime '${side.o.id}' do centro ou ` : "") + `ponha algo do lado ${left ? "direito" : "esquerdo"}`);
       }
     }
-  
+
     // 3) silhueta que se perde no vizinho ou no fundo
     const tokens = Object.entries(theme).filter(([, v]) => typeof v === "string" && /^#[0-9a-f]{6}$/i.test(v));
     const tokenOf = (rgb: any) => {
@@ -137,7 +137,7 @@ export class CriticService {
       out.push(`'${o.id}' some contra ${who === "(fundo)" ? "o fundo" : `'${who}'`} na parte ${part} (${pct(partFrac)} desse contorno sem contraste): ` +
         `a cor ${CriticService.hex(c[0], c[1], c[2])}${tk ? ` (${tk})` : ""} está próxima demais; mude a cor de um dos dois`);
     });
-  
+
     // 4) tangências: contornos que quase se tocam sem se sobrepor (criam tensão visual)
     const dil = (a: any) => {
       const m = new Uint8Array(N);

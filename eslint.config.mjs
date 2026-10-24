@@ -9,9 +9,11 @@ import { localRules } from "./scripts/eslint-local-rules.mjs";
 const TEST_FILES = ["src/**/*.test.ts", "test/**/*.ts", "scripts/**/*.test.mjs"];
 
 // Why: the legacy files were ported byte-for-byte from the JavaScript prototype to keep the 108 baselines identical (ADR 0010); they are cleaned up one folder at a time.
-const LEGACY_FILES = ["src/drawing/**/*.ts", "src/modes/**/*.ts", "src/render/critic.ts", "src/pipeline/compile.ts", "src/pipeline/custom.ts",
-  "src/pipeline/groups.ts", "src/utils/recolor.ts", "src/utils/color.ts",
-  "src/utils/sanitize.ts", "src/utils/suggest.ts", "src/catalog.ts", "src/cli.ts", "src/pipeline/parse.ts", "src/pipeline/index.ts", "src/render/check.ts"];
+const LEGACY_FILES = [
+  "src/drawing/**/*.ts", "src/modes/**/*.ts", "src/cli.ts", "src/pipeline/index.ts",
+  "src/pipeline/{CompileService,CustomAssetService,GroupService,ParseService,CatalogService}.ts",
+  "src/render/{CriticService,CheckService}.ts", "src/utils/{RecolorUtil,ColorUtil,SanitizeUtil,SuggestUtil}.ts",
+];
 
 // Why: layer order is Protocols < Utils < Drawing < Modes < Pipeline < Render < Cli; a layer imports only the ones below it.
 const LAYER_TO_FORBIDDEN_LAYERS = {
@@ -41,7 +43,7 @@ const MAX_PARAMS = 5;
 const BOOLEAN_PREFIXES = ["is", "has", "should", "can", "must", "was", "did"];
 
 export default tseslint.config(
-  { ignores: ["dist/", "node_modules/", "coverage/", "test/visual/report/", "test/visual/cases/", "skills/**/scripts/"] },
+  { ignores: ["dist/", "node_modules/", "coverage/", "test/visual/report/", "test/visual/cases/", "skills/**/scripts/", "scripts/fixtures/"] },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
@@ -63,6 +65,7 @@ export default tseslint.config(
         { selector: "variable", modifiers: ["const", "global"], types: ["boolean", "number", "string", "array"], format: ["UPPER_CASE"] },
         { selector: ["variable", "parameter"], types: ["boolean"], format: ["PascalCase"], prefix: BOOLEAN_PREFIXES },
         { selector: ["typeProperty", "classProperty", "parameterProperty", "accessor"], types: ["boolean"], format: ["PascalCase"], prefix: BOOLEAN_PREFIXES },
+        { selector: "classProperty", modifiers: ["static", "readonly"], format: ["UPPER_CASE", "camelCase"] },
         // Why: keys of external formats (YAML fields, SVG attributes, CLI flags) keep their spelling.
         { selector: ["objectLiteralProperty", "objectLiteralMethod", "typeProperty"], modifiers: ["requiresQuotes"], format: null },
         { selector: ["objectLiteralProperty", "objectLiteralMethod", "typeProperty"], format: null, filter: { regex: "^[a-z]+(_[a-z]+)+$", match: true } },
@@ -97,7 +100,9 @@ export default tseslint.config(
       "local/comment-placement": "error",
       "local/map-name": "error",
       "local/literal-dispatch": "error",
-      // Why: describe-target and class-matches-file are off until the class refactor (issue #1, ADR 0010).
+      "max-classes-per-file": ["error", 1],
+      "local/class-matches-file": "error",
+      "@typescript-eslint/no-extraneous-class": ["error", { allowStaticOnly: true }],
       "no-restricted-syntax": ["error", {
         selector: "CallExpression > CallExpression.arguments:matches([arguments.length>=3], :has(> CallExpression.arguments))",
         message: "Store this call's result in a named variable before passing it to another call.",
@@ -121,6 +126,10 @@ export default tseslint.config(
     },
   },
   {
+    files: ["src/**/*.test.ts"],
+    rules: { "local/describe-target": "error" },
+  },
+  {
     files: ["src/cli.ts", "scripts/**", "test/**"],
     rules: { "no-console": "off", "@typescript-eslint/no-magic-numbers": "off" },
   },
@@ -129,6 +138,7 @@ export default tseslint.config(
     files: LEGACY_FILES,
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/unbound-method": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/no-unsafe-call": "off",

@@ -63,7 +63,7 @@ export class MapService {
     const panelOn = m.panel !== false;
     const PW = panelOn ? Math.round(W * 0.28) : 0, PAD = W * 0.025;
     const area = { x0: PAD, y0: PAD, x1: W - PW - PAD * (panelOn ? 1.6 : 1), y1: H - PAD };
-  
+
     // ---------- rota ----------
     const stops: any[] = [], legs: any[] = [];
     let pendingBy = null;
@@ -85,7 +85,7 @@ export class MapService {
       stops.push(stop);
     }
     if (stops.length < 2) warnings.push("a rota precisa de pelo menos 2 cidades");
-  
+
     // ---------- projeção e enquadramento ----------
     const lon0 = m.center?.[0] ?? (stops.reduce((s, p) => s + p.lon, 0) / (stops.length || 1));
     const lat0 = m.center?.[1] ?? (stops.reduce((s, p) => s + p.lat, 0) / (stops.length || 1));
@@ -102,7 +102,7 @@ export class MapService {
     const ox = area.x0 + (aw - (fx1 - fx0) * k) / 2 - fx0 * k, oy = area.y0 + (ah - (fy1 - fy0) * k) / 2 - fy0 * k;
     const proj = (lon: any, lat: any) => { const [x, y] = P([lon, lat]); return [ox + x * k, oy + y * k]; };
     stops.forEach((s) => { [s.x, s.y] = proj(s.lon, s.lat); });
-  
+
     // ---------- países ----------
     const visited: any[] = [];
     for (const s of stops) if (s.country && !visited.includes(s.country)) visited.push(s.country);
@@ -116,7 +116,7 @@ export class MapService {
       if (Math.max(...xs) < -50 || Math.min(...xs) > W + 50 || Math.max(...ys) < -50 || Math.min(...ys) > H + 50) return "";
       return rings.map((r: any) => "M" + r.map((p: any) => p[0].toFixed(1) + " " + p[1].toFixed(1)).join("L") + "Z").join("");
     }).join("");
-  
+
     let mapSvg = `<rect x="0" y="0" width="${W}" height="${H}" fill="${sea}"/>`;
     // ondas sutis no mar
     for (let yy = 30; yy < H; yy += 46) for (let xx = (yy / 46 % 2) * 40 + 20; xx < W - PW; xx += 90) mapSvg += `<path d="M${xx} ${yy} q8 -4 16 0 t16 0" stroke="${ColorUtil.sh(sea, -0.1)}" stroke-width="1.5" fill="none" opacity="0.5"/>`;
@@ -135,7 +135,7 @@ export class MapService {
       const d = toPath(cc.polys), col = colorOf.get(cc);
       mapSvg += `<path d="${d}" fill="${ColorUtil.sh(col, -0.35)}" transform="translate(0 4)" opacity="0.55"/><path d="${d}" fill="${col}" stroke="${ColorUtil.sh(col, -0.3)}" stroke-width="1.6" stroke-linejoin="round"/>`;
     }
-  
+
     // ---------- rótulos dos países ----------
     const occupied: any[] = []; // caixas já usadas (para evitar sobreposição)
     const ov = (a: any, b: any) => Math.max(0, Math.min(a.x1, b.x1) - Math.max(a.x0, b.x0)) * Math.max(0, Math.min(a.y1, b.y1) - Math.max(a.y0, b.y0));
@@ -150,7 +150,7 @@ export class MapService {
       if (!inArea(b)) continue;
       occupied.push(b);
     }
-  
+
     // ---------- trechos ----------
     const legSvg: any[] = [], badges: any[] = [];
     const pairCount = new Map();
@@ -185,7 +185,7 @@ export class MapService {
       occupied.push({ x0: bx - r, x1: bx + r, y0: by2 - r, y1: by2 + r, kind: "badge" });
       for (let u = 0.08; u < 0.95; u += 0.06) { const [qx, qy] = pt(u); occupied.push({ x0: qx - 4, x1: qx + 4, y0: qy - 4, y1: qy + 4, kind: "line" }); }
     });
-  
+
     // ---------- pinos ----------
     const groups: any[] = [];
     for (const [n, s] of stops.entries()) {
@@ -199,7 +199,7 @@ export class MapService {
       g.dir = right ? -1 : 1;
     }
     for (const g of groups) { const ext = (g.nums.length - 1) * pinR * 1.6; occupied.push({ x0: g.x - pinR - (g.dir < 0 ? ext : 0), x1: g.x + pinR + (g.dir > 0 ? ext : 0), y0: g.y - pinR, y1: g.y + pinR, kind: "pin" }); }
-  
+
     // rótulos das cidades: escolhe a posição com menos sobreposição
     const cityLabels: any[] = [];
     const fsCity = Math.max(14, H * 0.021);
@@ -221,7 +221,7 @@ export class MapService {
       best.kind = "city"; best.name = name; best.sub = sub; best.g = g;
       occupied.push(best); cityLabels.push(best);
     }
-  
+
     // rótulos de países que não colidem com elementos da rota
     for (const b of occupied.filter((o) => o.kind === "country")) {
       const hit = occupied.some((o) => o !== b && o.kind !== "country" && o.kind !== "line" && ov(b, o) > 0.02 * (b.x1 - b.x0) * (b.y1 - b.y0));
@@ -239,7 +239,7 @@ export class MapService {
         ? `<text x="${MapService.f1(lx)}" y="${MapService.f1(ly)}" font-family="${MapService.FONT}" font-weight="700" font-size="${MapService.f1(b.fs)}" letter-spacing="2" fill="${ColorUtil.sh(colorOf.get(b.cc), -0.55)}" text-anchor="middle" opacity="0.8">${MapService.esc(b.txt)}</text>`
         : `<text x="${MapService.f1(lx)}" y="${MapService.f1(ly)}" font-family="${MapService.FONT}" font-weight="500" font-size="${MapService.f1(b.fs)}" fill="${ColorUtil.sh(land, -0.4)}" text-anchor="middle">${MapService.esc(b.txt)}</text>`;
     }
-  
+
     // ---------- desenho de selos, pinos e rótulos ----------
     const badgeSvg = badges.map((bd) => {
       const rot = bd.by === "plane" ? ` rotate(${MapService.f1(bd.ang)})` : "";
@@ -257,7 +257,7 @@ export class MapService {
       `<rect x="${MapService.f1(b.x0)}" y="${MapService.f1(b.y0)}" width="${MapService.f1(b.x1 - b.x0)}" height="${MapService.f1(b.y1 - b.y0)}" rx="8" fill="${t.paper}"/>` +
       `<text x="${MapService.f1(b.x0 + fsCity * 0.6)}" y="${MapService.f1(b.y0 + fsCity * 1.15)}" font-family="${MapService.FONT}" font-weight="700" font-size="${MapService.f1(fsCity)}" fill="${t.text === t.paper ? t.ink : t.text}">${MapService.esc(b.name)}</text>` +
       (b.sub ? `<text x="${MapService.f1(b.x0 + fsCity * 0.6)}" y="${MapService.f1(b.y0 + fsCity * 1.95)}" font-family="${MapService.FONT}" font-weight="500" font-size="${MapService.f1(fsCity * 0.68)}" fill="${ColorUtil.sh(t.ink, 0.35)}">${MapService.esc(b.sub)}</text>` : "")).join("");
-  
+
     // ---------- painel do roteiro ----------
     let panel = "";
     if (panelOn) {
@@ -300,7 +300,7 @@ export class MapService {
         lx += 38 + (MapService.TRANSPORT_PT[by] || by).length * H * 0.011 + 26;
       }
     }
-  
+
     const source = `<text x="${MapService.f1(area.x0 + 4)}" y="${MapService.f1(H - 8)}" font-family="${MapService.FONT}" font-size="10" fill="${ColorUtil.sh(sea, -0.45)}">Contornos: Natural Earth (domínio público)</text>`;
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">\n${mapSvg}\n${countryLabels}\n${legSvg.join("\n")}\n${badgeSvg}\n${pinSvg}\n${cityLabelSvg}\n${panel}\n${source}\n</svg>`;
     const description = [

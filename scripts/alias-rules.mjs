@@ -1,11 +1,11 @@
 import path from "node:path";
 
+const EXTENSION_TO_OUTPUT = { ts: "js", json: "json" };
 const IMPORT_SPECIFIER = /(["'])(@\/|\.{1,2}\/)([^"']+?)\.(ts|json)\1/g;
 
-/** Rewrites "@/x/y.ts" and relative "./y.ts" specifiers to the relative ".js" paths Node resolves in dist. */
 export function rewriteSpecifiers(source, filePath, distRoot) {
   return source.replace(IMPORT_SPECIFIER, (_match, quote, prefix, target, extension) => {
-    const resolvedExtension = extension === "ts" ? "js" : extension;
+    const resolvedExtension = EXTENSION_TO_OUTPUT[extension];
     if (prefix !== "@/") {
       return `${quote}${prefix}${target}.${resolvedExtension}${quote}`;
     }
@@ -18,7 +18,6 @@ export function rewriteSpecifiers(source, filePath, distRoot) {
 
 const JSON_IMPORT_WITHOUT_ATTRIBUTE = /(from\s+["'][^"']+\.json["'])(?!\s+with)/g;
 
-/** esbuild drops `with { type: "json" }`; Node needs it back on every JSON import. */
 export function restoreJsonAttributes(source) {
-  return source.replace(JSON_IMPORT_WITHOUT_ATTRIBUTE, '$1 with { type: "json" }');
+  return source.replace(JSON_IMPORT_WITHOUT_ATTRIBUTE, "$1 with { type: \"json\" }");
 }
