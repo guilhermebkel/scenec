@@ -44,7 +44,7 @@ const commentMarker = {
   },
 };
 
-const PROTOCOL_FOLDER = /[\\/]protocols[\\/]/;
+const PROTOCOL_FOLDER = /[\\/]Protocols[\\/]/;
 const EXPORT_TYPES = new Set(["ExportNamedDeclaration", "ExportDefaultDeclaration"]);
 const DECLARATION_SELECTOR = [
   "FunctionDeclaration",

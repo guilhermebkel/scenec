@@ -1,14 +1,14 @@
-import { CheckService } from "@/render/CheckService.ts";
-import type { CheckResult } from "@/render/CheckService.ts";
-import { FileReaderAdapter } from "@/render/FileReaderAdapter.ts";
-import { ResvgAdapter } from "@/render/ResvgAdapter.ts";
-import type { Raster } from "@/render/ResvgAdapter.ts";
-import type { BBox, CompileOptions, FileReader } from "@/protocols/options.ts";
+import { CheckModule } from "@/Modules/CheckModule.ts";
+import type { CheckResult } from "@/Modules/CheckModule.ts";
+import { FileReaderAdapter } from "@/Adapters/FileReaderAdapter.ts";
+import { ResvgAdapter } from "@/Adapters/ResvgAdapter.ts";
+import type { Raster } from "@/Adapters/ResvgAdapter.ts";
+import type { BBox, CompileOptions, FileReader } from "@/Protocols/OptionsProtocol.ts";
 
 export type { CheckResult, Raster };
 
 export function check(input: unknown, options: CompileOptions = {}): CheckResult {
-  return CheckService.check(input, options);
+  return CheckModule.check(input, options);
 }
 
 export function createFileReader(folder: string): FileReader {

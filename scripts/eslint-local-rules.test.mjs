@@ -216,7 +216,7 @@ tsRuleTester.run("comment-placement", localRules.rules["comment-placement"], {
     },
     {
       name: "tool directives anywhere, even in a type file",
-      filename: "src/protocols/SessionProtocol.ts",
+      filename: "src/Protocols/SessionProtocol.ts",
       code: "// eslint-disable-next-line no-var\nexport interface ThreadRef { id: string }",
     },
   ],
@@ -229,7 +229,7 @@ tsRuleTester.run("comment-placement", localRules.rules["comment-placement"], {
     },
     {
       name: "any comment in a type file",
-      filename: "src/protocols/ConfigProtocol.ts",
+      filename: "src/Protocols/ConfigProtocol.ts",
       code: "export interface ModelPrice {\n  // Why: USD per million tokens.\n  input: number;\n}",
       errors: [{ messageId: "protocol" }],
     },

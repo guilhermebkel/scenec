@@ -1,6 +1,6 @@
-import { CatalogService } from "@/pipeline/CatalogService.ts";
-import type { AssetEntry, CatalogKind } from "@/pipeline/CatalogService.ts";
-import { SchemaService } from "@/pipeline/SchemaService.ts";
+import { CatalogService } from "@/Services/CatalogService.ts";
+import type { AssetEntry, CatalogKind } from "@/Services/CatalogService.ts";
+import { SchemaService } from "@/Services/SchemaService.ts";
 
 export type { AssetEntry, CatalogKind };
 

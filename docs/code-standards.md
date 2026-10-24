@@ -12,7 +12,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **A pure core (lint).** `protocols` to `pipeline` have no clock, randomness, file system or process: the same scene gives the same SVG on any machine (ADR 0004). Files come in through the `FileReader` option and measurements through `measure`; only `render` and `cli` touch the outside.
 - **Native code behind `render`.** Code that knows resvg lives in `src/render/`. The core depends on the `measure` contract, never on the renderer.
 - **Imports use `@/` and the real file name (lint).** `@/` points to `src/`. Every import is `@/utils/ColorUtil.ts`: never `../` or `./`. One style means searching for a file's `@/` path finds every importer.
-- **Names say the folder.** Files are `PascalCase` and end in their role: `ColorUtil`, `SanitizeUtil`, `CompileService`, `ResvgAdapter`. Folders are lowercase layer names.
+- **Names say the folder.** Files are `PascalCase` and end in their role: `ColorUtil`, `SanitizeUtil`, `CompilationModule`, `ResvgAdapter`. Folders are lowercase layer names.
 - **Classes, not loose functions (lint).** Utils are classes with static methods only. The three public entries (`src/index.ts`, `src/render.ts`, `src/schema.ts`) are the only files with loose functions: thin facades over the classes. Services are classes whose dependencies come in through the constructor. Runtime constants belong to the class that owns them as `static readonly` members.
 - **One class per file, named after it (lint).** `max-classes-per-file`, `local/class-matches-file`.
 - **Protocols hold only types and schemas.** No logic. A type used by one file stays in that file.

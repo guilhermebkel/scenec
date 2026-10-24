@@ -1,5 +1,5 @@
 import { check, renderPng } from "../../src/render.ts";
-import { SanitizeUtil } from "../../src/utils/SanitizeUtil.ts";
+import { SanitizeUtil } from "../../src/Utils/SanitizeUtil.ts";
 import { describe, expect, it } from "vitest";
 import { listAssets, listKits } from "../../src/schema.ts";
 const SMOKE_WIDTH = 200;

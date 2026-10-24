@@ -10,18 +10,18 @@ const TEST_FILES = ["src/**/*.test.ts", "test/**/*.ts", "scripts/**/*.test.mjs"]
 
 // Why: the legacy files were ported byte-for-byte from the JavaScript prototype to keep the 108 baselines identical (ADR 0010); they are cleaned up one folder at a time.
 const LEGACY_FILES = [
-  "src/drawing/**/*.ts", "src/modes/**/*.ts", "src/cli.ts", "src/pipeline/index.ts",
-  "src/pipeline/{CompileService,CustomAssetService,GroupService,ParseService,CatalogService}.ts",
-  "src/render/{CriticService,CheckService}.ts", "src/utils/{RecolorUtil,ColorUtil,SanitizeUtil,SuggestUtil}.ts",
+  "src/Resources/**/*.ts", "src/Modules/**/*.ts", "src/cli.ts",
+  "src/Services/{CustomAssetService,GroupService,CatalogService,AssetService,KitService,ThemeService}.ts",
+  "src/Utils/{RecolorUtil,ColorUtil,SanitizeUtil,SuggestUtil,PersonUtil}.ts",
 ];
 
-// Why: layer order is Protocols < Utils < Drawing < Modes < Pipeline < Render < Cli; a layer imports only the ones below it.
+// Why: layer order is Protocols < Utils < Resources < Services < Modules < Cli; Adapters only see Protocols and Utils, so the core never reaches the native renderer or the file system.
 const LAYER_TO_FORBIDDEN_LAYERS = {
-  protocols: ["utils", "drawing", "modes", "pipeline", "render", "cli"],
-  utils: ["drawing", "modes", "pipeline", "render", "cli"],
-  drawing: ["modes", "pipeline", "render", "cli"],
-  modes: ["pipeline", "render", "cli"],
-  pipeline: ["render", "cli"],
+  Protocols: ["Utils", "Resources", "Services", "Modules", "Adapters"],
+  Utils: ["Resources", "Services", "Modules", "Adapters"],
+  Resources: ["Services", "Modules", "Adapters"],
+  Services: ["Modules", "Adapters"],
+  Adapters: ["Resources", "Services", "Modules"],
 };
 
 const layerConfigs = Object.entries(LAYER_TO_FORBIDDEN_LAYERS).map(([layer, forbiddenLayers]) => ({
@@ -36,6 +36,18 @@ const layerConfigs = Object.entries(LAYER_TO_FORBIDDEN_LAYERS).map(([layer, forb
     }],
   },
 }));
+
+const coreModulesConfig = {
+  // Why: the compile core stays pure, so only the critic and the check (which need the native renderer) may import Adapters.
+  files: ["src/Modules/**/*.ts"],
+  ignores: [...TEST_FILES, "src/Modules/CritiqueModule.ts", "src/Modules/CheckModule.ts"],
+  rules: {
+    "no-restricted-imports": ["error", { patterns: [
+      { group: ["**/Adapters/**"], message: "Core modules are pure: only the critic and the check use Adapters." },
+      { group: ["node:*", "fs", "path"], message: "The core has no file system; use the FileReader option." },
+    ] }],
+  },
+};
 
 const MAX_COGNITIVE_COMPLEXITY = 15;
 const MAX_DEPTH = 3;
@@ -113,10 +125,11 @@ export default tseslint.config(
     },
   },
   ...layerConfigs,
+  coreModulesConfig,
   {
     // Why: the core never touches the clock, randomness, the file system or the process; only render and cli do.
-    files: ["src/protocols/**", "src/utils/**", "src/drawing/**", "src/modes/**", "src/pipeline/**"],
-    ignores: TEST_FILES,
+    files: ["src/Protocols/**", "src/Utils/**", "src/Resources/**", "src/Services/**", "src/Modules/**"],
+    ignores: [...TEST_FILES, "src/Modules/CritiqueModule.ts", "src/Modules/CheckModule.ts"],
     rules: {
       "no-restricted-properties": ["error",
         { object: "Math", property: "random", message: "The core is pure: no randomness." },

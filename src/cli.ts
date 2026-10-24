@@ -4,7 +4,7 @@ import path from "node:path";
 import { parseArgs } from "node:util";
 import { CATALOG_KINDS, catalog, sceneJsonSchema } from "@/schema.ts";
 import type { CatalogKind } from "@/schema.ts";
-import { SceneError } from "@/pipeline/SceneError.ts";
+import { SceneError } from "@/Protocols/SceneError.ts";
 import { check, createFileReader, renderPng } from "@/render.ts";
 
 const SCHEMA_VERSION = 1;

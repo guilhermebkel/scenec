@@ -5,7 +5,7 @@ describe("rewriteSpecifiers()", () => {
   it("rewrites an alias import to a relative path with the .js extension", () => {
     const source = "import { ColorUtil } from \"@/utils/ColorUtil.ts\";";
 
-    expect(rewriteSpecifiers(source, "/pkg/dist/pipeline/CompileService.js", "/pkg/dist")).toBe(
+    expect(rewriteSpecifiers(source, "/pkg/dist/pipeline/CompilationModule.js", "/pkg/dist")).toBe(
       "import { ColorUtil } from \"../utils/ColorUtil.js\";",
     );
   });
@@ -27,7 +27,7 @@ describe("rewriteSpecifiers()", () => {
   it("keeps the .json extension of an aliased data import", () => {
     const source = "import data from \"@/data/europe.json\" with { type: \"json\" };";
 
-    expect(rewriteSpecifiers(source, "/pkg/dist/modes/MapService.js", "/pkg/dist")).toBe(
+    expect(rewriteSpecifiers(source, "/pkg/dist/modes/MapModule.js", "/pkg/dist")).toBe(
       "import data from \"../data/europe.json\" with { type: \"json\" };",
     );
   });
