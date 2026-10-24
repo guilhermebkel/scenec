@@ -1,21 +1,72 @@
-name: release
+name: Release
+
 on:
-  push:
-    tags: ["v*"]
-permissions:
-  contents: read
-  id-token: write
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "patch, minor or major; none releases the current version as is (first release)"
+        required: true
+        default: patch
+        type: choice
+        options: [patch, minor, major, none]
+
+concurrency:
+  group: main-writes
+  cancel-in-progress: false
+
 jobs:
-  publish:
+  release:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version-file: .nvmrc
+          cache: pnpm
           registry-url: https://registry.npmjs.org
-      - run: npm install -g npm@^11.5.1
+      - name: Use an npm that supports trusted publishing
+        run: npm install -g npm@^11.5.1
       - run: pnpm install --frozen-lockfile
-      - run: pnpm check
-      - run: npm publish --provenance --access public
+      - name: Bump the version in package.json
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: |
+          if [ "$BUMP" != "none" ]; then
+            pnpm version "$BUMP" --no-git-tag-version
+          fi
+          VERSION=$(node -p 'require("./package.json").version')
+          if git rev-parse -q --verify "refs/tags/v$VERSION" > /dev/null; then
+            echo "v$VERSION is already released; pick patch, minor or major." >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      - name: Check everything the release ships
+        run: pnpm check
+      - name: Commit, tag and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          if ! git diff --cached --quiet; then
+            git commit -m "release: v$VERSION [skip ci]"
+          fi
+          git tag -a "v$VERSION" -m "v$VERSION"
+          git push origin HEAD:main "v$VERSION"
+      - name: Publish to npm with provenance
+        run: |
+          if npm view "scenec@$VERSION" version > /dev/null 2>&1; then
+            echo "scenec@$VERSION is already on npm (published by hand); skipping."
+          else
+            npm publish --provenance --access public
+          fi
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "v$VERSION" --title "v$VERSION" --generate-notes --verify-tag
