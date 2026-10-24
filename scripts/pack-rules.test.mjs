@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findPackProblems } from "./pack-rules.mjs";
+import { findManifestWarnings, findPackProblems } from "./pack-rules.mjs";
 
 describe("findPackProblems()", () => {
   it("accepts dist, fonts, skills and the root files", () => {
@@ -18,5 +18,17 @@ describe("findPackProblems()", () => {
     expect(findPackProblems(["dist/index.js"], 5 * 1024 * 1024 + 1)).toStrictEqual([
       "package is 5242881 bytes; the limit is 5242880",
     ]);
+  });
+});
+
+describe("findManifestWarnings()", () => {
+  it("reports npm's auto-correction notice", () => {
+    const stderr = "npm warn publish npm auto-corrected some errors in your package.json when publishing.";
+
+    expect(findManifestWarnings(stderr)).toStrictEqual(["npm auto-corrected package.json; run `npm pkg fix` and commit the result"]);
+  });
+
+  it("accepts a clean stderr", () => {
+    expect(findManifestWarnings("")).toStrictEqual([]);
   });
 });
