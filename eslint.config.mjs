@@ -91,7 +91,7 @@ export default tseslint.config(
       "no-nested-ternary": "error",
       "no-console": "error",
       "@typescript-eslint/no-magic-numbers": ["error", {
-        ignore: [-1, 0, 1, 2], ignoreArrayIndexes: true, ignoreDefaultValues: true, ignoreEnums: true,
+        ignore: [-1, 0, 0.5, 1, 2, 100], ignoreArrayIndexes: true, ignoreDefaultValues: true, ignoreEnums: true,
         ignoreNumericLiteralTypes: true, ignoreReadonlyClassProperties: true, ignoreTypeIndexes: true,
       }],
       "sonarjs/cognitive-complexity": ["error", MAX_COGNITIVE_COMPLEXITY],
@@ -142,6 +142,11 @@ export default tseslint.config(
   {
     files: ["src/cli.ts", "src/Commands/**", "scripts/**", "test/**"],
     rules: { "no-console": "off", "@typescript-eslint/no-magic-numbers": "off" },
+  },
+  {
+    // Why: in drawing code a number is a coordinate, size or angle of a shape, not a business rule; naming each one would hide the drawing behind constants. Logic code (Services, Modules, Commands) keeps the rule on.
+    files: ["src/Resources/Assets/**", "src/Utils/PersonUtil.ts", "src/Utils/ShapeUtil.ts"],
+    rules: { "@typescript-eslint/no-magic-numbers": "off" },
   },
   {
     // Why: legacy debt, recorded in ADR 0010. New code in these folders still has to pass the rules that are not switched off here.
