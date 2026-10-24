@@ -1,3 +1,4 @@
+import { UnsafeSvgError } from "./UnsafeSvgError.ts";
 
 const ALLOWED_ELEMENTS = new Set([
   "svg", "g", "defs", "title", "desc", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "text", "tspan",
@@ -22,13 +23,6 @@ interface Tag {
   isClosing: boolean;
   isSelfClosing: boolean;
   end: number;
-}
-
-export class UnsafeSvgError extends Error {
-  constructor(reason: string) {
-    super(reason);
-    this.name = "UnsafeSvgError";
-  }
 }
 
 function skipPast(source: string, from: number, terminator: string): number {

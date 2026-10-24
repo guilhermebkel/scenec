@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { sanitizeSvg, UnsafeSvgError } from "./sanitize.ts";
+import { sanitizeSvg } from "./sanitize.ts";
+import { UnsafeSvgError } from "./UnsafeSvgError.ts";
 
 describe("sanitize.sanitizeSvg()", () => {
   it("removes a script element together with its content", () => {

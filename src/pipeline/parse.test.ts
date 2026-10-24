@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { parseScene, SceneError } from "./parse.ts";
+import { parseScene } from "./parse.ts";
+import { SceneError } from "./SceneError.ts";
 
 function errorsOf(input: unknown): string[] {
   try {

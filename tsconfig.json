@@ -14,7 +14,8 @@
     "rewriteRelativeImportExtensions": true,
     "declaration": true,
     "outDir": "dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", "scripts", "test", "*.mjs"]
 }

@@ -3,17 +3,8 @@ import { z } from "zod";
 import type { ZodType } from "zod";
 import { canvasSchema, objectSchema, OBJECT_PARAM_KEYS, MAX_OBJECTS, SIZE_NAMES, SLOT_NAMES, sceneSchema, textSchema } from "../protocols/scene.ts";
 import type { Scene } from "../protocols/scene.ts";
+import { SceneError } from "./SceneError.ts";
 import { closest } from "../utils/suggest.ts";
-
-export class SceneError extends Error {
-  readonly errors: string[];
-
-  constructor(errors: string[]) {
-    super(errors.join("\n"));
-    this.name = "SceneError";
-    this.errors = errors;
-  }
-}
 
 export interface ParsedScene {
   scene: Scene;
