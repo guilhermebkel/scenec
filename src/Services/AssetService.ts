@@ -1,4 +1,5 @@
 import type { AssetId, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
+import { RegistryUtil } from "@/Utils/RegistryUtil.ts";
 import { SuggestUtil } from "@/Utils/SuggestUtil.ts";
 import { PersonAsset } from "@/Resources/Assets/PersonAsset.ts";
 import { HouseAsset } from "@/Resources/Assets/HouseAsset.ts";
@@ -99,20 +100,11 @@ export interface AssetResolution {
 }
 
 export class AssetService {
-  private static indexById(assets: BaseAsset[]): Record<AssetId, BaseAsset> {
-    const index: Partial<Record<AssetId, BaseAsset>> = {};
-    for (const asset of assets) {
-      index[asset.id] = asset;
-    }
-    // Why: AssetService.test.ts checks that every id in ASSET_IDS has a registered asset.
-    return index as Record<AssetId, BaseAsset>;
-  }
-
   private static readonly CANDIDATE_POOL = 6;
 
   private static readonly SUGGESTION_COUNT = 3;
 
-  static readonly ASSETS: Record<AssetId, BaseAsset> = AssetService.indexById(
+  static readonly ASSETS: Record<AssetId, BaseAsset> = RegistryUtil.indexById(
     [new PersonAsset(), new HouseAsset(), new TreeAsset(), new PineAsset(), new PalmAsset(), new BushAsset(), new FlowersAsset(), new FenceAsset(), new BuildingAsset(), new MountainAsset(), new SunAsset(), new MoonAsset(), new CloudAsset(), new BirdAsset(), new StarAsset(), new StarsAsset(), new CarAsset(), new BicycleAsset(), new DogAsset(), new CatAsset(), new StreetlightAsset(), new BenchAsset(), new WindowAsset(), new FrameAsset(), new ClockAsset(), new BoardAsset(), new ShelfWallAsset(), new BookshelfAsset(), new DeskAsset(), new TableAsset(), new CounterAsset(), new ChairAsset(), new SofaAsset(), new BedAsset(), new TvAsset(), new TvStandAsset(), new FloorLampAsset(), new RugAsset(), new PendantLampAsset(), new LaptopAsset(), new MonitorAsset(), new LampAsset(), new PlantAsset(), new BigPlantAsset(), new CupAsset(), new CakeAsset(), new PizzaAsset(), new FruitBowlAsset(), new BurgerAsset(), new PlateAsset(), new VaseFlowersAsset(), new BooksAsset(), new CoffeeMachineAsset(), new UmbrellaAsset(), new BoatAsset(), new SuitcaseAsset(), new BackpackAsset(), new BeachTowelAsset(), new BallAsset(), new SandcastleAsset(), new SchoolAsset(), new UniversityAsset(), new LabAsset(), new StageAsset(), new FinishFlagAsset(), new PennantAsset(), new BalloonsAsset(), new DiplomaAsset(), new TrophyAsset(), new DeskSlabAsset(), new DrawerUnitAsset(), new CabinetAsset(), new RollingCartAsset(), new TrashCanAsset(), new OfficeChairAsset(), new LaptopOpenAsset(), new HeadphonesAsset(), new CapAsset(), new PhotoFrameAsset(), new FigurineAsset(), new TumblerAsset(), new PaperCupAsset(), new PlasticBagAsset(), new CablesAsset(), new LightSwitchAsset(), new GlassShelfAsset()],
   );
 

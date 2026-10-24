@@ -17,3 +17,15 @@ export interface KitStyle {
   readonly scene?: string;
   readonly hasDrop?: boolean;
 }
+
+// Why: the slug of every kit, so code that names a kit by id is checked by the compiler.
+export const KIT_IDS = [
+  "flat",
+  "hatch",
+  "outline",
+  "paper",
+  "riso",
+  "sketch",
+] as const;
+
+export type KitId = (typeof KIT_IDS)[number];

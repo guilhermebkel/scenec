@@ -1,19 +1,20 @@
 import type { CompilationContext, LayoutLines } from "@/Protocols/CompilationProtocol.ts";
 import type { CompileOptions } from "@/Protocols/OptionsProtocol.ts";
-import type { Scene } from "@/Protocols/SceneProtocol.ts";
-import type { Theme } from "@/Protocols/ThemeProtocol.ts";
+import { SETTING_NAMES, type Scene, type SettingName } from "@/Protocols/SceneProtocol.ts";
+import { KIT_IDS, type KitId } from "@/Protocols/KitProtocol.ts";
+import { THEME_IDS, type Theme, type ThemeId } from "@/Protocols/ThemeProtocol.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { AssetService } from "@/Services/AssetService.ts";
 import { CustomAssetService } from "@/Services/CustomAssetService.ts";
 import { KitService } from "@/Services/KitService.ts";
-import { RequireUtil } from "@/Utils/RequireUtil.ts";
 import { ThemeService } from "@/Services/ThemeService.ts";
 
 export class ContextService {
-  private static readonly DEFAULT_THEME = "flat-cool";
+  private static readonly DEFAULT_THEME: ThemeId = "flat-cool";
 
-  private static readonly DEFAULT_KIT = "flat";
+  private static readonly DEFAULT_KIT: KitId = "flat";
 
-  private static readonly DEFAULT_SETTING = "outdoor";
+  private static readonly DEFAULT_SETTING: SettingName = "outdoor";
 
   private static readonly DEFAULT_WIDTH = 1200;
 
@@ -30,7 +31,7 @@ export class ContextService {
 
   private static readonly FAR_BASE_FOLLOW = 0.3;
 
-  private static readonly SETTING_TO_LINES: Record<string, LayoutLines> = {
+  private static readonly SETTING_TO_LINES: Record<SettingName, LayoutLines> = {
     outdoor: { horizon: 0.64, base: { near: 0.92, mid: 0.8, far: 0.69 } },
     indoor: { horizon: 0.68, base: { near: 0.93, mid: 0.84, far: 0.74 } },
     beach: { horizon: 0.5, sea: 0.62, base: { near: 0.93, mid: 0.82, far: 0.71 } },
@@ -52,30 +53,33 @@ export class ContextService {
   }
 
   private static themeOf(name: string | undefined, warnings: string[]): Theme {
-    const theme = ThemeService.THEMES[name ?? ContextService.DEFAULT_THEME];
-    if (theme) {
-      return theme;
+    if (name === undefined) {
+      return ThemeService.THEMES[ContextService.DEFAULT_THEME];
     }
-    warnings.push(`theme '${name}' does not exist; using '${ContextService.DEFAULT_THEME}'. Available: ${Object.keys(ThemeService.THEMES).join(", ")}`);
-    return RequireUtil.defined(ThemeService.THEMES[ContextService.DEFAULT_THEME], "default theme");
+    if (IdUtil.isOneOf(THEME_IDS, name)) {
+      return ThemeService.THEMES[name];
+    }
+    warnings.push(`theme '${name}' does not exist; using '${ContextService.DEFAULT_THEME}'. Available: ${THEME_IDS.join(", ")}`);
+    return ThemeService.THEMES[ContextService.DEFAULT_THEME];
   }
 
   private static kitOf(name: string | undefined, warnings: string[]): CompilationContext["kit"] {
-    const kit = KitService.KITS[name ?? ContextService.DEFAULT_KIT];
-    if (kit) {
-      return kit;
+    if (name === undefined) {
+      return KitService.KITS[ContextService.DEFAULT_KIT];
     }
-    warnings.push(`kit '${name}' does not exist; available: ${Object.keys(KitService.KITS).join(", ")}`);
-    return RequireUtil.defined(KitService.KITS[ContextService.DEFAULT_KIT], "default kit");
+    if (IdUtil.isOneOf(KIT_IDS, name)) {
+      return KitService.KITS[name];
+    }
+    warnings.push(`kit '${name}' does not exist; available: ${KIT_IDS.join(", ")}`);
+    return KitService.KITS[ContextService.DEFAULT_KIT];
   }
 
   private static linesOf(setting: string, canvas: CompilationContext["canvas"], warnings: string[]): LayoutLines {
-    let preset = ContextService.SETTING_TO_LINES[setting];
-    if (!preset) {
+    const isKnown = IdUtil.isOneOf(SETTING_NAMES, setting);
+    if (!isKnown) {
       warnings.push(`setting '${setting}' is invalid; use outdoor, indoor, beach or city`);
-      preset = RequireUtil.defined(ContextService.SETTING_TO_LINES[ContextService.DEFAULT_SETTING], "default setting");
     }
-    const lines = structuredClone(preset);
+    const lines = structuredClone(ContextService.SETTING_TO_LINES[isKnown ? setting : ContextService.DEFAULT_SETTING]);
     if (canvas.horizon != null) {
       lines.horizon = canvas.horizon;
     }

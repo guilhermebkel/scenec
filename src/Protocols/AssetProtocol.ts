@@ -96,6 +96,7 @@ export type AssetId = (typeof ASSET_IDS)[number];
 export type Facing = "left" | "right";
 
 export interface AssetParams extends PersonParams {
+  shadow?: boolean;
   color?: string;
   width?: number;
   height?: number;
@@ -138,8 +139,13 @@ export interface PersonDrawing {
 
 export type AssetDrawing = string | PersonDrawing;
 
+// Why: the surface an asset sits on or hangs from; placement, lighting and custom assets branch on it.
+export const ASSET_KINDS = ["ground", "surface", "any", "wall", "sky", "ceiling", "floor", "water"] as const;
+
+export type AssetKind = typeof ASSET_KINDS[number];
+
 export interface LibraryAsset {
-  readonly kind: string;
+  readonly kind: AssetKind;
   readonly width: number;
   readonly height: number;
   readonly tags?: readonly string[];

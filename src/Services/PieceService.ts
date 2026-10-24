@@ -1,5 +1,6 @@
-import type { AssetId } from "@/Protocols/AssetProtocol.ts";
-import type { CompilationContext, HazeLevels, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
+import type { AssetId, AssetKind } from "@/Protocols/AssetProtocol.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
+import type { Depth, CompilationContext, HazeLevels, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
 import type { SceneObject } from "@/Protocols/SceneProtocol.ts";
 import { KitService } from "@/Services/KitService.ts";
 
@@ -25,11 +26,11 @@ export interface Pieces {
 export class PieceService {
   private static readonly SHADOW_ELLIPSE = /<ellipse cx="([-\d.]+)" cy="0" rx="([\d.]+)" ry="([\d.]+)" fill="[^"]*"( stroke="none")?\s*\/>/;
 
-  private static readonly DEPTH_TO_SHADE: Record<string, number> = { near: 1, mid: 0.6, far: 0.3 };
+  private static readonly DEPTH_TO_SHADE: Record<Depth, number> = { near: 1, mid: 0.6, far: 0.3 };
 
-  private static readonly UNLIT_KINDS = ["sky", "floor"];
+  private static readonly UNLIT_KINDS: readonly AssetKind[] = ["sky", "floor"];
 
-  private static readonly GROUNDED_KINDS = ["ground", "any"];
+  private static readonly GROUNDED_KINDS: readonly AssetKind[] = ["ground", "any"];
 
   private static readonly NO_CAST_ASSETS: AssetId[] = ["mountain", "cloud"];
 
@@ -153,7 +154,7 @@ export class PieceService {
       return "";
     }
     const box = PieceService.maskBox(placement);
-    const opacity = PieceService.DEPTH_TO_SHADE[placement.depth ?? ""] ?? 1;
+    const opacity = IdUtil.lookup(PieceService.DEPTH_TO_SHADE, placement.depth) ?? 1;
     const mask = `<mask id="mk_${placement.id}" maskUnits="userSpaceOnUse" x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${box.width.toFixed(1)}" height="${box.height.toFixed(1)}"><use href="#b_${placement.id}" transform="${transform}" filter="url(#toWhite)"/></mask>`;
     const isGrounded = PieceService.GROUNDED_KINDS.includes(placement.kind) && !object.on;
     if (isGrounded && context.kit.light?.hasCasts !== false && !heldBy[placement.id] && !((object.elevation ?? 0) > 0)

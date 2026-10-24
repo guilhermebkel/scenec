@@ -1,5 +1,5 @@
 import type { CompilationContext, Placement, TextRect } from "@/Protocols/CompilationProtocol.ts";
-import type { SceneText } from "@/Protocols/SceneProtocol.ts";
+import type { SceneText, TextRole } from "@/Protocols/SceneProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 
 interface TextLayout {
@@ -27,9 +27,9 @@ export class TextService {
 
   private static readonly TITLE_SIZE = 0.075;
 
-  private static readonly ROLE_TO_SIZE: Record<string, number> = { title: TextService.TITLE_SIZE, subtitle: 0.036, label: 0.028, body: 0.032 };
+  private static readonly ROLE_TO_SIZE: Record<TextRole, number> = { title: TextService.TITLE_SIZE, subtitle: 0.036, label: 0.028, body: 0.032 };
 
-  private static readonly ROLE_TO_WEIGHT: Record<string, number> = { title: 700, body: 400 };
+  private static readonly ROLE_TO_WEIGHT: Partial<Record<TextRole, number>> = { title: 700, body: 400 };
 
   private static readonly DEFAULT_SIZE = 0.04;
 

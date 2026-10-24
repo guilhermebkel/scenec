@@ -1,7 +1,11 @@
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import type { AssetDrawing } from "@/Protocols/AssetProtocol.ts";
-import type { BodyScale, PersonParams, Point } from "@/Protocols/PersonProtocol.ts";
+import {
+  EXPRESSION_NAMES, SEATED_POSE_NAMES, STANDING_POSE_NAMES,
+  type AgeName, type BodyScale, type BuildName, type GazeName, type PersonParams, type Point, type SeatedPoseName, type StandingPoseName,
+} from "@/Protocols/PersonProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { PersonArmUtil } from "@/Utils/PersonArmUtil.ts";
 import { PersonHeadUtil } from "@/Utils/PersonHeadUtil.ts";
 import { PersonOutfitUtil, type PersonLook } from "@/Utils/PersonOutfitUtil.ts";
@@ -23,9 +27,9 @@ interface AgeScale {
 
 // Why: units are such that a standing person is 100 tall with the origin at the feet; poses only say where the hands go.
 export class PersonUtil {
-  static readonly EXPRESSION_NAMES = PersonHeadUtil.EXPRESSION_NAMES;
+  static readonly EXPRESSION_NAMES = [...EXPRESSION_NAMES];
 
-  private static readonly FRONT_POSES: Record<string, FrontPose> = {
+  private static readonly FRONT_POSES: Record<StandingPoseName, FrontPose> = {
     standing: { left: [-15, -46], right: [15, -46] },
     waving: { left: [-15, -46], right: [27, -105], openRight: true },
     pointing: { left: [-15, -46], right: [46, -77] },
@@ -41,15 +45,15 @@ export class PersonUtil {
 
   private static readonly STANDING_POSE: FrontPose = { left: [-15, -46], right: [15, -46] };
 
-  private static readonly SIDE_POSES: Record<string, Point> = {
+  private static readonly SIDE_POSES: Record<SeatedPoseName, Point> = {
     sitting: [20, -50], typing: [35, -55], reading: [22, -66], drinking: [10, -82],
   };
 
   private static readonly TYPING_HANDS: Point = [35, -55];
 
-  static readonly POSE_NAMES = { standing: Object.keys(PersonUtil.FRONT_POSES), seated: Object.keys(PersonUtil.SIDE_POSES) };
+  static readonly POSE_NAMES = { standing: [...STANDING_POSE_NAMES], seated: [...SEATED_POSE_NAMES] };
 
-  private static readonly AGE_TO_SCALE: Record<string, AgeScale> = {
+  private static readonly AGE_TO_SCALE: Record<AgeName, AgeScale> = {
     child: { bx: 0.8, by: 0.58, hs: 0.93 },
     teen: { bx: 0.9, by: 0.86, hs: 0.97 },
     adult: { bx: 1, by: 1, hs: 1 },
@@ -58,18 +62,18 @@ export class PersonUtil {
 
   private static readonly ADULT_SCALE: AgeScale = { bx: 1, by: 1, hs: 1 };
 
-  private static readonly BUILD_TO_WIDTH: Record<string, number> = { slim: 0.88, average: 1, broad: 1.12, heavy: 1.16 };
+  private static readonly BUILD_TO_WIDTH: Record<BuildName, number> = { slim: 0.88, average: 1, broad: 1.12, heavy: 1.16 };
 
   private static readonly MIN_HEIGHT = 0.8;
 
   private static readonly MAX_HEIGHT = 1.2;
 
-  private static readonly LOOK_TO_GAZE: Record<string, Point> = {
+  private static readonly LOOK_TO_GAZE: Record<GazeName, Point> = {
     "left": [-1, 0], "right": [1, 0], "up": [0, -1], "down": [0, 1], "up-left": [-0.8, -0.7], "up-right": [0.8, -0.7],
     "down-left": [-0.8, 0.7], "down-right": [0.8, 0.7], "camera": [0, 0], "forward": [0, 0],
   };
 
-  private static readonly POSE_TO_GAZE: Record<string, Point> = {
+  private static readonly POSE_TO_GAZE: Partial<Record<StandingPoseName | SeatedPoseName, Point>> = {
     pointing: [1, -0.3], presenting: [0.8, 0], thinking: [-0.5, -0.8], celebrating: [0, -0.5], phone: [0.5, 0.4], holding: [0.5, 0.3],
     reading: [0.5, 0.9], typing: [1, 0.15], drinking: [0.6, 0], sitting: [0.6, 0],
   };
@@ -83,9 +87,9 @@ export class PersonUtil {
   private static readonly CANE_REST_HEIGHT = 6;
 
   static bodyScale(params: PersonParams = {}): BodyScale {
-    const age = PersonUtil.AGE_TO_SCALE[params.age ?? ""] ?? PersonUtil.ADULT_SCALE;
+    const age = IdUtil.lookup(PersonUtil.AGE_TO_SCALE, params.age) ?? PersonUtil.ADULT_SCALE;
     const heightFactor = Math.max(PersonUtil.MIN_HEIGHT, Math.min(PersonUtil.MAX_HEIGHT, Number(params.height) || 1));
-    return { bx: age.bx * (PersonUtil.BUILD_TO_WIDTH[params.build ?? ""] || 1), by: age.by * heightFactor, hs: age.hs };
+    return { bx: age.bx * (IdUtil.lookup(PersonUtil.BUILD_TO_WIDTH, params.build) || 1), by: age.by * heightFactor, hs: age.hs };
   }
 
   // Why: the compiler resolves `look: <id>` into a gaze vector; names such as "left" or "camera" are resolved here.
@@ -93,11 +97,11 @@ export class PersonUtil {
     if (Array.isArray(params.gaze)) {
       return [params.gaze[0] ?? 0, params.gaze[1] ?? 0];
     }
-    const named = typeof params.look === "string" ? PersonUtil.LOOK_TO_GAZE[params.look] : undefined;
+    const named = IdUtil.lookup(PersonUtil.LOOK_TO_GAZE, params.look);
     if (named) {
       return named;
     }
-    const byPose = PersonUtil.POSE_TO_GAZE[pose];
+    const byPose = IdUtil.lookup(PersonUtil.POSE_TO_GAZE, pose);
     return byPose ? [byPose[0] * facing, byPose[1]] : [0, 0];
   }
 
@@ -107,7 +111,7 @@ export class PersonUtil {
     const pose = params.pose || "standing";
     const round = PersonArmUtil.round;
     const shadow = `<ellipse cx="0" cy="0" rx="${round(20 * scale.bx)}" ry="3.2" fill="${theme.shadow}"/>`;
-    const isSeated = pose in PersonUtil.SIDE_POSES || pose === "sitting_typing";
+    const isSeated = IdUtil.isOneOf(SEATED_POSE_NAMES, pose) || pose === "sitting_typing";
     const drawn = isSeated ? PersonUtil.seated(params, look, scale, pose) : PersonUtil.standing(params, look, scale, pose);
     return {
       svg: shadow + drawn.svg,
@@ -130,7 +134,7 @@ export class PersonUtil {
   private static seated(params: PersonParams, look: PersonLook, scale: BodyScale, pose: string): { svg: string; hand: Point } {
     const { theme, skin, sleeve, isShortSleeve } = look;
     const facing = params.facing === "left" ? -1 : 1;
-    const target = PersonUtil.SIDE_POSES[pose] ?? PersonUtil.TYPING_HANDS;
+    const target = IdUtil.lookup(PersonUtil.SIDE_POSES, pose) ?? PersonUtil.TYPING_HANDS;
     const shoulder: Point = [facing * 2, -75];
     const backArm = PersonArmUtil.ik(shoulder, [target[0] * facing - facing * 4, target[1] + 2], facing, "down");
     const frontArm = PersonArmUtil.ik(shoulder, [target[0] * facing, target[1]], facing, "down");
@@ -162,7 +166,7 @@ export class PersonUtil {
   private static standing(params: PersonParams, look: PersonLook, scale: BodyScale, pose: string): { svg: string; hand: Point } {
     const { theme, skin, sleeve, isShortSleeve } = look;
     const isBack = params.view === "back";
-    const targets = PersonUtil.FRONT_POSES[pose] ?? PersonUtil.STANDING_POSE;
+    const targets = IdUtil.lookup(PersonUtil.FRONT_POSES, pose) ?? PersonUtil.STANDING_POSE;
     const side = params.facing === "left" ? -1 : params.facing === "right" ? 1 : 0;
     const legs = PersonOutfitUtil.standingLegs(look, pose === "walking");
     const backpack = PersonOutfitUtil.backpack(look, params, isBack);

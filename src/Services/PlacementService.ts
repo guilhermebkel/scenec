@@ -1,8 +1,9 @@
 import type { AssetId, AssetParams, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
 import type { CompilationContext, Depth, Placement } from "@/Protocols/CompilationProtocol.ts";
-import type { SceneObject } from "@/Protocols/SceneProtocol.ts";
+import type { ObjectLayer, SceneObject, SizeName, SlotName } from "@/Protocols/SceneProtocol.ts";
 import { AssetService } from "@/Services/AssetService.ts";
 import { DependencyOrderService, type ResolutionOrder } from "@/Services/DependencyOrderService.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { RequireUtil } from "@/Utils/RequireUtil.ts";
 import { PersonUtil } from "@/Utils/PersonUtil.ts";
 
@@ -11,7 +12,7 @@ interface Position {
   y: number;
   scale: number;
   z: number;
-  depth: string | null;
+  depth: Depth | null;
 }
 
 interface PlacementRequest {
@@ -26,11 +27,11 @@ interface PlacementRequest {
 }
 
 export class PlacementService {
-  private static readonly SLOT_TO_FRACTION: Record<string, number> = {
+  private static readonly SLOT_TO_FRACTION: Record<SlotName, number> = {
     "far-left": 0.08, "left": 0.2, "center-left": 0.35, "center": 0.5, "center-right": 0.65, "right": 0.8, "far-right": 0.92,
   };
 
-  private static readonly SIZE_NAME_TO_FACTOR: Record<string, number> = {
+  private static readonly SIZE_NAME_TO_FACTOR: Record<SizeName, number> = {
     tiny: 0.5, small: 0.75, medium: 1, large: 1.3, huge: 1.7,
   };
 
@@ -43,13 +44,13 @@ export class PlacementService {
 
   private static readonly SEATED_POSES = ["sitting", "typing", "reading", "drinking", "sitting_floor", "hugging_knees"];
 
-  private static readonly SEAT_ALIGN_TO_OFFSET: Record<string, number> = { left: -0.28, right: 0.28, center: 0 };
+  private static readonly SEAT_ALIGN_TO_OFFSET: Record<"left" | "right" | "center", number> = { left: -0.28, right: 0.28, center: 0 };
 
-  private static readonly SURFACE_ALIGN_TO_OFFSET: Record<string, number> = {
+  private static readonly SURFACE_ALIGN_TO_OFFSET: Record<"left" | "right" | "center" | "far-left" | "far-right", number> = {
     "left": -0.3, "right": 0.3, "center": 0, "far-left": -0.42, "far-right": 0.42,
   };
 
-  private static readonly LAYER_TO_Z_SHIFT: Record<string, number> = { back: -0.2, front: 0.2 };
+  private static readonly LAYER_TO_Z_SHIFT: Record<ObjectLayer, number> = { back: -0.2, front: 0.2 };
 
   private static readonly SKY_SCALE = 0.9;
 
@@ -99,7 +100,7 @@ export class PlacementService {
     if (typeof at === "number") {
       return at;
     }
-    return typeof at === "string" ? PlacementService.SLOT_TO_FRACTION[at] ?? fallback : fallback;
+    return IdUtil.lookup(PlacementService.SLOT_TO_FRACTION, at) ?? fallback;
   }
 
   static placeAll(context: CompilationContext, resolution: ResolutionOrder): Record<string, Placement> {
@@ -159,7 +160,7 @@ export class PlacementService {
     if (typeof object.size === "number") {
       return object.size;
     }
-    const known = PlacementService.SIZE_NAME_TO_FACTOR[object.size ?? "medium"];
+    const known = IdUtil.lookup(PlacementService.SIZE_NAME_TO_FACTOR, object.size ?? "medium");
     if (known !== undefined) {
       return known;
     }
@@ -202,7 +203,7 @@ export class PlacementService {
     let scale = unit * sizeFactor * PlacementService.SKY_SCALE;
     const slot = String(object.at || "top-right").replace("top-", "").replace("sky-", "");
     const fallback = typeof object.at === "number" ? object.at : 0.5;
-    let x = (PlacementService.SLOT_TO_FRACTION[slot] ?? fallback) * width;
+    let x = (IdUtil.lookup(PlacementService.SLOT_TO_FRACTION, slot) ?? fallback) * width;
     let y = height * (object.altitude ?? PlacementService.DEFAULT_SKY_ALTITUDE) + (size.h * scale) / 2;
     if (assetId === "stars") {
       x = width / 2;
@@ -261,11 +262,11 @@ export class PlacementService {
     };
   }
 
-  private static alignOffset(align: unknown, names: Record<string, number>): number {
+  private static alignOffset<Name extends string>(align: unknown, names: Record<Name, number>): number {
     if (typeof align === "number") {
       return align;
     }
-    return names[typeof align === "string" ? align : "center"] ?? 0;
+    return IdUtil.lookup(names, typeof align === "string" ? align : "center") ?? 0;
   }
 
   private static positionOnTop(request: PlacementRequest, context: CompilationContext): Position | null {
@@ -295,7 +296,7 @@ export class PlacementService {
       return { x: support.x, y: support.y - support.height, scale, z: support.z + PlacementService.ON_Z_STEP, depth: support.depth };
     }
     const offset = PlacementService.alignOffset(object.align, PlacementService.SURFACE_ALIGN_TO_OFFSET);
-    const layerShift = PlacementService.LAYER_TO_Z_SHIFT[object.layer ?? ""] ?? 0;
+    const layerShift = IdUtil.lookup(PlacementService.LAYER_TO_Z_SHIFT, object.layer) ?? 0;
     return {
       x: support.x + offset * support.width, y: support.y - surfaceTop * support.scale, scale,
       z: support.z + PlacementService.ON_Z_STEP + layerShift, depth: support.depth,

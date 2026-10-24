@@ -1,6 +1,6 @@
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import type { KitStyle } from "@/Protocols/KitProtocol.ts";
-import type { LibraryAsset } from "@/Protocols/AssetProtocol.ts";
+import type { AssetId, AssetKind, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
 import type { Canvas, SceneObject } from "@/Protocols/SceneProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 
@@ -15,14 +15,14 @@ export interface LayoutLines {
 export interface Placement {
   id: string;
   asset: string;
-  kind: string;
+  kind: AssetKind;
   x: number;
   y: number;
   scale: number;
   width: number;
   height: number;
   z: number;
-  depth: string | null;
+  depth: Depth | null;
   svg: string;
   bodySvg: string;
   surfaceTop: number | undefined;

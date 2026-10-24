@@ -23,3 +23,14 @@ export interface Theme {
   shadow: string;
   [key: string]: string | string[] | undefined;
 }
+
+// Why: the slug of every theme, so code that names a theme by id is checked by the compiler.
+export const THEME_IDS = [
+  "beach",
+  "flat-autumn",
+  "flat-cool",
+  "night",
+  "warm-cafe",
+] as const;
+
+export type ThemeId = (typeof THEME_IDS)[number];

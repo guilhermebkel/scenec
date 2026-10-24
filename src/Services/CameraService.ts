@@ -1,3 +1,5 @@
+import type { ShotName } from "@/Protocols/SceneProtocol.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import type { Camera, CompilationContext, Placement } from "@/Protocols/CompilationProtocol.ts";
 
 interface ShotConfig {
@@ -16,13 +18,13 @@ interface Bounds {
 export class CameraService {
   static readonly NEUTRAL: Camera = { zoom: 1, translateX: 0, translateY: 0 };
 
-  private static readonly SHOT_TO_CONFIG: Record<string, ShotConfig> = {
+  private static readonly SHOT_TO_CONFIG: Record<Exclude<ShotName, "wide">, ShotConfig> = {
     full: { fill: 0.55 },
     medium: { show: 0.62, top: 0.12 },
     close: { show: 0.3, top: 0.08 },
   };
 
-  private static readonly FRAME_TO_FRACTION: Record<string, number> = { left: 1 / 3, center: 0.5, right: 2 / 3 };
+  private static readonly FRAME_TO_FRACTION: Record<"left" | "center" | "right", number> = { left: 1 / 3, center: 0.5, right: 2 / 3 };
 
   private static readonly MAX_ZOOM = 6;
 
@@ -39,7 +41,7 @@ export class CameraService {
     if (shot === "wide") {
       return CameraService.NEUTRAL;
     }
-    const config = CameraService.SHOT_TO_CONFIG[shot];
+    const config = IdUtil.lookup(CameraService.SHOT_TO_CONFIG, shot);
     if (!config) {
       context.warnings.push(`shot '${shot}' is invalid; use wide, full, medium or close`);
       return CameraService.NEUTRAL;
@@ -106,7 +108,7 @@ export class CameraService {
       : ((1 - (top ?? 0)) * height) / ((config.show ?? 1) * focusHeight);
     const widthZoom = (CameraService.FOCUS_WIDTH_FRACTION * width) / Math.max(1, bounds.right - bounds.left);
     const zoom = Math.max(1, Math.min(CameraService.MAX_ZOOM, heightZoom, widthZoom));
-    const target = typeof canvas.frame === "number" ? canvas.frame : CameraService.FRAME_TO_FRACTION[canvas.frame ?? "center"] ?? 0.5;
+    const target = typeof canvas.frame === "number" ? canvas.frame : IdUtil.lookup(CameraService.FRAME_TO_FRACTION, canvas.frame ?? "center") ?? 0.5;
     const translateX = target * width - ((bounds.left + bounds.right) / 2) * zoom;
     const translateY = top == null
       ? CameraService.CENTERED_FOCUS_HEIGHT * height - ((bounds.top + bounds.bottom) / 2) * zoom

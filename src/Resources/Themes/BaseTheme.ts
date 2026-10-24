@@ -1,7 +1,7 @@
-import type { Theme } from "@/Protocols/ThemeProtocol.ts";
+import type { Theme, ThemeId } from "@/Protocols/ThemeProtocol.ts";
 
 export abstract class BaseTheme {
-  abstract readonly id: string;
+  abstract readonly id: ThemeId;
 
   abstract readonly palette: Theme;
 }

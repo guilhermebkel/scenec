@@ -1,7 +1,7 @@
-import type { GroupParams, GroupPart } from "@/Protocols/GroupProtocol.ts";
+import type { GroupId, GroupParams, GroupPart } from "@/Protocols/GroupProtocol.ts";
 
 export abstract class BaseGroup {
-  abstract readonly id: string;
+  abstract readonly id: GroupId;
 
   abstract readonly anchor: string;
 

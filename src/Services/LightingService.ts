@@ -1,10 +1,11 @@
 import type { AssetId } from "@/Protocols/AssetProtocol.ts";
 import type { Background, Camera, CompilationContext, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { KitService } from "@/Services/KitService.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 
 export class LightingService {
-  private static readonly DIRECTION_TO_FRACTION: Record<string, number> = { left: 0.05, right: 0.95, front: 0.5, top: 0.5 };
+  private static readonly DIRECTION_TO_FRACTION: Record<"left" | "right" | "front" | "top", number> = { left: 0.05, right: 0.95, front: 0.5, top: 0.5 };
 
   private static readonly DEFAULT_SOURCE = 0.15;
 
@@ -47,7 +48,7 @@ export class LightingService {
     if (typeof from === "number") {
       return from;
     }
-    const named = typeof from === "string" ? LightingService.DIRECTION_TO_FRACTION[from] : undefined;
+    const named = IdUtil.lookup(LightingService.DIRECTION_TO_FRACTION, from);
     if (named != null) {
       return named;
     }

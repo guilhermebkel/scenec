@@ -4,19 +4,16 @@ import { HatchKit } from "@/Resources/Kits/HatchKit.ts";
 import { RisoKit } from "@/Resources/Kits/RisoKit.ts";
 import { PaperKit } from "@/Resources/Kits/PaperKit.ts";
 import { SketchKit } from "@/Resources/Kits/SketchKit.ts";
+import type { KitId } from "@/Protocols/KitProtocol.ts";
+import { RegistryUtil } from "@/Utils/RegistryUtil.ts";
 import { BaseKit } from "@/Resources/Kits/BaseKit.ts";
 import type { CompilationContext } from "@/Protocols/CompilationProtocol.ts";
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import { SvgUtil } from "@/Utils/SvgUtil.ts";
 
 export class KitService {
-  // Kits de estilo: a mesma cena com outra linguagem visual (não só outra paleta).
-// canvas.kit: flat (padrão) | outline | hatch | riso | paper | sketch
-// Cada kit decide: cores de base, como a luz aparece (gradiente, hachura ou nada), contorno por objeto,
-// filtro de cena inteira e textura por cima (abaixo do texto). Tudo SVG puro, renderizável no resvg.
-
-  static readonly KITS: Record<string, BaseKit> = Object.fromEntries(
-    [new FlatKit(), new OutlineKit(), new HatchKit(), new RisoKit(), new PaperKit(), new SketchKit()].map((kit) => [kit.id, kit]),
+  static readonly KITS: Record<KitId, BaseKit> = RegistryUtil.indexById(
+    [new FlatKit(), new OutlineKit(), new HatchKit(), new RisoKit(), new PaperKit(), new SketchKit()],
   );
 
   private static readonly WHOLE_KIT_HEIGHT = 900;

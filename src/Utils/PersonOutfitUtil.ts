@@ -1,6 +1,7 @@
-import type { PersonParams } from "@/Protocols/PersonProtocol.ts";
+import type { HatName, PersonParams } from "@/Protocols/PersonProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { PersonHeadUtil } from "@/Utils/PersonHeadUtil.ts";
 
 export interface PersonLook {
@@ -20,7 +21,7 @@ export interface PersonLook {
 export class PersonOutfitUtil {
   private static readonly LAB_COAT = "#FBFBF8";
 
-  private static readonly HAT_BUILDERS: Record<string, (look: PersonLook, params: PersonParams, side: number) => string> = {
+  private static readonly HAT_BUILDERS: Record<HatName, (look: PersonLook, params: PersonParams, side: number) => string> = {
     grad_cap: (look) => PersonOutfitUtil.graduationCap(look),
     cap: (look, params, side) => PersonOutfitUtil.cap(look, params, side),
   };
@@ -184,7 +185,7 @@ export class PersonOutfitUtil {
   }
 
   static hat(look: PersonLook, params: PersonParams, side: number): string {
-    return PersonOutfitUtil.HAT_BUILDERS[params.hat ?? ""]?.(look, params, side) ?? "";
+    return IdUtil.lookup(PersonOutfitUtil.HAT_BUILDERS, params.hat)?.(look, params, side) ?? "";
   }
 
   private static graduationCap(look: PersonLook): string {

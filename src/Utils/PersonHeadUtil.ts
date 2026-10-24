@@ -1,6 +1,7 @@
-import type { PersonParams, Point } from "@/Protocols/PersonProtocol.ts";
+import type { ExpressionName, HairColorName, HairStyleName, PersonParams, Point, SkinName } from "@/Protocols/PersonProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { PersonArmUtil } from "@/Utils/PersonArmUtil.ts";
 
 interface Face {
@@ -19,11 +20,9 @@ type HairBuilder = (hair: string, side: number) => HairParts;
 type FeatureBuilder = (x: number, cy: number, color: string) => string;
 
 export class PersonHeadUtil {
-  static readonly SKIN_TONES: Record<string, string> = { light: "#F2C9A5", medium: "#D19A6E", tan: "#B87A50", dark: "#7A4B30", deep: "#5A3522" };
+  static readonly SKIN_TONES: Record<SkinName, string> = { light: "#F2C9A5", medium: "#D19A6E", tan: "#B87A50", dark: "#7A4B30", deep: "#5A3522" };
 
-  static readonly HAIR_COLORS: Record<string, string> = { black: "#1E1A1A", brown: "#5A3825", blonde: "#E2B45A", red: "#B0462A", gray: "#9C9C9C" };
-
-  static readonly EXPRESSION_NAMES = ["happy", "neutral", "surprised", "sad", "worried", "angry", "laughing", "wink", "thinking"];
+  static readonly HAIR_COLORS: Record<HairColorName, string> = { black: "#1E1A1A", brown: "#5A3825", blonde: "#E2B45A", red: "#B0462A", gray: "#9C9C9C" };
 
   private static readonly CENTER_Y = -91;
 
@@ -33,7 +32,7 @@ export class PersonHeadUtil {
 
   private static readonly CURL_OFFSETS: Point[] = [[-9, -6], [-4, -10], [2, -11], [8, -8], [11, -2], [-11, 0]];
 
-  private static readonly STYLE_TO_HAIR: Record<string, HairBuilder> = {
+  private static readonly STYLE_TO_HAIR: Record<HairStyleName, HairBuilder> = {
     long: (hair) => ({
       backHair: `<path d="M-12 -93 Q-15 -70 -10 -68 L10 -68 Q15 -70 12 -93 Z" fill="${hair}"/>`,
       front: `<path d="M-12 -92 Q-11 -105 0 -104 Q11 -105 12 -92 Q4 -99 -12 -92 Z" fill="${hair}"/>`,
@@ -54,7 +53,7 @@ export class PersonHeadUtil {
     bald: () => ({ backHair: "", front: "" }),
   };
 
-  private static readonly EXPRESSION_TO_MOUTH: Record<string, FeatureBuilder> = {
+  private static readonly EXPRESSION_TO_MOUTH: Partial<Record<ExpressionName, FeatureBuilder>> = {
     surprised: (x, cy, ink) => `<ellipse cx="${x}" cy="${cy + 5.5}" rx="1.6" ry="2" fill="${ink}"/>`,
     neutral: (x, cy, ink) => `<path d="M${x - 2.5} ${cy + 5.5} L${x + 2.5} ${cy + 5.5}" stroke="${ink}" stroke-width="1.2" stroke-linecap="round"/>`,
     sad: (x, cy, ink) => PersonHeadUtil.frown(x, cy, ink),
@@ -63,7 +62,7 @@ export class PersonHeadUtil {
     laughing: (x, cy, ink) => `<path d="M${x - 3.5} ${cy + 4} Q${x} ${cy + 9.5} ${x + 3.5} ${cy + 4} Z" fill="${ink}"/>`,
   };
 
-  private static readonly EXPRESSION_TO_BROWS: Record<string, FeatureBuilder> = {
+  private static readonly EXPRESSION_TO_BROWS: Partial<Record<ExpressionName, FeatureBuilder>> = {
     thinking: (x, cy, hair) => PersonHeadUtil.raisedBrows(x, cy, hair),
     surprised: (x, cy, hair) => PersonHeadUtil.raisedBrows(x, cy, hair),
     worried: (x, cy, hair) => `<path d="M${-6 + x} ${cy - 4.2} L${-2 + x} ${cy - 5.6} M${2 + x} ${cy - 5.6} L${6 + x} ${cy - 4.2}" stroke="${hair}" stroke-width="1.1" stroke-linecap="round"/>`,
@@ -83,12 +82,12 @@ export class PersonHeadUtil {
   }
 
   static skinOf(name: string | undefined): string {
-    return PersonHeadUtil.SKIN_TONES[name ?? ""] ?? PersonHeadUtil.SKIN_TONES.medium ?? "";
+    return IdUtil.lookup(PersonHeadUtil.SKIN_TONES, name) ?? PersonHeadUtil.SKIN_TONES.medium;
   }
 
   private static hairColorOf(params: PersonParams): string {
-    const named = PersonHeadUtil.HAIR_COLORS[params.hair_color ?? ""];
-    const fallback = PersonHeadUtil.HAIR_COLORS[params.age === "elder" ? "gray" : "brown"] ?? "";
+    const named = IdUtil.lookup(PersonHeadUtil.HAIR_COLORS, params.hair_color);
+    const fallback = PersonHeadUtil.HAIR_COLORS[params.age === "elder" ? "gray" : "brown"];
     return named ?? (params.hair_color || fallback);
   }
 
@@ -97,7 +96,7 @@ export class PersonHeadUtil {
     const skin = PersonHeadUtil.skinOf(params.skin);
     const hair = PersonHeadUtil.hairColorOf(params);
     const style = params.hair || "short";
-    const { backHair, front } = PersonHeadUtil.STYLE_TO_HAIR[style]?.(hair, side) ?? { backHair: "", front: "" };
+    const { backHair, front } = IdUtil.lookup(PersonHeadUtil.STYLE_TO_HAIR, style)?.(hair, side) ?? { backHair: "", front: "" };
     const neck = `<rect x="-3" y="-85" width="6" height="7" fill="${ColorUtil.sh(skin, -0.12)}"/>`;
     if (isBack) {
       return neck + backHair + PersonHeadUtil.backOfHead(style, skin, hair);
@@ -127,8 +126,8 @@ export class PersonHeadUtil {
     // Why: looking sideways in the front view also shifts the face, so the head seems to turn a little.
     const shiftX = side * 1.8 + (side ? 0 : gaze[0] * 1.3);
     const mouthX = side * 2 + (side ? 0 : gaze[0] * 1.3);
-    const mouth = (PersonHeadUtil.EXPRESSION_TO_MOUTH[expression] ?? PersonHeadUtil.smile)(mouthX, cy, theme.ink);
-    const brows = PersonHeadUtil.EXPRESSION_TO_BROWS[expression]?.(shiftX, cy, hair) ?? "";
+    const mouth = (IdUtil.lookup(PersonHeadUtil.EXPRESSION_TO_MOUTH, expression) ?? PersonHeadUtil.smile)(mouthX, cy, theme.ink);
+    const brows = IdUtil.lookup(PersonHeadUtil.EXPRESSION_TO_BROWS, expression)?.(shiftX, cy, hair) ?? "";
     const blush = `<circle cx="${-6.5 + shiftX}" cy="${cy + 3.5}" r="2" fill="#E9806E" opacity="0.35"/><circle cx="${6.5 + shiftX}" cy="${cy + 3.5}" r="2" fill="#E9806E" opacity="0.35"/>`;
     const glasses = params.glasses
       ? `<g stroke="${theme.ink}" stroke-width="1" fill="none"><circle cx="${-4 + shiftX}" cy="${cy}" r="3.2"/><circle cx="${4 + shiftX}" cy="${cy}" r="3.2"/><path d="M${-0.8 + shiftX} ${cy} L${0.8 + shiftX} ${cy}"/></g>`

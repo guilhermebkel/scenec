@@ -1,3 +1,4 @@
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { SuggestUtil } from "@/Utils/SuggestUtil.ts";
 import * as yaml from "js-yaml";
 import { z } from "zod";
@@ -10,6 +11,8 @@ export interface ParsedScene {
   scene: Scene;
   warnings: string[];
 }
+type UnionField = "size" | "at" | "frame";
+
 export class ParsingModule {
   private static shapeKeys(schema: ZodType): string[] {
     return Object.keys((schema as unknown as { shape: Record<string, unknown> }).shape);
@@ -27,7 +30,7 @@ export class ParsingModule {
     });
   }
 
-  private static readonly UNION_FIELD_TO_NAMES: Record<string, readonly string[]> = {
+  private static readonly UNION_FIELD_TO_NAMES: Record<UnionField, readonly string[]> = {
     size: SIZE_NAMES,
     at: SLOT_NAMES,
     frame: ["left", "center", "right"],
@@ -75,7 +78,7 @@ export class ParsingModule {
     if (!result.success) {
       throw new SceneError(result.error.issues.map((issue) => {
         const field = String(issue.path.at(-1));
-        const values = issue.code === "invalid_union" ? ParsingModule.UNION_FIELD_TO_NAMES[field] : "values" in issue ? issue.values as unknown[] : undefined;
+        const values = issue.code === "invalid_union" ? IdUtil.lookup(ParsingModule.UNION_FIELD_TO_NAMES, field) : "values" in issue ? issue.values as unknown[] : undefined;
         return ParsingModule.describeIssue(issue.path, issue.message, values, ParsingModule.valueAt(raw, issue.path));
       }));
     }

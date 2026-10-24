@@ -7,8 +7,11 @@ import { CelebrationGroup } from "@/Resources/Groups/CelebrationGroup.ts";
 import { MeetingGroup } from "@/Resources/Groups/MeetingGroup.ts";
 import { BaseGroup } from "@/Resources/Groups/BaseGroup.ts";
 
-import type { GroupPart } from "@/Protocols/GroupProtocol.ts";
-import type { SceneObject } from "@/Protocols/SceneProtocol.ts";
+import { GROUP_IDS, type GroupId, type GroupPart } from "@/Protocols/GroupProtocol.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
+import { RegistryUtil } from "@/Utils/RegistryUtil.ts";
+import type { Facing } from "@/Protocols/AssetProtocol.ts";
+import type { SceneObject, SizeName } from "@/Protocols/SceneProtocol.ts";
 
 export class GroupService {
   // Why: these are the keys that name another object, so a group has to prefix them with its own id.
@@ -16,14 +19,14 @@ export class GroupService {
     "left_of", "right_of", "behind", "in_front_of", "on", "under", "above", "holds", "look",
   ];
 
-  private static readonly SIZE_NAME_TO_FACTOR: Record<string, number> = {
+  private static readonly SIZE_NAME_TO_FACTOR: Record<SizeName, number> = {
     tiny: 0.5, small: 0.75, medium: 1, large: 1.3, huge: 1.7,
   };
 
-  private static readonly FACING_TO_OPPOSITE: Record<string, string> = { left: "right", right: "left" };
+  private static readonly FACING_TO_OPPOSITE: Record<Facing, Facing> = { left: "right", right: "left" };
 
-  static readonly GROUPS: Record<string, BaseGroup> = Object.fromEntries(
-    [new WorkspaceGroup(), new ReadingCornerGroup(), new DiningGroup(), new ConversationGroup(), new ParkBenchGroup(), new CelebrationGroup(), new MeetingGroup()].map((group) => [group.id, group]),
+  static readonly GROUPS: Record<GroupId, BaseGroup> = RegistryUtil.indexById(
+    [new WorkspaceGroup(), new ReadingCornerGroup(), new DiningGroup(), new ConversationGroup(), new ParkBenchGroup(), new CelebrationGroup(), new MeetingGroup()],
   );
 
   static expandGroups(objects: Record<string, SceneObject>, warnings: string[]): Record<string, SceneObject> {
@@ -34,7 +37,7 @@ export class GroupService {
         expanded[id] = object;
         continue;
       }
-      const group = GroupService.GROUPS[object.group];
+      const group = IdUtil.isOneOf(GROUP_IDS, object.group) ? GroupService.GROUPS[object.group] : undefined;
       if (!group) {
         const available = Object.keys(GroupService.GROUPS).join(", ");
         warnings.push(`group '${object.group}' (in '${id}') does not exist; available: ${available}`);
@@ -100,7 +103,7 @@ export class GroupService {
     if (typeof size === "number") {
       return size;
     }
-    return GroupService.SIZE_NAME_TO_FACTOR[String(size)] ?? 1;
+    return IdUtil.lookup(GroupService.SIZE_NAME_TO_FACTOR, size) ?? 1;
   }
 
   private static flip(part: GroupPart): void {
@@ -121,7 +124,7 @@ export class GroupService {
   }
 
   private static opposite(side: unknown): unknown {
-    return typeof side === "string" ? GroupService.FACING_TO_OPPOSITE[side] ?? side : side;
+    return IdUtil.lookup(GroupService.FACING_TO_OPPOSITE, side) ?? side;
   }
 
   private static deleteUndefined(part: GroupPart): void {

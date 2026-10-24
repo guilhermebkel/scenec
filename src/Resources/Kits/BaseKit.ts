@@ -1,7 +1,7 @@
-import type { KitLight, KitOutline, KitStyle } from "@/Protocols/KitProtocol.ts";
+import type { KitId, KitLight, KitOutline, KitStyle } from "@/Protocols/KitProtocol.ts";
 
 export abstract class BaseKit implements KitStyle {
-  abstract readonly id: string;
+  abstract readonly id: KitId;
 
   abstract readonly description: string;
 

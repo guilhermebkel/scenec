@@ -116,6 +116,14 @@ export const sceneSchema = z.looseObject({
   route: z.array(z.unknown()).optional(),
 });
 
+export type SettingName = (typeof SETTING_NAMES)[number];
+
+export type SlotName = (typeof SLOT_NAMES)[number];
+
+export type SizeName = (typeof SIZE_NAMES)[number];
+
+export type ShotName = (typeof SHOT_NAMES)[number];
+
 export type Scene = z.infer<typeof sceneSchema>;
 
 export type SceneObject = z.infer<typeof objectSchema>;
@@ -123,6 +131,10 @@ export type SceneObject = z.infer<typeof objectSchema>;
 export type Canvas = z.infer<typeof canvasSchema>;
 
 export type SceneText = z.infer<typeof textSchema>;
+
+export type TextRole = NonNullable<SceneText["role"]>;
+
+export type ObjectLayer = NonNullable<SceneObject["layer"]>;
 
 export const OBJECT_PARAM_KEYS = [
   "age", "along", "art", "backpack", "beard", "bg", "bottom", "build", "cane", "color", "count", "details", "dist", "doors",
