@@ -97,7 +97,7 @@ export default tseslint.config(
       "local/comment-placement": "error",
       "local/map-name": "error",
       "local/literal-dispatch": "error",
-      // Why: describe-target and class-matches-file check classes; scenec is functional and has none (ADR 0010).
+      // Why: describe-target and class-matches-file are off until the class refactor (issue #1, ADR 0010).
       "no-restricted-syntax": ["error", {
         selector: "CallExpression > CallExpression.arguments:matches([arguments.length>=3], :has(> CallExpression.arguments))",
         message: "Store this call's result in a named variable before passing it to another call.",

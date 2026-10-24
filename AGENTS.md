@@ -38,7 +38,7 @@ pnpm check:licenses  # runtime dependency licenses
 
 - One commit per task, after `pnpm check` is clean. Never raise a limit or silence a rule to pass.
 - Work on a branch from `main` and open a pull request.
-- Code, docs and commit messages are in English. Runtime messages for the scene author are still in Portuguese (ADR 0010); do not mix languages inside one message.
+- Code, docs and commit messages are in English. Runtime messages for the scene author are still in Portuguese; that is debt (issue #1), so do not mix languages inside one message.
 - The core (`protocols` to `pipeline`) is pure: no clock, randomness, file system or process. Files come through the `FileReader` option and measurements through `measure`.
 - A change that moves any baseline is deliberate: run `pnpm test:visual --update`, look at `test/visual/report/`, and say in the PR why each case changed.
 - Anything that goes into an SVG from outside passes `sanitizeSvg`. Never loosen its allowlist without a test for the new element.
@@ -48,7 +48,7 @@ pnpm check:licenses  # runtime dependency licenses
 
 ## Legacy debt
 
-The files ported from the JavaScript prototype (`src/drawing`, `src/modes`, `src/pipeline/{compile,custom,groups,parse,index}.ts`, `src/render/{critic,check}.ts`, `src/utils/{recolor,color,sanitize,suggest}.ts`, `src/catalog.ts`, `src/cli.ts`) have relaxed lint rules, listed in `eslint.config.mjs` under `LEGACY_FILES`. `noUncheckedIndexedAccess` is off. Clean one file at a time, remove it from the list, and keep the baselines identical. See ADR 0010.
+The files ported from the JavaScript prototype (`src/drawing`, `src/modes`, `src/pipeline/{compile,custom,groups,parse,index}.ts`, `src/render/{critic,check}.ts`, `src/utils/{recolor,color,sanitize,suggest}.ts`, `src/catalog.ts`, `src/cli.ts`) have relaxed lint rules, listed in `eslint.config.mjs` under `LEGACY_FILES`. `noUncheckedIndexedAccess` is off, the code is functions where the standards ask for classes, and the `@/` alias is not set up. All of it is tracked in https://github.com/guilhermebkel/scenec/issues/1; clean one file at a time and keep the baselines identical. See ADR 0010.
 
 ## Agent skills
 
