@@ -1,4 +1,4 @@
-import type { GroupParams } from "@/Protocols/GroupProtocol.ts";
+import type { GroupParams, GroupPart } from "@/Protocols/GroupProtocol.ts";
 import { BaseGroup } from "@/Resources/Groups/BaseGroup.ts";
 
 export class MeetingGroup extends BaseGroup {
@@ -8,7 +8,7 @@ export class MeetingGroup extends BaseGroup {
 
   readonly desc = "meeting table with a board, one person presenting and two seated";
 
-  build(group: GroupParams) {
+  build(group: GroupParams): Record<string, GroupPart> {
     const [firstPerson = {}, secondPerson = {}, thirdPerson = {}] = group.people ?? [];
     return {
       quadro: { asset: "board", above: "mesa", offset: 0.1, elevation: 70 },

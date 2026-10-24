@@ -134,7 +134,7 @@ export class GroupService {
 
   private static pointReferencesAtAnchors(expanded: Record<string, SceneObject>, groupIdToAnchorId: Record<string, string>): void {
     for (const part of Object.values(expanded)) {
-      const fields: GroupPart = part;
+      const fields: Record<string, unknown> = part;
       for (const key of GroupService.REFERENCE_KEYS) {
         const reference = fields[key];
         if (typeof reference === "string" && groupIdToAnchorId[reference]) {

@@ -1,4 +1,4 @@
-import type { GroupParams } from "@/Protocols/GroupProtocol.ts";
+import type { GroupParams, GroupPart } from "@/Protocols/GroupProtocol.ts";
 import { BaseGroup } from "@/Resources/Groups/BaseGroup.ts";
 
 export class ConversationGroup extends BaseGroup {
@@ -8,7 +8,7 @@ export class ConversationGroup extends BaseGroup {
 
   readonly desc = "two standing people talking, looking at each other";
 
-  build(group: GroupParams) {
+  build(group: GroupParams): Record<string, GroupPart> {
     const [firstPerson = {}, secondPerson = {}] = group.people ?? [];
     return {
       pessoa1: { asset: "person", at: group.at, pose: "presenting", facing: "right", look: "pessoa2", expr: "happy", ...firstPerson },

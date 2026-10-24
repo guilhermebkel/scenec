@@ -1,4 +1,4 @@
-import type { AssetParams, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
+import type { AssetId, AssetParams, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
 import type { CompilationContext, Depth, Placement } from "@/Protocols/CompilationProtocol.ts";
 import type { SceneObject } from "@/Protocols/SceneProtocol.ts";
 import { AssetService } from "@/Services/AssetService.ts";
@@ -38,7 +38,7 @@ export class PlacementService {
   private static readonly DEPTH_TO_SCALE: Record<string, number> = { near: 1, mid: 0.8, far: 0.6 };
 
   // Why: the height, in drawing units, of the point where a hand grips each object.
-  private static readonly ASSET_TO_GRIP_HEIGHT: Record<string, number> = { cup: 6, suitcase: 44, books: 8, ball: 12 };
+  private static readonly ASSET_TO_GRIP_HEIGHT: Partial<Record<AssetId, number>> = { cup: 6, suitcase: 44, books: 8, ball: 12 };
 
   private static readonly SEATED_POSES = ["sitting", "typing", "reading", "drinking", "sitting_floor", "hugging_knees"];
 
@@ -307,7 +307,7 @@ export class PlacementService {
     const hand = holder.hand ?? [0, 0];
     const side = Math.sign(hand[0]) || 1;
     const anyShift = asset.kind === "any" ? side * size.w * PlacementService.HELD_ANY_WIDTH_FACTOR * scale : 0;
-    const grip = PlacementService.ASSET_TO_GRIP_HEIGHT[assetId] ?? size.h / 2;
+    const grip = PlacementService.ASSET_TO_GRIP_HEIGHT[assetId as AssetId] ?? size.h / 2;
     return {
       x: holder.x + hand[0] * holder.scale + anyShift,
       y: holder.y + hand[1] * holder.scale + grip * scale,

@@ -92,7 +92,7 @@ export class ContextService {
   private static libraryOf(scene: Scene, options: CompileOptions, warnings: string[], failed: Set<string>): CompilationContext["library"] {
     const custom = CustomAssetService.loadCustomAssets(scene.assets, options, warnings, failed);
     for (const id of Object.keys(custom)) {
-      if (AssetService.ASSETS[id]) {
+      if (id in AssetService.ASSETS) {
         warnings.push(`custom asset '${id}' replaces the library asset with the same name`);
       }
     }

@@ -1,3 +1,4 @@
+import type { AssetId } from "@/Protocols/AssetProtocol.ts";
 import type { CompilationContext, HazeLevels, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
 import type { SceneObject } from "@/Protocols/SceneProtocol.ts";
 import { KitService } from "@/Services/KitService.ts";
@@ -30,7 +31,7 @@ export class PieceService {
 
   private static readonly GROUNDED_KINDS = ["ground", "any"];
 
-  private static readonly NO_CAST_ASSETS = ["mountain", "cloud"];
+  private static readonly NO_CAST_ASSETS: AssetId[] = ["mountain", "cloud"];
 
   private static readonly MASK_PADDING = 0.2;
 
@@ -156,7 +157,7 @@ export class PieceService {
     const mask = `<mask id="mk_${placement.id}" maskUnits="userSpaceOnUse" x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${box.width.toFixed(1)}" height="${box.height.toFixed(1)}"><use href="#b_${placement.id}" transform="${transform}" filter="url(#toWhite)"/></mask>`;
     const isGrounded = PieceService.GROUNDED_KINDS.includes(placement.kind) && !object.on;
     if (isGrounded && context.kit.light?.hasCasts !== false && !heldBy[placement.id] && !((object.elevation ?? 0) > 0)
-      && !PieceService.NO_CAST_ASSETS.includes(placement.asset)) {
+      && !PieceService.NO_CAST_ASSETS.includes(placement.asset as AssetId)) {
       casts.push(PieceService.castShape(placement, light, context));
     }
     const layer = light.isHatch

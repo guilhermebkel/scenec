@@ -1,4 +1,4 @@
-import type { GroupParams } from "@/Protocols/GroupProtocol.ts";
+import type { GroupParams, GroupPart } from "@/Protocols/GroupProtocol.ts";
 import { BaseGroup } from "@/Resources/Groups/BaseGroup.ts";
 
 export class ParkBenchGroup extends BaseGroup {
@@ -8,7 +8,7 @@ export class ParkBenchGroup extends BaseGroup {
 
   readonly desc = "park bench with a tree, a seated person and a dog";
 
-  build(group: GroupParams) {
+  build(group: GroupParams): Record<string, GroupPart> {
     return ({
       banco: { asset: "bench", at: group.at, color: group.color },
       arvore: { asset: "tree", right_of: "banco", gap: -0.02, depth: "mid" },

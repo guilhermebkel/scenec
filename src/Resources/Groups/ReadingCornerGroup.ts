@@ -1,4 +1,4 @@
-import type { GroupParams } from "@/Protocols/GroupProtocol.ts";
+import type { GroupParams, GroupPart } from "@/Protocols/GroupProtocol.ts";
 import { BaseGroup } from "@/Resources/Groups/BaseGroup.ts";
 
 export class ReadingCornerGroup extends BaseGroup {
@@ -8,7 +8,7 @@ export class ReadingCornerGroup extends BaseGroup {
 
   readonly desc = "sofa with a person reading, floor lamp and shelf";
 
-  build(group: GroupParams) {
+  build(group: GroupParams): Record<string, GroupPart> {
     return ({
       sofa: { asset: "sofa", at: group.at, color: group.color ?? "secondary" },
       pessoa: { asset: "person", pose: "reading", on: "sofa", align: "left", facing: "right", pants: "metal", ...group.person },

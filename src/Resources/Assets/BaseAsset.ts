@@ -1,7 +1,7 @@
-import type { AssetDrawing, AssetParams, AssetSize, LibraryAsset, Theme } from "@/Protocols/AssetProtocol.ts";
+import type { AssetDrawing, AssetId, AssetParams, AssetSize, LibraryAsset, Theme } from "@/Protocols/AssetProtocol.ts";
 
 export abstract class BaseAsset implements LibraryAsset {
-  abstract readonly id: string;
+  abstract readonly id: AssetId;
 
   abstract readonly kind: string;
 

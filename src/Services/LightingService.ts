@@ -1,3 +1,4 @@
+import type { AssetId } from "@/Protocols/AssetProtocol.ts";
 import type { Background, Camera, CompilationContext, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
 import { KitService } from "@/Services/KitService.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
@@ -19,7 +20,7 @@ export class LightingService {
 
   private static readonly DAY_LIGHT = "#FFF4DE";
 
-  private static readonly SOURCE_ASSETS = ["sun", "moon"];
+  private static readonly SOURCE_ASSETS: AssetId[] = ["sun", "moon"];
 
   static resolve(context: CompilationContext, list: Placement[], background: Background): LightState | null {
     const { canvas, kit, setting, width, theme } = context;
@@ -50,7 +51,7 @@ export class LightingService {
     if (named != null) {
       return named;
     }
-    const sourcePlacement = scene.list.find((placement) => LightingService.SOURCE_ASSETS.includes(placement.asset))
+    const sourcePlacement = scene.list.find((placement) => LightingService.SOURCE_ASSETS.includes(placement.asset as AssetId))
       ?? (scene.setting === "indoor" ? scene.list.find((placement) => placement.asset === "window") : undefined);
     return sourcePlacement ? sourcePlacement.x / scene.width : LightingService.DEFAULT_SOURCE;
   }

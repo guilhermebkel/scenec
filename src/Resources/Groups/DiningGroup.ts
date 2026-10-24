@@ -1,4 +1,4 @@
-import type { GroupParams } from "@/Protocols/GroupProtocol.ts";
+import type { GroupParams, GroupPart } from "@/Protocols/GroupProtocol.ts";
 import { BaseGroup } from "@/Resources/Groups/BaseGroup.ts";
 
 export class DiningGroup extends BaseGroup {
@@ -8,7 +8,7 @@ export class DiningGroup extends BaseGroup {
 
   readonly desc = "table with two seated people talking, food and drinks";
 
-  build(group: GroupParams) {
+  build(group: GroupParams): Record<string, GroupPart> {
     const [firstPerson = {}, secondPerson = {}] = group.people ?? [];
     return {
       mesa: { asset: "table", at: group.at, color: group.color },
