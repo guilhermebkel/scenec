@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 20+ and network access to npm for npx; no image model and no browser.
 allowed-tools: Bash(npx @guilhermebkel/scenec@1 *)
 metadata:
-  sources-file: "references/fontes.md"
+  sources-file: "references/sources.md"
   updated: "2026-10-24"
 ---
 
@@ -16,14 +16,14 @@ You write a YAML scene. `scenec` compiles it to SVG and tells you, in text, what
 ## Workflow
 
 1. Pick the closest recipe in `recipes/` and copy it to a working file, for example `scene.yaml`:
-   - `reels-explicativo`: vertical 9:16 explainer frame
-   - `carrossel`: square or 4:5 carousel slide
-   - `wrapped-personalizado`: personalized "year in review" card
-   - `elearning`: course scene with people and a screen
-   - `historia-ilustrada`: story or history scene
-   - `mapas-jornadas`: route over the map of Europe
-   - `anuncios-variacoes`: ad with variations
-   - `ilustracoes-produto`: product illustration
+   - `explainer-reel`: vertical 9:16 explainer frame
+   - `carousel`: square or 4:5 carousel slide
+   - `personalized-wrapped`: personalized "year in review" card
+   - `e-learning`: course scene with people and a screen
+   - `illustrated-story`: story or history scene
+   - `journey-map`: route over the map of Europe
+   - `ad-variations`: ad with variations
+   - `product-illustration`: product illustration
 2. Change the content. Prefer `group:` (ready-made sets such as a workspace) and `canvas.shot` over placing every piece by hand. Look up names in `references/catalog.md`, or run `npx @guilhermebkel/scenec@1 catalog assets`.
 3. Check: `npx @guilhermebkel/scenec@1 check scene.yaml`. Read `warnings` and `art`. Exit code 1 means there is something to fix.
 4. Fix and check again. Stop after 5 cycles; if something still fails, say what is left instead of looping.
@@ -43,4 +43,4 @@ You write a YAML scene. `scenec` compiles it to SVG and tells you, in text, what
 - `recipes/*.yaml`: 8 scenes that compile with zero warnings and zero critiques.
 - `references/dsl.md`: the scene language (generated).
 - `references/catalog.md`: assets, groups, kits, themes, poses (generated).
-- `references/fontes.md`: sources used to build this skill.
+- `references/sources.md`: sources used to build this skill.

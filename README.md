@@ -17,7 +17,7 @@
 <p align="center">
   <img src="docs/assets/banner.png" alt="An illustration made by scenec from a 40-line YAML scene" width="520" />
   <br />
-  <sub>This image was drawn by scenec from <a href="skills/scenec/recipes/historia-ilustrada.yaml">a short YAML scene</a>.</sub>
+  <sub>This image was drawn by scenec from <a href="skills/scenec/recipes/illustrated-story.yaml">a short YAML scene</a>.</sub>
 </p>
 
 ---

@@ -20,11 +20,11 @@ describe("skill", () => {
 
     expect(Object.keys(frontmatter).every((key) => ALLOWED_FRONTMATTER_KEYS.includes(key))).toBe(true);
     expect(frontmatter.name).toBe("scenec");
-    expect(frontmatter.metadata).toStrictEqual({ "sources-file": "references/fontes.md", "updated": "2026-10-24" });
+    expect(frontmatter.metadata).toStrictEqual({ "sources-file": "references/sources.md", "updated": "2026-10-24" });
   });
 
   it("starts the sources file with the consulted date", () => {
-    expect(read("references/fontes.md").startsWith("Consultadas em ")).toBe(true);
+    expect(read("references/sources.md").startsWith("Consultadas em ")).toBe(true);
   });
 
   it("keeps the generated references up to date", () => {
