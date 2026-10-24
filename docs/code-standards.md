@@ -16,7 +16,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **Classes, not loose functions (lint).** Utils are classes with static methods only. The three public entries (`src/index.ts`, `src/render.ts`, `src/schema.ts`) are the only files with loose functions: thin facades over the classes. Services are classes whose dependencies come in through the constructor. Runtime constants belong to the class that owns them as `static readonly` members.
 - **One class per file, named after it (lint).** `max-classes-per-file`, `local/class-matches-file`.
 - **Protocols hold only types and schemas.** No logic. A type used by one file stays in that file.
-- **Three public entries.** `@guilhermebkel/scenec`, `@guilhermebkel/scenec/render` and `@guilhermebkel/scenec/schema`. Anything else is internal; a test snapshots the exports.
+- **Three public entries.** `@scenec/core`, `@scenec/core/render` and `@scenec/core/schema`. Anything else is internal; a test snapshots the exports.
 
 ## Naming
 

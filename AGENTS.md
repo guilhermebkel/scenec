@@ -15,7 +15,7 @@ An AI writes a YAML scene; the compiler returns an SVG plus warnings, art-direct
 | `src/index.ts`, `src/render.ts`, `src/schema.ts` | The three public entries: thin facades over the classes. |
 | `src/cli.ts` | `scenec render|check|catalog|schema`. |
 | `fonts/` | Poppins (OFL-1.1). |
-| `skills/scenec/` | The agent skill shipped in the package. |
+| `skills/draw-scene/` | The agent skill shipped in the package. |
 | `test/visual/` | 108 base generations with baselines. |
 | `test/smoke/` | Every asset in every kit. |
 
