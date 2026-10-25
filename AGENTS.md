@@ -20,7 +20,7 @@ An AI writes a YAML scene; the compiler returns an SVG plus warnings, art-direct
 | `fonts/` | Poppins (OFL-1.1). |
 | `skills/draw-scene/` | The agent skill shipped in the package. |
 | `design/` | The logo, its variants, web icons, guidelines and presentation. Not in the npm package. |
-| `site/` | The GitHub Pages landing page. `.github/workflows/pages.yml` publishes it on every push to `main` that touches it. Not in the npm package. |
+| `site/` | The GitHub Pages landing page. `.github/workflows/pages.yml` publishes it on every push to `main` that touches it, and the release workflow sets its version and date. Served at `scenec.guilherr.me`. Not in the npm package. |
 | `test/visual/` | 108 base generations with baselines. |
 | `test/smoke/` | Every asset in every kit. |
 

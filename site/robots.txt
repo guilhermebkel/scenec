@@ -12,4 +12,4 @@ Allow: /
 # User-agent: CCBot
 # Disallow: /
 
-Sitemap: https://guilhermebkel.github.io/scenec/sitemap.xml
+Sitemap: https://scenec.guilherr.me/sitemap.xml
