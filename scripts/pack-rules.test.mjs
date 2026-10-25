@@ -3,7 +3,7 @@ import { findManifestWarnings, findPackProblems } from "./pack-rules.mjs";
 
 describe("findPackProblems()", () => {
   it("accepts dist, fonts, skills and the root files", () => {
-    const paths = ["dist/index.js", "fonts/OFL.txt", "skills/scenec/SKILL.md", "package.json", "LICENSE", "README.md"];
+    const paths = ["dist/index.js", "fonts/OFL.txt", "skills/draw-scene/SKILL.md", "package.json", "LICENSE", "README.md"];
 
     expect(findPackProblems(paths, 1000)).toStrictEqual([]);
   });

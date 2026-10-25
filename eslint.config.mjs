@@ -6,20 +6,18 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import { localRules } from "./scripts/eslint-local-rules.mjs";
 
+const SCENE_FLAG_KEYS = "^(shadow|trim|glasses|beard|cane|handle|steam|mic|stand|off)$";
+
 const TEST_FILES = ["src/**/*.test.ts", "test/**/*.ts", "scripts/**/*.test.mjs"];
 
-// Why: the legacy files were ported byte-for-byte from the JavaScript prototype to keep the 108 baselines identical (ADR 0010); they are cleaned up one folder at a time.
-const LEGACY_FILES = ["src/drawing/**/*.ts", "src/modes/**/*.ts", "src/render/critic.ts", "src/pipeline/compile.ts", "src/pipeline/custom.ts",
-  "src/pipeline/groups.ts", "src/utils/recolor.ts", "src/utils/color.ts",
-  "src/utils/sanitize.ts", "src/utils/suggest.ts", "src/catalog.ts", "src/cli.ts", "src/pipeline/parse.ts", "src/pipeline/index.ts", "src/render/check.ts"];
-
-// Why: layer order is Protocols < Utils < Drawing < Modes < Pipeline < Render < Cli; a layer imports only the ones below it.
+// Why: layer order is Errors, Protocols < Utils < Resources < Services < Modules < Cli; Adapters only see Protocols and Utils, so the core never reaches the native renderer or the file system.
 const LAYER_TO_FORBIDDEN_LAYERS = {
-  protocols: ["utils", "drawing", "modes", "pipeline", "render", "cli"],
-  utils: ["drawing", "modes", "pipeline", "render", "cli"],
-  drawing: ["modes", "pipeline", "render", "cli"],
-  modes: ["pipeline", "render", "cli"],
-  pipeline: ["render", "cli"],
+  Errors: ["Protocols", "Utils", "Resources", "Services", "Modules", "Adapters"],
+  Protocols: ["Utils", "Resources", "Services", "Modules", "Adapters"],
+  Utils: ["Resources", "Services", "Modules", "Adapters"],
+  Resources: ["Services", "Modules", "Adapters"],
+  Services: ["Modules", "Adapters"],
+  Adapters: ["Resources", "Services", "Modules"],
 };
 
 const layerConfigs = Object.entries(LAYER_TO_FORBIDDEN_LAYERS).map(([layer, forbiddenLayers]) => ({
@@ -34,6 +32,18 @@ const layerConfigs = Object.entries(LAYER_TO_FORBIDDEN_LAYERS).map(([layer, forb
     }],
   },
 }));
+
+const coreModulesConfig = {
+  // Why: the compile core stays pure, so only the critic and the check (which need the native renderer) may import Adapters.
+  files: ["src/Modules/**/*.ts"],
+  ignores: [...TEST_FILES, "src/Modules/CritiqueModule.ts", "src/Modules/CheckModule.ts"],
+  rules: {
+    "no-restricted-imports": ["error", { patterns: [
+      { group: ["**/Adapters/**"], message: "Core modules are pure: only the critic and the check use Adapters." },
+      { group: ["node:*", "fs", "path"], message: "The core has no file system; use the FileReader option." },
+    ] }],
+  },
+};
 
 const MAX_COGNITIVE_COMPLEXITY = 15;
 const MAX_DEPTH = 3;
@@ -62,7 +72,10 @@ export default tseslint.config(
         { selector: "variable", modifiers: ["const", "global"], format: ["UPPER_CASE", "camelCase"] },
         { selector: "variable", modifiers: ["const", "global"], types: ["boolean", "number", "string", "array"], format: ["UPPER_CASE"] },
         { selector: ["variable", "parameter"], types: ["boolean"], format: ["PascalCase"], prefix: BOOLEAN_PREFIXES },
+        // Why: these flags are fields that scene authors write in YAML (`glasses: true`), so their spelling is fixed.
+        { selector: "typeProperty", types: ["boolean"], format: null, filter: { regex: SCENE_FLAG_KEYS, match: true } },
         { selector: ["typeProperty", "classProperty", "parameterProperty", "accessor"], types: ["boolean"], format: ["PascalCase"], prefix: BOOLEAN_PREFIXES },
+        { selector: "classProperty", modifiers: ["static", "readonly"], format: ["UPPER_CASE", "camelCase"] },
         // Why: keys of external formats (YAML fields, SVG attributes, CLI flags) keep their spelling.
         { selector: ["objectLiteralProperty", "objectLiteralMethod", "typeProperty"], modifiers: ["requiresQuotes"], format: null },
         { selector: ["objectLiteralProperty", "objectLiteralMethod", "typeProperty"], format: null, filter: { regex: "^[a-z]+(_[a-z]+)+$", match: true } },
@@ -79,7 +92,7 @@ export default tseslint.config(
       "no-nested-ternary": "error",
       "no-console": "error",
       "@typescript-eslint/no-magic-numbers": ["error", {
-        ignore: [-1, 0, 1, 2], ignoreArrayIndexes: true, ignoreDefaultValues: true, ignoreEnums: true,
+        ignore: [-1, 0, 0.5, 1, 2, 100], ignoreArrayIndexes: true, ignoreDefaultValues: true, ignoreEnums: true,
         ignoreNumericLiteralTypes: true, ignoreReadonlyClassProperties: true, ignoreTypeIndexes: true,
       }],
       "sonarjs/cognitive-complexity": ["error", MAX_COGNITIVE_COMPLEXITY],
@@ -96,8 +109,11 @@ export default tseslint.config(
       "local/comment-marker": "error",
       "local/comment-placement": "error",
       "local/map-name": "error",
+      "local/known-keys": ["error", { inferred: true }],
       "local/literal-dispatch": "error",
-      // Why: describe-target and class-matches-file are off until the class refactor (issue #1, ADR 0010).
+      "max-classes-per-file": ["error", 1],
+      "local/class-matches-file": "error",
+      "@typescript-eslint/no-extraneous-class": ["error", { allowStaticOnly: true }],
       "no-restricted-syntax": ["error", {
         selector: "CallExpression > CallExpression.arguments:matches([arguments.length>=3], :has(> CallExpression.arguments))",
         message: "Store this call's result in a named variable before passing it to another call.",
@@ -108,10 +124,11 @@ export default tseslint.config(
     },
   },
   ...layerConfigs,
+  coreModulesConfig,
   {
     // Why: the core never touches the clock, randomness, the file system or the process; only render and cli do.
-    files: ["src/protocols/**", "src/utils/**", "src/drawing/**", "src/modes/**", "src/pipeline/**"],
-    ignores: TEST_FILES,
+    files: ["src/Errors/**", "src/Protocols/**", "src/Utils/**", "src/Resources/**", "src/Services/**", "src/Modules/**"],
+    ignores: [...TEST_FILES, "src/Modules/CritiqueModule.ts", "src/Modules/CheckModule.ts"],
     rules: {
       "no-restricted-properties": ["error",
         { object: "Math", property: "random", message: "The core is pure: no randomness." },
@@ -121,57 +138,33 @@ export default tseslint.config(
     },
   },
   {
-    files: ["src/cli.ts", "scripts/**", "test/**"],
+    files: ["src/**/*.test.ts"],
+    rules: { "local/describe-target": "error" },
+  },
+  {
+    files: ["src/cli.ts", "src/Commands/**", "scripts/**", "test/**"],
     rules: { "no-console": "off", "@typescript-eslint/no-magic-numbers": "off" },
   },
   {
-    // Why: legacy debt, recorded in ADR 0010. New code in these folders still has to pass the rules that are not switched off here.
-    files: LEGACY_FILES,
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
-      "@typescript-eslint/no-magic-numbers": "off",
-      "@typescript-eslint/naming-convention": "off",
-      "@typescript-eslint/restrict-template-expressions": "off",
-      "@typescript-eslint/no-unnecessary-condition": "off",
-      "@typescript-eslint/prefer-nullish-coalescing": "off",
-      "@typescript-eslint/no-unnecessary-type-conversion": "off",
-      "@typescript-eslint/no-confusing-void-expression": "off",
-      "@typescript-eslint/no-dynamic-delete": "off",
-      "id-length": "off",
-      "curly": "off",
-      "no-nested-ternary": "off",
-      "sonarjs/cognitive-complexity": "off",
-      "sonarjs/no-nested-conditional": "off",
-      "sonarjs/no-duplicate-string": "off",
-      "sonarjs/no-identical-functions": "off",
-      "sonarjs/no-duplicated-branches": "off",
-      "sonarjs/no-alphabetical-sort": "off",
-      "sonarjs/super-linear-regex": "off",
-      "max-depth": "off",
-      "max-params": "off",
-      "local/comment-marker": "off",
-      "local/comment-placement": "off",
-      "local/map-name": "off",
-      "local/literal-dispatch": "off",
-      "no-restricted-syntax": "off",
-      "@typescript-eslint/restrict-plus-operands": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "@stylistic/max-statements-per-line": "off",
-      "@stylistic/no-mixed-operators": "off",
-      "no-useless-assignment": "off",
-      "@typescript-eslint/no-misused-spread": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@stylistic/no-multiple-empty-lines": "off",
-      "@stylistic/max-len": "off",
-      "@stylistic/operator-linebreak": "off",
-      "@stylistic/indent-binary-ops": "off",
-      "@stylistic/quote-props": "off",
-    },
+    // Why: the config and the build scripts are plain JavaScript with no types to narrow.
+    files: ["eslint.config.mjs", "scripts/**"],
+    rules: { "local/known-keys": "off" },
+  },
+  {
+    // Why: the Oklab conversion is a published table of coefficients; each number has no meaning apart from its place in the matrix.
+    files: ["src/Utils/OklabUtil.ts"],
+    rules: { "@typescript-eslint/no-magic-numbers": "off" },
+  },
+  {
+    // Why: a resource class fills fields that its Base class already types, so an untyped literal there is not a lost union.
+    files: ["src/Resources/**"],
+    rules: { "local/known-keys": ["error", { inferred: false }] },
+  },
+  {
+    // Why: in drawing code a number is a coordinate, size or angle of a shape, not a business rule; naming each one would hide the drawing behind constants. Logic code (Services, Modules, Commands) keeps the rule on.
+    files: ["src/Resources/Assets/**", "src/Utils/Person*Util.ts", "src/Utils/ShapeUtil.ts", "src/Utils/RecolorUtil.ts", "src/Utils/ColorUtil.ts", "src/Services/BackgroundService.ts", "src/Services/LightingService.ts",
+      "src/Services/Map*Service.ts", "src/Services/Plane*Service.ts", "src/Utils/TransportUtil.ts", "src/Utils/CurveUtil.ts"],
+    rules: { "@typescript-eslint/no-magic-numbers": "off" },
   },
   {
     files: TEST_FILES,

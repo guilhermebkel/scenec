@@ -1,0 +1,48 @@
+name: Bug report
+description: The compiler crashed, drew something wrong, or a warning or critique is wrong for your scene.
+title: "[bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Never paste private text, images, secrets or company data here.** Shrink the scene to the smallest YAML that still shows the problem.
+
+        Security issues go through SECURITY.md, not here.
+  - type: textarea
+    id: scene
+    attributes:
+      label: The scene
+      description: The smallest YAML scene that shows the problem.
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: The command you ran and what you got (the warnings, the critiques, the error, or what the picture shows).
+      placeholder: Ran `npx @guilhermebkel/scenec check scene.yaml` and got "..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: The scenec version (see `npm ls @guilhermebkel/scenec`, or the latest if you ran it with npx), Node.js, OS, and the agent if you use the skill.
+      placeholder: scenec 0.1.1 · Node 22 · macOS 15
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy
+      options:
+        - label: This issue has no private content, secrets or company names.
+          required: true

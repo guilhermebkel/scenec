@@ -1,0 +1,38 @@
+import type { AssetParams, PersonDrawing } from "@/Protocols/AssetProtocol.ts";
+import type { CompilationContext, Placement } from "@/Protocols/CompilationProtocol.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
+
+type GazeDirection = "left" | "right" | "up" | "down" | "up-left" | "up-right" | "down-left" | "down-right" | "camera" | "forward";
+
+export class GazeService {
+  private static readonly DIRECTION_NAMES: readonly GazeDirection[] = [
+    "left", "right", "up", "down", "up-left", "up-right", "down-left", "down-right", "camera", "forward",
+  ];
+
+  private static readonly EYE_HEIGHT_FRACTION = 0.85;
+
+  static redraw(idToPlacement: Record<string, Placement>, context: CompilationContext): void {
+    const { idToObject: objects, library, theme, warnings } = context;
+    for (const placement of Object.values(idToPlacement)) {
+      const object = objects[placement.id];
+      if (placement.asset !== "person" || !object || typeof object.look !== "string") {
+        continue;
+      }
+      const target = idToPlacement[object.look];
+      if (!target) {
+        if (!IdUtil.isOneOf(GazeService.DIRECTION_NAMES, object.look)) {
+          warnings.push(`'${placement.id}' looks at '${object.look}', which does not exist in the scene`);
+        }
+        continue;
+      }
+      const deltaX = target.x - placement.x;
+      const deltaY = target.y - target.height / 2 - (placement.y - placement.height * GazeService.EYE_HEIGHT_FRACTION);
+      const length = Math.hypot(deltaX, deltaY) || 1;
+      const params = { ...object, gaze: [deltaX / length, deltaY / length] } as AssetParams;
+      const drawing = library.person?.draw(params, theme) as PersonDrawing | undefined;
+      if (drawing) {
+        placement.svg = drawing.svg;
+      }
+    }
+  }
+}

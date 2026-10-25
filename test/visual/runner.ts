@@ -1,13 +1,10 @@
+import { check, createFileReader, renderPng } from "../../src/render.ts";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as yaml from "js-yaml";
 import pixelmatch from "pixelmatch";
 import { PNG } from "pngjs";
-import { check } from "../../src/render/check.ts";
-import { createFileReader } from "../../src/render/files.ts";
-import { renderPng } from "../../src/render/png.ts";
-
 export const CASES_DIR = fileURLToPath(new URL("cases", import.meta.url));
 export const REPORT_DIR = fileURLToPath(new URL("report", import.meta.url));
 const COMPARE_WIDTH = 800;

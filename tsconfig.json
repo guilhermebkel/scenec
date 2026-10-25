@@ -5,16 +5,16 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
-    "noUncheckedIndexedAccess": false,
+    "noUncheckedIndexedAccess": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "types": ["node"],
     "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
     "declaration": true,
     "outDir": "dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "paths": { "@/*": ["./src/*"] }
   },
   "include": ["src", "scripts", "test", "*.mjs"]
 }

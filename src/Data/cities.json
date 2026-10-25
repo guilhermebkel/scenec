@@ -1,0 +1,312 @@
+{
+  "paris": {
+    "lon": 2.35,
+    "lat": 48.86,
+    "name": "Paris"
+  },
+  "roma": {
+    "lon": 12.5,
+    "lat": 41.9,
+    "name": "Roma"
+  },
+  "rome": {
+    "lon": 12.5,
+    "lat": 41.9,
+    "name": "Roma"
+  },
+  "munique": {
+    "lon": 11.58,
+    "lat": 48.14,
+    "name": "Munique"
+  },
+  "munich": {
+    "lon": 11.58,
+    "lat": 48.14,
+    "name": "Munique"
+  },
+  "salzburgo": {
+    "lon": 13.04,
+    "lat": 47.81,
+    "name": "Salzburgo"
+  },
+  "saltzburg": {
+    "lon": 13.04,
+    "lat": 47.81,
+    "name": "Salzburgo"
+  },
+  "salzburg": {
+    "lon": 13.04,
+    "lat": 47.81,
+    "name": "Salzburgo"
+  },
+  "luxemburgo": {
+    "lon": 6.13,
+    "lat": 49.61,
+    "name": "Luxemburgo"
+  },
+  "luxembourg": {
+    "lon": 6.13,
+    "lat": 49.61,
+    "name": "Luxemburgo"
+  },
+  "milao": {
+    "lon": 9.19,
+    "lat": 45.46,
+    "name": "Milão"
+  },
+  "milan": {
+    "lon": 9.19,
+    "lat": 45.46,
+    "name": "Milão"
+  },
+  "londres": {
+    "lon": -0.13,
+    "lat": 51.51,
+    "name": "Londres"
+  },
+  "madri": {
+    "lon": -3.7,
+    "lat": 40.42,
+    "name": "Madri"
+  },
+  "barcelona": {
+    "lon": 2.17,
+    "lat": 41.39,
+    "name": "Barcelona"
+  },
+  "lisboa": {
+    "lon": -9.14,
+    "lat": 38.72,
+    "name": "Lisboa"
+  },
+  "porto": {
+    "lon": -8.61,
+    "lat": 41.15,
+    "name": "Porto"
+  },
+  "berlim": {
+    "lon": 13.4,
+    "lat": 52.52,
+    "name": "Berlim"
+  },
+  "frankfurt": {
+    "lon": 8.68,
+    "lat": 50.11,
+    "name": "Frankfurt"
+  },
+  "hamburgo": {
+    "lon": 9.99,
+    "lat": 53.55,
+    "name": "Hamburgo"
+  },
+  "colonia": {
+    "lon": 6.96,
+    "lat": 50.94,
+    "name": "Colônia"
+  },
+  "viena": {
+    "lon": 16.37,
+    "lat": 48.21,
+    "name": "Viena"
+  },
+  "innsbruck": {
+    "lon": 11.4,
+    "lat": 47.27,
+    "name": "Innsbruck"
+  },
+  "zurique": {
+    "lon": 8.54,
+    "lat": 47.37,
+    "name": "Zurique"
+  },
+  "genebra": {
+    "lon": 6.14,
+    "lat": 46.2,
+    "name": "Genebra"
+  },
+  "berna": {
+    "lon": 7.45,
+    "lat": 46.95,
+    "name": "Berna"
+  },
+  "amsterda": {
+    "lon": 4.9,
+    "lat": 52.37,
+    "name": "Amsterdã"
+  },
+  "bruxelas": {
+    "lon": 4.35,
+    "lat": 50.85,
+    "name": "Bruxelas"
+  },
+  "praga": {
+    "lon": 14.42,
+    "lat": 50.08,
+    "name": "Praga"
+  },
+  "budapeste": {
+    "lon": 19.04,
+    "lat": 47.5,
+    "name": "Budapeste"
+  },
+  "varsovia": {
+    "lon": 21.01,
+    "lat": 52.23,
+    "name": "Varsóvia"
+  },
+  "cracovia": {
+    "lon": 19.94,
+    "lat": 50.06,
+    "name": "Cracóvia"
+  },
+  "veneza": {
+    "lon": 12.32,
+    "lat": 45.44,
+    "name": "Veneza"
+  },
+  "florenca": {
+    "lon": 11.26,
+    "lat": 43.77,
+    "name": "Florença"
+  },
+  "napoles": {
+    "lon": 14.27,
+    "lat": 40.85,
+    "name": "Nápoles"
+  },
+  "turim": {
+    "lon": 7.69,
+    "lat": 45.07,
+    "name": "Turim"
+  },
+  "bolonha": {
+    "lon": 11.34,
+    "lat": 44.49,
+    "name": "Bolonha"
+  },
+  "nice": {
+    "lon": 7.27,
+    "lat": 43.7,
+    "name": "Nice"
+  },
+  "lyon": {
+    "lon": 4.84,
+    "lat": 45.76,
+    "name": "Lyon"
+  },
+  "marselha": {
+    "lon": 5.37,
+    "lat": 43.3,
+    "name": "Marselha"
+  },
+  "bordeaux": {
+    "lon": -0.58,
+    "lat": 44.84,
+    "name": "Bordeaux"
+  },
+  "estrasburgo": {
+    "lon": 7.75,
+    "lat": 48.57,
+    "name": "Estrasburgo"
+  },
+  "copenhague": {
+    "lon": 12.57,
+    "lat": 55.68,
+    "name": "Copenhague"
+  },
+  "estocolmo": {
+    "lon": 18.07,
+    "lat": 59.33,
+    "name": "Estocolmo"
+  },
+  "oslo": {
+    "lon": 10.75,
+    "lat": 59.91,
+    "name": "Oslo"
+  },
+  "helsinque": {
+    "lon": 24.94,
+    "lat": 60.17,
+    "name": "Helsinque"
+  },
+  "dublin": {
+    "lon": -6.26,
+    "lat": 53.35,
+    "name": "Dublin"
+  },
+  "edimburgo": {
+    "lon": -3.19,
+    "lat": 55.95,
+    "name": "Edimburgo"
+  },
+  "atenas": {
+    "lon": 23.73,
+    "lat": 37.98,
+    "name": "Atenas"
+  },
+  "istambul": {
+    "lon": 28.98,
+    "lat": 41.01,
+    "name": "Istambul"
+  },
+  "dubrovnik": {
+    "lon": 18.09,
+    "lat": 42.65,
+    "name": "Dubrovnik"
+  },
+  "zagreb": {
+    "lon": 15.98,
+    "lat": 45.81,
+    "name": "Zagreb"
+  },
+  "liubliana": {
+    "lon": 14.51,
+    "lat": 46.06,
+    "name": "Liubliana"
+  },
+  "bratislava": {
+    "lon": 17.11,
+    "lat": 48.15,
+    "name": "Bratislava"
+  },
+  "sevilha": {
+    "lon": -5.98,
+    "lat": 37.39,
+    "name": "Sevilha"
+  },
+  "valencia": {
+    "lon": -0.38,
+    "lat": 39.47,
+    "name": "Valência"
+  },
+  "hallstatt": {
+    "lon": 13.65,
+    "lat": 47.56,
+    "name": "Hallstatt"
+  },
+  "bruges": {
+    "lon": 3.22,
+    "lat": 51.21,
+    "name": "Bruges"
+  },
+  "interlaken": {
+    "lon": 7.86,
+    "lat": 46.69,
+    "name": "Interlaken"
+  },
+  "como": {
+    "lon": 9.09,
+    "lat": 45.81,
+    "name": "Como"
+  },
+  "pisa": {
+    "lon": 10.4,
+    "lat": 43.72,
+    "name": "Pisa"
+  },
+  "verona": {
+    "lon": 10.99,
+    "lat": 45.44,
+    "name": "Verona"
+  }
+}

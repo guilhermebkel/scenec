@@ -1,0 +1,123 @@
+{
+  "layout": [
+    {
+      "id": "janela",
+      "asset": "window",
+      "x": 20,
+      "base": 46.3,
+      "w": 13.7,
+      "h": 28.9
+    },
+    {
+      "id": "luz1",
+      "asset": "pendant_lamp",
+      "x": 33,
+      "base": 23.8,
+      "w": 7.1,
+      "h": 10.2
+    },
+    {
+      "id": "luz2",
+      "asset": "pendant_lamp",
+      "x": 50,
+      "base": 23.8,
+      "w": 7.1,
+      "h": 10.2
+    },
+    {
+      "id": "filho",
+      "asset": "person",
+      "x": 53.8,
+      "base": 93,
+      "w": 5.4,
+      "h": 27.5
+    },
+    {
+      "id": "mesa",
+      "asset": "table",
+      "x": 47,
+      "base": 93,
+      "w": 33.9,
+      "h": 15.6
+    },
+    {
+      "id": "c1",
+      "asset": "chair",
+      "x": 29.6,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "c2",
+      "asset": "chair",
+      "x": 64.4,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "estante",
+      "asset": "bookshelf",
+      "x": 92,
+      "base": 93,
+      "w": 14.3,
+      "h": 57.8
+    },
+    {
+      "id": "dog",
+      "asset": "dog",
+      "x": 12,
+      "base": 93,
+      "w": 8.9,
+      "h": 12.2
+    },
+    {
+      "id": "pai",
+      "asset": "person",
+      "x": 28.9,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "mae",
+      "asset": "person",
+      "x": 65.1,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "pizza",
+      "asset": "pizza",
+      "x": 47,
+      "base": 77.4,
+      "w": 7.1,
+      "h": 2.7
+    },
+    {
+      "id": "frutas",
+      "asset": "fruit_bowl",
+      "x": 36.8,
+      "base": 77.4,
+      "w": 6.1,
+      "h": 7.5
+    },
+    {
+      "id": "burger",
+      "asset": "burger",
+      "x": 32.8,
+      "base": 77.4,
+      "w": 3.9,
+      "h": 6.1
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "art: visual weight leans right (center of mass at 66% of the width); move 'estante' toward the center or put something on the left side",
+    "art: 'janela' blends into the background in the top part (86% of this outline has no contrast): the color #F8F0E4 is too close; change the color of one of the two",
+    "art: 'pizza' blends into the background in the top part (47% of this outline has no contrast): the color #DF9C62 is too close; change the color of one of the two",
+    "art: 'c1' and 'burger' almost touch (tangency); move them apart a little or overlap them on purpose"
+  ]
+}

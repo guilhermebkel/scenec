@@ -1,0 +1,123 @@
+{
+  "layout": [
+    {
+      "id": "sol",
+      "asset": "sun",
+      "x": 80,
+      "base": 27.8,
+      "w": 14.5,
+      "h": 27.5
+    },
+    {
+      "id": "nuvem1",
+      "asset": "cloud",
+      "x": 65,
+      "base": 37.6,
+      "w": 17.7,
+      "h": 15.3
+    },
+    {
+      "id": "nuvem2",
+      "asset": "cloud",
+      "x": 50,
+      "base": 41.7,
+      "w": 13.3,
+      "h": 11.5
+    },
+    {
+      "id": "passaro1",
+      "asset": "bird",
+      "x": 50,
+      "base": 23.5,
+      "w": 3.2,
+      "h": 3.1
+    },
+    {
+      "id": "passaro2",
+      "asset": "bird",
+      "x": 65,
+      "base": 19.1,
+      "w": 2.4,
+      "h": 2.3
+    },
+    {
+      "id": "monte",
+      "asset": "mountain",
+      "x": 78,
+      "base": 69,
+      "w": 44.6,
+      "h": 53
+    },
+    {
+      "id": "arvore",
+      "asset": "tree",
+      "x": 57.7,
+      "base": 80,
+      "w": 16.4,
+      "h": 55.8
+    },
+    {
+      "id": "pinho",
+      "asset": "pine",
+      "x": 12,
+      "base": 80,
+      "w": 11.4,
+      "h": 54.4
+    },
+    {
+      "id": "casa",
+      "asset": "house",
+      "x": 42,
+      "base": 92,
+      "w": 28.6,
+      "h": 59.5
+    },
+    {
+      "id": "joao",
+      "asset": "person",
+      "x": 21.1,
+      "base": 92,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "rex",
+      "asset": "dog",
+      "x": 13.1,
+      "base": 92,
+      "w": 8.9,
+      "h": 12.2
+    },
+    {
+      "id": "flores",
+      "asset": "flowers",
+      "x": 32.9,
+      "base": 92,
+      "w": 8.9,
+      "h": 10.2
+    },
+    {
+      "id": "cerca",
+      "asset": "fence",
+      "x": 70.6,
+      "base": 92,
+      "w": 28.6,
+      "h": 13.6
+    },
+    {
+      "id": "arbusto",
+      "asset": "bush",
+      "x": 92.4,
+      "base": 92,
+      "w": 13.2,
+      "h": 15
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "art: 'flores' blends into 'casa' in the bottom part (41% of this outline has no contrast): the color #AF522C is too close; change the color of one of the two",
+    "art: 'sol' and 'monte' almost touch (tangency); move them apart a little or overlap them on purpose",
+    "art: 'arvore' and 'cerca' almost touch (tangency); move them apart a little or overlap them on purpose",
+    "art: 'pinho' and 'joao' almost touch (tangency); move them apart a little or overlap them on purpose"
+  ]
+}

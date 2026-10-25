@@ -1,3 +1,7 @@
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import tseslint from "typescript-eslint";
+
 const COMMENT_MARKER = /^Why: \S/;
 const TOOL_DIRECTIVE = /^(eslint-disable|eslint-enable|@ts-expect-error|global )/;
 const EQUALITY_OPERATORS = new Set(["===", "==", "!==", "!="]);
@@ -40,7 +44,7 @@ const commentMarker = {
   },
 };
 
-const PROTOCOL_FOLDER = /[\\/]protocols[\\/]/;
+const PROTOCOL_FOLDER = /[\\/]Protocols[\\/]/;
 const EXPORT_TYPES = new Set(["ExportNamedDeclaration", "ExportDefaultDeclaration"]);
 const DECLARATION_SELECTOR = [
   "FunctionDeclaration",
@@ -205,6 +209,102 @@ const literalDispatch = {
   },
 };
 
+function fileStemOf(filename) {
+  const base = filename.split(/[\\/]/).at(-1) ?? "";
+  return base.replace(/\.[^.]+$/, "");
+}
+
+const classMatchesFile = {
+  meta: {
+    type: "suggestion",
+    messages: { mismatch: "Class \"{{name}}\" lives in \"{{file}}\"; name the file after its one class." },
+  },
+  create(context) {
+    const stem = fileStemOf(context.filename);
+    return {
+      "Program > ClassDeclaration, Program > ExportNamedDeclaration > ClassDeclaration"(node) {
+        const name = node.id?.name;
+        if (name && name !== stem) {
+          context.report({ node: node.id, messageId: "mismatch", data: { name, file: stem } });
+        }
+      },
+    };
+  },
+};
+
+const DESCRIBE_TARGET = /^([A-Z]\w*)\.(\w+)\(\)$/;
+const HIDDEN_ACCESSIBILITY = new Set(["private", "protected"]);
+const TEST_SUFFIX = /\.test$/;
+const SOURCE_EXTENSION = ".ts";
+
+function isPublicMember(member) {
+  const isNamed = member.key?.type === "Identifier";
+  return isNamed && !HIDDEN_ACCESSIBILITY.has(member.accessibility) && member.kind !== "constructor";
+}
+
+function publicMethodsOf(sourcePath, className) {
+  const { ast: program } = tseslint.parser.parseForESLint(readFileSync(sourcePath, "utf8"), { sourceType: "module" });
+  const declarations = program.body.map((node) => node.declaration ?? node);
+  const classNode = declarations.find((node) => node.type === "ClassDeclaration" && node.id?.name === className);
+  const members = classNode?.body.body ?? [];
+  return new Set(members.filter((member) => isPublicMember(member)).map((member) => member.key.name));
+}
+
+function calleeNameOf(statement) {
+  return statement.expression?.callee?.name;
+}
+
+const describeTarget = {
+  meta: {
+    type: "suggestion",
+    messages: {
+      format: "Name the outer describe \"{{className}}.<method>()\": the class this file tests and the public method the tests go through.",
+      otherClass: "This file tests {{className}}; the outer describe names \"{{named}}\".",
+      notPublic: "{{className}} has no public method \"{{method}}\" in {{source}}; test through a public method.",
+      outside: "Put this test inside a describe named \"{{className}}.<method>()\".",
+    },
+  },
+  create(context) {
+    const className = fileStemOf(context.filename).replace(TEST_SUFFIX, "");
+    const testFolder = dirname(resolve(context.filename));
+    const sourcePath = join(testFolder, `${className}${SOURCE_EXTENSION}`);
+    let publicMethods;
+    const methodsOfSource = () => {
+      publicMethods ??= existsSync(sourcePath) ? publicMethodsOf(sourcePath, className) : new Set();
+      return publicMethods;
+    };
+    const checkDescribe = (call) => {
+      const title = call.arguments[0];
+      const match = DESCRIBE_TARGET.exec(typeof title?.value === "string" ? title.value : "");
+      if (!match) {
+        context.report({ node: title ?? call, messageId: "format", data: { className } });
+        return;
+      }
+      const [, named, method] = match;
+      if (named !== className) {
+        context.report({ node: title, messageId: "otherClass", data: { className, named } });
+        return;
+      }
+      if (!methodsOfSource().has(method)) {
+        context.report({ node: title, messageId: "notPublic", data: { className, method, source: `${className}${SOURCE_EXTENSION}` } });
+      }
+    };
+    const reportOutside = (call) => {
+      context.report({ node: call, messageId: "outside", data: { className } });
+    };
+    const CALLEE_TO_CHECK = { describe: checkDescribe, it: reportOutside, test: reportOutside };
+    return {
+      "Program"(program) {
+        for (const statement of program.body) {
+          const name = calleeNameOf(statement);
+          const check = Object.hasOwn(CALLEE_TO_CHECK, name ?? "") ? CALLEE_TO_CHECK[name] : undefined;
+          check?.(statement.expression);
+        }
+      },
+    };
+  },
+};
+
 const MAP_TYPE_NAMES = new Set(["Record", "Map", "ReadonlyMap"]);
 const WRAPPER_TYPE_NAMES = new Set(["Partial", "Readonly", "Required"]);
 const MAP_NAME = /To[A-Z0-9]|_TO_/;
@@ -259,11 +359,110 @@ const mapName = {
   },
 };
 
+const LIST_TYPE_NAMES = new Set(["Array", "ReadonlyArray"]);
+
+function isStringKeyword(typeNode) {
+  return typeNode?.type === "TSStringKeyword";
+}
+
+function unwrapRecord(typeNode) {
+  let current = typeNode;
+  while (current?.type === "TSTypeReference" && WRAPPER_TYPE_NAMES.has(current.typeName.name)) {
+    current = current.typeArguments?.params[0];
+  }
+  return current;
+}
+
+function isRecordOfStringKeys(typeNode) {
+  const record = unwrapRecord(typeNode);
+  return record?.type === "TSTypeReference" && record.typeName.name === "Record" && isStringKeyword(record.typeArguments?.params[0]);
+}
+
+const TYPE_TO_IS_LIST_OF_STRINGS = {
+  TSTypeOperator: (node) => node.operator === "readonly" && isListOfStrings(node.typeAnnotation),
+  TSArrayType: (node) => isStringKeyword(node.elementType),
+  TSTypeReference: (node) => LIST_TYPE_NAMES.has(node.typeName.name) && isStringKeyword(node.typeArguments?.params[0]),
+};
+
+function isListOfStrings(typeNode) {
+  return typeNode ? (TYPE_TO_IS_LIST_OF_STRINGS[typeNode.type]?.(typeNode) ?? false) : false;
+}
+
+function hasOnlyFixedKeys(objectNode) {
+  return objectNode.properties.length > 0
+    && objectNode.properties.every((property) => property.type === "Property" && !property.computed);
+}
+
+function hasOnlyFixedStrings(arrayNode) {
+  return arrayNode.elements.length > 0
+    && arrayNode.elements.every((element) => element?.type === "Literal" && typeof element.value === "string");
+}
+
+const MIN_TABLE_ENTRIES = 2;
+
+const INIT_TO_DECLARED_MESSAGE = {
+  ObjectExpression: (typeNode, init) => (isRecordOfStringKeys(typeNode) && hasOnlyFixedKeys(init) ? "keys" : null),
+  ArrayExpression: (typeNode, init) => (isListOfStrings(typeNode) && hasOnlyFixedStrings(init) ? "values" : null),
+};
+
+const isStringTable = (init) => hasOnlyFixedKeys(init) && init.properties.length >= MIN_TABLE_ENTRIES
+  && init.properties.every((property) => property.value.type === "Literal" && typeof property.value.value === "string");
+
+const INIT_TO_INFERRED_MESSAGE = {
+  ArrayExpression: (init) => (hasOnlyFixedStrings(init) ? "inferredList" : null),
+  ObjectExpression: (init) => (isStringTable(init) ? "inferredTable" : null),
+};
+
+const knownKeys = {
+  meta: {
+    type: "suggestion",
+    schema: [{ type: "object", properties: { inferred: { type: "boolean" } }, additionalProperties: false }],
+    messages: {
+      keys: "The keys here are all known: type them as a union (Record<SomeName, ...>) instead of string, so a typo fails to compile.",
+      values: "The values here are all known: type the list as an array of a union (readonly SomeName[]) instead of string[].",
+      inferredList: "An untyped list of string literals is inferred as string[]: annotate it with a union (readonly SomeName[]).",
+      inferredTable: "An untyped table of string literals is inferred as { key: string }: annotate it (Record<SomeName, SomeValue>).",
+    },
+  },
+  create(context) {
+    const check = (typeNode, init, reportNode) => {
+      const messageId = init ? INIT_TO_DECLARED_MESSAGE[init.type]?.(typeNode, init) : null;
+      if (messageId) {
+        context.report({ node: reportNode, messageId });
+      }
+    };
+    const checkInferred = (typeNode, init, reportNode) => {
+      const messageId = typeNode || !init ? null : INIT_TO_INFERRED_MESSAGE[init.type]?.(init);
+      if (messageId) {
+        context.report({ node: reportNode, messageId });
+      }
+    };
+    return {
+      "VariableDeclarator"(node) {
+        check(node.id.typeAnnotation?.typeAnnotation, node.init, node.id);
+        if (context.options[0]?.inferred) {
+          checkInferred(node.id.typeAnnotation, node.init, node.id);
+        }
+      },
+      "PropertyDefinition"(node) {
+        check(node.typeAnnotation?.typeAnnotation, node.value, node.key);
+        if (context.options[0]?.inferred) {
+          checkInferred(node.typeAnnotation, node.value, node.key);
+        }
+      },
+    };
+  },
+  defaultOptions: [{ inferred: false }],
+};
+
 export const localRules = {
   rules: {
     "comment-marker": commentMarker,
     "literal-dispatch": literalDispatch,
+    "class-matches-file": classMatchesFile,
+    "describe-target": describeTarget,
     "comment-placement": commentPlacement,
     "map-name": mapName,
+    "known-keys": knownKeys,
   },
 };

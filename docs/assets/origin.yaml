@@ -1,0 +1,96 @@
+canvas:
+  mode: 2.5d
+  width: 1400
+  height: 900
+  theme: flat-autumn
+path:
+  width: 0.07
+  points:
+    - id: idea
+      at: [0.16, 0.06]
+      label: An idea
+      zone: home
+    - id: scene
+      at: [0.7, 0.2]
+      label: A YAML scene
+      zone: office
+    - id: compiler
+      at: [0.26, 0.5]
+      label: A compiler that measures
+      zone: lab
+    - id: critique
+      at: [0.76, 0.72]
+      label: An art director in text
+      zone: school
+    - id: repo
+      at: [0.4, 0.95]
+      label: scenec
+      zone: ceremony
+      finish: true
+objects:
+  dreamer:
+    asset: person
+    near: idea
+    pose: thinking
+    hair: curly
+    hair_color: brown
+    skin: tan
+    shirt: accent
+  writer:
+    asset: person
+    near: scene
+    pose: typing
+    hair: ponytail
+    hair_color: black
+    skin: medium
+    shirt: primary
+    glasses: true
+  builder:
+    asset: person
+    near: compiler
+    pose: presenting
+    outfit: labcoat
+    hair: short
+    hair_color: brown
+    skin: light
+    shirt: secondary
+  reviewer:
+    asset: person
+    near: critique
+    pose: waving
+    hair: bun
+    hair_color: red
+    skin: dark
+    shirt: paper
+    jacket: primary
+  maker:
+    asset: person
+    near: repo
+    pose: celebrating
+    hair: short
+    hair_color: black
+    skin: tan
+    shirt: accent
+  flag:
+    asset: finish_flag
+    near: repo
+    offset: [0.07, 0.01]
+  sun:
+    asset: sun
+    at: far-right
+    altitude: 0.06
+    size: small
+  cloud:
+    asset: cloud
+    at: left
+    altitude: 0.17
+    size: small
+scatter:
+  - assets: [tree, pine, bush, flowers]
+    count: 22
+    seed: 5
+    size: 0.65
+text:
+  - content: scenec
+    at: top-left
+    role: title

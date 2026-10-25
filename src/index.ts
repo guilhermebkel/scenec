@@ -1,6 +1,19 @@
-export { compile } from "./pipeline/index.ts";
-export type { CompileResult, LayoutEntry } from "./pipeline/index.ts";
-export { parseScene, SceneError } from "./pipeline/parse.ts";
-export type { ParsedScene } from "./pipeline/parse.ts";
-export type { Scene } from "./protocols/scene.ts";
-export type { BBox, CompileOptions, FileReader } from "./protocols/options.ts";
+import { CompilationModule } from "@/Modules/CompilationModule.ts";
+import { ParsingModule } from "@/Modules/ParsingModule.ts";
+import type { ParsedScene } from "@/Modules/ParsingModule.ts";
+import type { CompileOptions } from "@/Protocols/OptionsProtocol.ts";
+import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
+
+export { SceneError } from "@/Errors/SceneError.ts";
+export type { ParsedScene, CompileResult };
+export type { LayoutEntry } from "@/Protocols/ResultProtocol.ts";
+export type { Scene } from "@/Protocols/SceneProtocol.ts";
+export type { BBox, CompileOptions, FileReader } from "@/Protocols/OptionsProtocol.ts";
+
+export function compile(input: unknown, options: CompileOptions = {}): CompileResult {
+  return CompilationModule.compile(input, options);
+}
+
+export function parseScene(input: unknown): ParsedScene {
+  return ParsingModule.parseScene(input);
+}

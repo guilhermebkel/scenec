@@ -5,7 +5,7 @@ canvas:
   setting: indoor
 assets:
   prensa:
-    svg: custom/prensa.svg
+    svg: custom/press.svg
     kind: surface
     height: 24
   logo:

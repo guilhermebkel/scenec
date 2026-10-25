@@ -5,9 +5,11 @@ import { check } from "../../src/render.ts";
 import * as schema from "../../src/schema.ts";
 import { buildCatalog, buildDsl } from "../../scripts/skill-refs-lib.mjs";
 
-const SKILL_DIR = new URL("../../skills/scenec/", import.meta.url);
+const SKILL_DIR = new URL("../../skills/draw-scene/", import.meta.url);
 const read = (path: string): string => readFileSync(new URL(path, SKILL_DIR), "utf8");
-const ALLOWED_FRONTMATTER_KEYS = ["name", "description", "license", "compatibility", "allowed-tools", "metadata"];
+type FrontmatterKey = "name" | "description" | "license" | "compatibility" | "allowed-tools" | "metadata";
+
+const ALLOWED_FRONTMATTER_KEYS: readonly string[] & readonly FrontmatterKey[] = ["name", "description", "license", "compatibility", "allowed-tools", "metadata"];
 
 function frontmatterOf(markdown: string): Record<string, unknown> {
   const match = /^---\n([\s\S]*?)\n---\n/.exec(markdown);
@@ -15,16 +17,11 @@ function frontmatterOf(markdown: string): Record<string, unknown> {
 }
 
 describe("skill", () => {
-  it("has a frontmatter with only the allowed keys and sources inside metadata", () => {
+  it("has a frontmatter with only the allowed keys", () => {
     const frontmatter = frontmatterOf(read("SKILL.md"));
 
     expect(Object.keys(frontmatter).every((key) => ALLOWED_FRONTMATTER_KEYS.includes(key))).toBe(true);
-    expect(frontmatter.name).toBe("scenec");
-    expect(frontmatter.metadata).toStrictEqual({ "sources-file": "references/fontes.md", "updated": "2026-10-24" });
-  });
-
-  it("starts the sources file with the consulted date", () => {
-    expect(read("references/fontes.md").startsWith("Consultadas em ")).toBe(true);
+    expect(frontmatter.name).toBe("draw-scene");
   });
 
   it("keeps the generated references up to date", () => {

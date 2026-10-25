@@ -1,0 +1,6 @@
+{
+  "warnings": [
+    "in map mode, kit 'outline' applies only filter and texture; per-object outline and hatching exist in classic mode"
+  ],
+  "art": []
+}

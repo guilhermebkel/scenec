@@ -123,10 +123,10 @@
   ],
   "warnings": [],
   "art": [
-    "arte: 'balcao' some contra o fundo na parte de baixo (66% desse contorno sem contraste): a cor #7C5036 está próxima demais; mude a cor de um dos dois",
-    "arte: 'quadro' e 'luz1' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
-    "arte: 'cadeira1' e 'cafe1' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
-    "arte: 'cadeira2' e 'cafe2' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito",
-    "arte: 'cafe1' e 'bolo' quase se encostam (tangência); afaste-os um pouco ou sobreponha de propósito"
+    "art: 'balcao' blends into the background in the bottom part (66% of this outline has no contrast): the color #7C5036 is too close; change the color of one of the two",
+    "art: 'quadro' and 'luz1' almost touch (tangency); move them apart a little or overlap them on purpose",
+    "art: 'cadeira1' and 'cafe1' almost touch (tangency); move them apart a little or overlap them on purpose",
+    "art: 'cadeira2' and 'cafe2' almost touch (tangency); move them apart a little or overlap them on purpose",
+    "art: 'cafe1' and 'bolo' almost touch (tangency); move them apart a little or overlap them on purpose"
   ]
 }

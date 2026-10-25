@@ -1,0 +1,25 @@
+name: Feature request
+description: An asset, a group, a kit, a field or a critique you would like scenec to have.
+title: "[feature] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What do you want to draw, or what does the report miss today?
+      placeholder: I want to draw a lighthouse and there is no asset for it.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you would like
+      description: The asset, field, group or critique you have in mind, and how a scene would use it.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you do today instead
+      description: Optional. For example, a custom asset declared in the scene, or another asset that comes close.

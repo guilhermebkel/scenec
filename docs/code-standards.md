@@ -4,17 +4,17 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 
 **A rule that a tool can check is a tool, not a sentence.** When a rule here can be a lint rule, a type or a test, it becomes one (this repo's own rules live in `scripts/eslint-local-rules.mjs`); text is for what no tool can check. A written rule the agent keeps breaking is the sign it should move.
 
-**Target state and debt.** This file describes where the code must be. The code ported from the JavaScript prototype is not there yet: rules marked **(pending)** are not enforced until the debt in [issue #1](https://github.com/guilhermebkel/scenec/issues/1) is paid, and `LEGACY_FILES` in `eslint.config.mjs` lists the files with relaxed rules. New code follows every rule here, enforced or not.
+**Enforcement.** Every rule below is enforced by `pnpm lint` on all of `src`. The legacy debt of the JavaScript prototype was paid in [issue #1](https://github.com/guilhermebkel/scenec/issues/1).
 
 ## Architecture
 
-- **Layers (lint).** Inside `src/`, folders form layers and a layer imports only the ones below it: `protocols` (types and Zod schemas) < `utils` < `drawing` < `modes` < `pipeline` < `render` < `cli`. Tests may import any layer: nothing imports them. Import cycles fail `pnpm quality` (dpdm, `import type` ignored).
-- **A pure core (lint).** `protocols` to `pipeline` have no clock, randomness, file system or process: the same scene gives the same SVG on any machine (ADR 0004). Files come in through the `FileReader` option and measurements through `measure`; only `render` and `cli` touch the outside.
-- **Native code behind `render`.** Code that knows resvg lives in `src/render/`. The core depends on the `measure` contract, never on the renderer.
-- **Imports use `@/` and the real file name (pending).** `@/` points to `src/`. Every import is `@/utils/ColorUtil.ts`: never `../` or `./`. One style means searching for a file's `@/` path finds every importer.
-- **Names say the folder.** Files are `PascalCase` and end in their role: `SceneProtocol`, `ColorUtil`, `SanitizeUtil`, `CompileService`, `ResvgAdapter`.
-- **Classes, not loose functions (pending).** Utils are classes with static methods only. Services are classes whose dependencies come in through the constructor. Runtime constants belong to the class that owns them as `static readonly` members.
-- **One class per file, named after it (pending).** `max-classes-per-file`, `local/class-matches-file`.
+- **Layers (lint).** Inside `src/`, folders form layers and a layer imports only the ones below it: `Errors` and `Protocols` (types, Zod schemas, errors) < `Utils` < `Resources` < `Services` < `Modules` < `Commands`; `Adapters` see only `Protocols` and `Utils`. Tests may import any layer: nothing imports them. Import cycles fail `pnpm quality` (dpdm, `import type` ignored).
+- **A pure core (lint).** `Errors` to `Modules` have no clock, randomness, file system or process: the same scene gives the same SVG on any machine (ADR 0004). Files come in through the `FileReader` option and measurements through `measure`; only the adapters, the critique and check modules and the commands touch the outside.
+- **Native code behind `Adapters`.** Code that knows resvg lives in `src/Adapters/`. The core depends on the `measure` contract, never on the renderer.
+- **Imports use `@/` and the real file name (lint).** `@/` points to `src/`. Every import is `@/Utils/ColorUtil.ts`: never `../` or `./`. One style means searching for a file's `@/` path finds every importer.
+- **Names say the folder.** Files are `PascalCase` and end in their role: `ColorUtil`, `SanitizeUtil`, `CompilationModule`, `ResvgAdapter`. Folders are `PascalCase` layer names. Resources end in their kind (`HouseAsset`, `FlatKit`, `NightTheme`, `WorkspaceGroup`) and extend a `Base` class.
+- **Classes, not loose functions (lint).** Utils are classes with static methods only. The three public entries (`src/index.ts`, `src/render.ts`, `src/schema.ts`) are the only files with loose functions: thin facades over the classes. Services are classes whose dependencies come in through the constructor. Runtime constants belong to the class that owns them as `static readonly` members.
+- **One class per file, named after it (lint).** `max-classes-per-file`, `local/class-matches-file`.
 - **Protocols hold only types and schemas.** No logic. A type used by one file stays in that file.
 - **Three public entries.** `@guilhermebkel/scenec`, `@guilhermebkel/scenec/render` and `@guilhermebkel/scenec/schema`. Anything else is internal; a test snapshots the exports.
 
@@ -24,8 +24,9 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **Descriptive names (lint).** No single-letter identifiers, including loop indexes and callback parameters: `(asset) => …`, not `(a) => …`. A name says what the value is in this domain (`GLOSSARY.md`), never `data`, `item`, `value` or `obj` when something more specific exists.
 - **Booleans (lint).** Start with `is`, `has`, `should`, `can`, `must`, `was` or `did`. Names are affirmative: `isOnGround`, never `isNotFloating`.
 - **Maps and records (lint).** Every `Record` or `Map` is named `keyToValue`: `slotToX`, `kitToRenderer`, `THEME_TO_PALETTE`. A `Record<string, unknown>` is a plain object and is exempt.
+- **Known values are unions, never `string` (lint).** Every resource has a typed slug (`AssetId`, `KitId`, `ThemeId`, `GroupId`), and so does every other closed vocabulary (`SettingName`, `SlotName`, `SizeName`, `ShotName`, `Depth`, `AssetKind`). A table whose keys are known is `Record<SizeName, number>`, and a list whose values are known is `readonly AssetKind[]`; `Record<string, ...>` and `string[]` are for values that only exist at run time (ids the scene author invents). Text from the scene is narrowed with `IdUtil.isOneOf` or looked up with `IdUtil.lookup`. `local/known-keys` flags a `string`-typed annotation on a literal with fixed keys or fixed strings, and (outside `src/Resources/`, where the Base class already types the fields) an untyped list or table of string literals, which TypeScript would infer as `string[]`.
 - **Units.** A number with a unit carries it in the name: `widthPx`, `compileMs`, `svgKb`. A fraction of the frame says so: `xFraction`.
-- **English in code.** Identifiers, comments, docs, error messages and warnings are in English (pending for runtime messages, which are still Portuguese: issue #1).
+- **English in code.** Identifiers, comments, docs, error messages and warnings are in English.
 
 ## TypeScript
 
@@ -34,7 +35,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **Exhaustive unions (lint).** A `switch` over a union handles every member; prefer a `Record<Union, …>` map, which the compiler checks for completeness.
 - **Reuse types.** Derive from an existing type (`Pick`, `Omit`, `Partial`, `&`, `z.infer`) instead of copying fields. The scene type is `z.infer` of the schema.
 - **`interface` for object shapes (lint).**
-- **`strict` is on; `noUncheckedIndexedAccess` is pending** (issue #1).
+- **`strict` and `noUncheckedIndexedAccess` are on.**
 
 ## Logic
 
@@ -58,7 +59,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **No nested ternaries (lint).**
 - **Name intermediate steps.** Complex conditions go into a named boolean.
 - **One responsibility per function, and the name says it.** `readX` doesn't write; `findX` doesn't create.
-- **No duplicated logic.** Search before adding a helper; reuse or extract to `src/utils/`. `pnpm quality` (jscpd) catches copies.
+- **No duplicated logic.** Search before adding a helper; reuse or extract to `src/Utils/`. `pnpm quality` (jscpd) catches copies.
 - **Unmapped values stay visible.** An unknown asset, theme or field is never dropped or guessed: it becomes a warning with the closest valid names, and the scene still compiles.
 - **No `console` (lint).** Only `src/cli.ts` writes to the terminal.
 - **Floating promises (lint).** Every promise is awaited or returned.

@@ -1,3 +1,6 @@
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { RuleTester } from "eslint";
 import tseslint from "typescript-eslint";
 import { afterAll, describe, it } from "vitest";
@@ -112,6 +115,110 @@ ruleTester.run("comment-marker", localRules.rules["comment-marker"], {
   ],
 });
 
+ruleTester.run("class-matches-file", localRules.rules["class-matches-file"], {
+  valid: [
+    {
+      name: "one exported class named after its file",
+      filename: TIME_UTIL_FILE,
+      code: "export class TimeUtil {}",
+    },
+    {
+      name: "a class expression inside a function is not the file's class",
+      filename: TIME_UTIL_FILE,
+      code: "export class TimeUtil { static make() { return class {}; } }",
+    },
+  ],
+  invalid: [
+    {
+      name: "a second class in the file",
+      filename: "src/Providers/ClaudeCode/Services/ClaudeCodeInventoryService.ts",
+      code: "class InventoryBuilder {} export class ClaudeCodeInventoryService {}",
+      errors: [{ messageId: "mismatch", data: { name: "InventoryBuilder", file: "ClaudeCodeInventoryService" } }],
+    },
+    {
+      name: "a file named after something else",
+      filename: "src/Shared/Utils/SessionFactsFixtureUtil.ts",
+      code: "export class SessionFactsBuilder {}",
+      errors: [{ messageId: "mismatch", data: { name: "SessionFactsBuilder", file: "SessionFactsFixtureUtil" } }],
+    },
+  ],
+});
+
+// Why: describe-target reads the class next to the test file, so the sources it checks against are written to a temp folder.
+const FIXTURE_FOLDER = mkdtempSync(join(tmpdir(), "describe-target-"));
+writeFileSync(join(FIXTURE_FOLDER, "TimeUtil.ts"), "export class TimeUtil {\n  static parsePointInTime(value: string): string {\n    return value;\n  }\n}\n");
+writeFileSync(join(FIXTURE_FOLDER, "ClaudeCodeProviderAdapter.ts"), [
+  "export class ClaudeCodeProviderAdapter {",
+  "  parseSession(value: string): string {",
+  "    return this.sessionService(value);",
+  "  }",
+  "  private sessionService(value: string): string {",
+  "    return value;",
+  "  }",
+  "}",
+  "",
+].join("\n"));
+afterAll(() => rmSync(FIXTURE_FOLDER, { recursive: true, force: true }));
+
+const TIME_UTIL_TEST = join(FIXTURE_FOLDER, "TimeUtil.test.ts");
+const ADAPTER_TEST = join(FIXTURE_FOLDER, "ClaudeCodeProviderAdapter.test.ts");
+
+ruleTester.run("describe-target", localRules.rules["describe-target"], {
+  valid: [
+    {
+      name: "the outer describe names the class and a public static method, with contexts inside",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"TimeUtil.parsePointInTime()\", () => { describe(\"on a period\", () => { it(\"reads days\", () => {}); }); });",
+    },
+    {
+      name: "a public instance method, next to hooks at the top level",
+      filename: ADAPTER_TEST,
+      code: "beforeEach(() => {}); describe(\"ClaudeCodeProviderAdapter.parseSession()\", () => {});",
+    },
+  ],
+  invalid: [
+    {
+      name: "a method without the class",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"parsePointInTime\", () => {});",
+      errors: [{ messageId: "format", data: { className: "TimeUtil" } }],
+    },
+    {
+      name: "a theme instead of a method",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"TimeUtil\", () => {});",
+      errors: [{ messageId: "format", data: { className: "TimeUtil" } }],
+    },
+    {
+      name: "another class than the file's",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"RedactUtil.redact()\", () => {});",
+      errors: [{ messageId: "otherClass", data: { className: "TimeUtil", named: "RedactUtil" } }],
+    },
+    {
+      name: "a private method",
+      filename: ADAPTER_TEST,
+      code: "describe(\"ClaudeCodeProviderAdapter.sessionService()\", () => {});",
+      errors: [{
+        messageId: "notPublic",
+        data: { className: "ClaudeCodeProviderAdapter", method: "sessionService", source: "ClaudeCodeProviderAdapter.ts" },
+      }],
+    },
+    {
+      name: "a method the class doesn't have, as after a rename",
+      filename: TIME_UTIL_TEST,
+      code: "describe(\"TimeUtil.parseDate()\", () => {});",
+      errors: [{ messageId: "notPublic", data: { className: "TimeUtil", method: "parseDate", source: "TimeUtil.ts" } }],
+    },
+    {
+      name: "a test outside any describe",
+      filename: TIME_UTIL_TEST,
+      code: "it(\"reads days\", () => {});",
+      errors: [{ messageId: "outside", data: { className: "TimeUtil" } }],
+    },
+  ],
+});
+
 const tsRuleTester = new RuleTester({ languageOptions: { parser: tseslint.parser, ecmaVersion: 2024, sourceType: "module" } });
 
 tsRuleTester.run("comment-placement", localRules.rules["comment-placement"], {
@@ -128,7 +235,7 @@ tsRuleTester.run("comment-placement", localRules.rules["comment-placement"], {
     },
     {
       name: "tool directives anywhere, even in a type file",
-      filename: "src/Shared/protocols/SessionProtocol.ts",
+      filename: "src/Protocols/SessionProtocol.ts",
       code: "// eslint-disable-next-line no-var\nexport interface ThreadRef { id: string }",
     },
   ],
@@ -141,7 +248,7 @@ tsRuleTester.run("comment-placement", localRules.rules["comment-placement"], {
     },
     {
       name: "any comment in a type file",
-      filename: "src/Shared/protocols/ConfigProtocol.ts",
+      filename: "src/Protocols/ConfigProtocol.ts",
       code: "export interface ModelPrice {\n  // Why: USD per million tokens.\n  input: number;\n}",
       errors: [{ messageId: "protocol" }],
     },
@@ -188,6 +295,62 @@ tsRuleTester.run("map-name", localRules.rules["map-name"], {
       name: "a new Map without a type",
       code: "const seen = new Map();",
       errors: [{ messageId: "unnamed" }],
+    },
+  ],
+});
+
+tsRuleTester.run("known-keys", localRules.rules["known-keys"], {
+  valid: [
+    { name: "a record keyed by a union", code: "const SIZE_TO_FACTOR: Record<SizeName, number> = { small: 1, large: 2 };" },
+    { name: "a record keyed by user input, filled at run time", code: "const idToCost: Record<string, number> = {};" },
+    { name: "a record with computed keys", code: "const idToCost: Record<string, number> = { [id]: 1 };" },
+    { name: "a list of a union", code: "const KINDS: readonly AssetKind[] = [\"ground\", \"any\"];" },
+    { name: "a string list that is built at run time", code: "const names: string[] = [];" },
+    { name: "a string list from a call", code: "const names: string[] = Object.keys(table);" },
+  ],
+  invalid: [
+    {
+      name: "a string-keyed record with a fixed literal",
+      code: "const SIZE_TO_FACTOR: Record<string, number> = { small: 1, large: 2 };",
+      errors: [{ messageId: "keys" }],
+    },
+    {
+      name: "a static property typed as a partial string record",
+      code: "class A { static readonly TABLE: Partial<Record<string, number>> = { a: 1 }; }",
+      errors: [{ messageId: "keys" }],
+    },
+    {
+      name: "a string list with a fixed literal",
+      code: "const KINDS: string[] = [\"ground\", \"any\"];",
+      errors: [{ messageId: "values" }],
+    },
+    {
+      name: "a readonly string list and a ReadonlyArray",
+      code: "const A: readonly string[] = [\"a\"]; const B: ReadonlyArray<string> = [\"b\"];",
+      errors: [{ messageId: "values" }, { messageId: "values" }],
+    },
+  ],
+});
+
+tsRuleTester.run("known-keys with inferred types", localRules.rules["known-keys"], {
+  valid: [
+    { name: "a list annotated with a union", code: "const KINDS: readonly AssetKind[] = [\"ground\"];", options: [{ inferred: true }] },
+    { name: "a list kept literal with as const", code: "const KINDS = [\"ground\", \"any\"] as const;", options: [{ inferred: true }] },
+    { name: "a table with a single entry is a config object", code: "const theme = { shadow: \"#000\" };", options: [{ inferred: true }] },
+    { name: "an untyped list is allowed when the option is off", code: "const KINDS = [\"ground\", \"any\"];" },
+  ],
+  invalid: [
+    {
+      name: "an untyped list of strings",
+      code: "class A { static readonly KINDS = [\"ground\", \"any\"]; }",
+      options: [{ inferred: true }],
+      errors: [{ messageId: "inferredList" }],
+    },
+    {
+      name: "an untyped table of strings",
+      code: "const NAME_TO_MIME = { png: \"image/png\", jpg: \"image/jpeg\" };",
+      options: [{ inferred: true }],
+      errors: [{ messageId: "inferredTable" }],
     },
   ],
 });
