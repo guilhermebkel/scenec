@@ -8,7 +8,7 @@ const THEME = ThemeService.THEMES["flat-cool"];
 function compile(scene: Scene): { svg: string; warnings: string[]; description: string } {
   const warnings: string[] = [];
   const result = MapModule.compileMap(scene, { theme: THEME, warnings, width: 1400, height: 900 });
-  return { svg: result.svg, warnings: result.warnings, description: result.description ?? "" };
+  return { svg: result.svg, warnings: result.warnings, description: result.description };
 }
 
 const PARIS_ROME: Scene = {
