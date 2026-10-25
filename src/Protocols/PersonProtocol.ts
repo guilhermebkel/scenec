@@ -52,6 +52,8 @@ export const STANDING_POSE_NAMES = [
 export const SEATED_POSE_NAMES = ["sitting", "typing", "reading", "drinking"] as const;
 export const GAZE_NAMES = ["left", "right", "up", "down", "up-left", "up-right", "down-left", "down-right", "camera", "forward"] as const;
 export const HAT_NAMES = ["grad_cap", "cap"] as const;
+export const OUTFIT_NAMES = ["tshirt", "sweater", "labcoat", "gown", "dress"] as const;
+export const BOTTOM_NAMES = ["pants", "shorts", "skirt", "dress"] as const;
 
 export type AgeName = (typeof AGE_NAMES)[number];
 export type BuildName = (typeof BUILD_NAMES)[number];
@@ -63,3 +65,5 @@ export type StandingPoseName = (typeof STANDING_POSE_NAMES)[number];
 export type SeatedPoseName = (typeof SEATED_POSE_NAMES)[number];
 export type GazeName = (typeof GAZE_NAMES)[number];
 export type HatName = (typeof HAT_NAMES)[number];
+export type OutfitName = (typeof OUTFIT_NAMES)[number];
+export type BottomName = (typeof BOTTOM_NAMES)[number];
