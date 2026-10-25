@@ -7,7 +7,9 @@ import { buildCatalog, buildDsl } from "../../scripts/skill-refs-lib.mjs";
 
 const SKILL_DIR = new URL("../../skills/draw-scene/", import.meta.url);
 const read = (path: string): string => readFileSync(new URL(path, SKILL_DIR), "utf8");
-const ALLOWED_FRONTMATTER_KEYS = ["name", "description", "license", "compatibility", "allowed-tools", "metadata"];
+type FrontmatterKey = "name" | "description" | "license" | "compatibility" | "allowed-tools" | "metadata";
+
+const ALLOWED_FRONTMATTER_KEYS: readonly string[] & readonly FrontmatterKey[] = ["name", "description", "license", "compatibility", "allowed-tools", "metadata"];
 
 function frontmatterOf(markdown: string): Record<string, unknown> {
   const match = /^---\n([\s\S]*?)\n---\n/.exec(markdown);

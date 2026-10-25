@@ -137,7 +137,7 @@ export class TextService {
         y0: y - fontSize,
         x1: left + estimatedWidth,
         y1: y + blockHeight - fontSize * TextService.RECT_DESCENT,
-        box: Boolean(text.box),
+        hasBox: Boolean(text.box),
       });
       svg += TextService.boxOf(text, layout, context, backdrop) + TextService.element(layout);
       TextService.warnCovered(layout, list, context);

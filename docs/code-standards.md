@@ -4,7 +4,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 
 **A rule that a tool can check is a tool, not a sentence.** When a rule here can be a lint rule, a type or a test, it becomes one (this repo's own rules live in `scripts/eslint-local-rules.mjs`); text is for what no tool can check. A written rule the agent keeps breaking is the sign it should move.
 
-**Target state and debt.** This file describes where the code must be. The code ported from the JavaScript prototype is not there yet: rules marked **(pending)** are not enforced until the debt in [issue #1](https://github.com/guilhermebkel/scenec/issues/1) is paid, and `LEGACY_FILES` in `eslint.config.mjs` lists the files with relaxed rules. New code follows every rule here, enforced or not.
+**Enforcement.** Every rule below is enforced by `pnpm lint` on all of `src`. The legacy debt of the JavaScript prototype was paid in [issue #1](https://github.com/guilhermebkel/scenec/issues/1).
 
 ## Architecture
 
@@ -35,7 +35,7 @@ How code in this repository is written. `pnpm lint` enforces the rules marked **
 - **Exhaustive unions (lint).** A `switch` over a union handles every member; prefer a `Record<Union, …>` map, which the compiler checks for completeness.
 - **Reuse types.** Derive from an existing type (`Pick`, `Omit`, `Partial`, `&`, `z.infer`) instead of copying fields. The scene type is `z.infer` of the schema.
 - **`interface` for object shapes (lint).**
-- **`strict` is on; `noUncheckedIndexedAccess` is pending** (issue #1).
+- **`strict` and `noUncheckedIndexedAccess` are on.**
 
 ## Logic
 

@@ -157,7 +157,7 @@ export class PlacementService {
     context: CompilationContext,
     state: { idToPlacement: Record<string, Placement>; heldToHolder: Record<string, string> },
   ): Placement | null {
-    const { objects, library, warnings, theme } = context;
+    const { idToObject: objects, library, warnings, theme } = context;
     const object = objects[id] ?? {};
     const requested = object.asset ?? id;
     const resolved = AssetService.resolveAsset(requested, library);
@@ -433,7 +433,7 @@ export class PlacementService {
         centerX = reference.x;
       }
     }
-    const baseY = height * lines.base[depth];
+    const baseY = height * lines.depthToBase[depth];
     let depthZ = PlacementService.DEPTHS.indexOf(depth) * PlacementService.DEPTH_Z_STEP + baseY;
     depthZ += IdUtil.lookup(PlacementService.KIND_TO_GROUND_Z_SHIFT, asset.kind) ?? 0;
     depthZ += IdUtil.lookup(PlacementService.LAYER_TO_GROUND_Z_SHIFT, object.layer) ?? 0;

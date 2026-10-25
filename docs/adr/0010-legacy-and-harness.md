@@ -1,6 +1,6 @@
 # 0010. Harness adaptation and legacy debt
 
-Status: accepted.
+Status: accepted. The legacy debt below is paid: `LEGACY_FILES` is gone and every rule applies to all of `src`.
 
 The harness comes from the author's own templates. Adaptations: layers are `protocols < utils < drawing < modes < pipeline < render < cli`; the code is classes with `@/` imports, as in harness-ledger. The build is esbuild per file plus `tsc` for declarations, because `tsc` cannot emit `@/….ts` imports; `scripts/build.mjs` rewrites them to relative `.js` paths in `dist`.
 

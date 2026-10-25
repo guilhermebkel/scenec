@@ -378,14 +378,14 @@ function isRecordOfStringKeys(typeNode) {
   return record?.type === "TSTypeReference" && record.typeName.name === "Record" && isStringKeyword(record.typeArguments?.params[0]);
 }
 
+const TYPE_TO_IS_LIST_OF_STRINGS = {
+  TSTypeOperator: (node) => node.operator === "readonly" && isListOfStrings(node.typeAnnotation),
+  TSArrayType: (node) => isStringKeyword(node.elementType),
+  TSTypeReference: (node) => LIST_TYPE_NAMES.has(node.typeName.name) && isStringKeyword(node.typeArguments?.params[0]),
+};
+
 function isListOfStrings(typeNode) {
-  if (typeNode?.type === "TSTypeOperator" && typeNode.operator === "readonly") {
-    return isListOfStrings(typeNode.typeAnnotation);
-  }
-  if (typeNode?.type === "TSArrayType") {
-    return isStringKeyword(typeNode.elementType);
-  }
-  return typeNode?.type === "TSTypeReference" && LIST_TYPE_NAMES.has(typeNode.typeName.name) && isStringKeyword(typeNode.typeArguments?.params[0]);
+  return typeNode ? (TYPE_TO_IS_LIST_OF_STRINGS[typeNode.type]?.(typeNode) ?? false) : false;
 }
 
 function hasOnlyFixedKeys(objectNode) {
@@ -400,6 +400,19 @@ function hasOnlyFixedStrings(arrayNode) {
 
 const MIN_TABLE_ENTRIES = 2;
 
+const INIT_TO_DECLARED_MESSAGE = {
+  ObjectExpression: (typeNode, init) => (isRecordOfStringKeys(typeNode) && hasOnlyFixedKeys(init) ? "keys" : null),
+  ArrayExpression: (typeNode, init) => (isListOfStrings(typeNode) && hasOnlyFixedStrings(init) ? "values" : null),
+};
+
+const isStringTable = (init) => hasOnlyFixedKeys(init) && init.properties.length >= MIN_TABLE_ENTRIES
+  && init.properties.every((property) => property.value.type === "Literal" && typeof property.value.value === "string");
+
+const INIT_TO_INFERRED_MESSAGE = {
+  ArrayExpression: (init) => (hasOnlyFixedStrings(init) ? "inferredList" : null),
+  ObjectExpression: (init) => (isStringTable(init) ? "inferredTable" : null),
+};
+
 const knownKeys = {
   meta: {
     type: "suggestion",
@@ -413,23 +426,15 @@ const knownKeys = {
   },
   create(context) {
     const check = (typeNode, init, reportNode) => {
-      if (isRecordOfStringKeys(typeNode) && init?.type === "ObjectExpression" && hasOnlyFixedKeys(init)) {
-        context.report({ node: reportNode, messageId: "keys" });
-      }
-      if (isListOfStrings(typeNode) && init?.type === "ArrayExpression" && hasOnlyFixedStrings(init)) {
-        context.report({ node: reportNode, messageId: "values" });
+      const messageId = init ? INIT_TO_DECLARED_MESSAGE[init.type]?.(typeNode, init) : null;
+      if (messageId) {
+        context.report({ node: reportNode, messageId });
       }
     };
     const checkInferred = (typeNode, init, reportNode) => {
-      if (typeNode || !init) {
-        return;
-      }
-      if (init.type === "ArrayExpression" && hasOnlyFixedStrings(init)) {
-        context.report({ node: reportNode, messageId: "inferredList" });
-      }
-      if (init.type === "ObjectExpression" && hasOnlyFixedKeys(init) && init.properties.length >= MIN_TABLE_ENTRIES
-        && init.properties.every((property) => property.value.type === "Literal" && typeof property.value.value === "string")) {
-        context.report({ node: reportNode, messageId: "inferredTable" });
+      const messageId = typeNode || !init ? null : INIT_TO_INFERRED_MESSAGE[init.type]?.(init);
+      if (messageId) {
+        context.report({ node: reportNode, messageId });
       }
     };
     return {

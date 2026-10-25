@@ -265,13 +265,9 @@ export type RouteItem = z.infer<typeof routeItemSchema>;
 
 export type Camera25 = z.infer<typeof cameraSchema>;
 
-export type PathPoint = z.infer<typeof pathPointSchema>;
-
 export type PathOptions = z.infer<typeof pathSchema>;
 
 export type ZoneDecor = z.infer<typeof zoneDecorSchema>;
-
-export type ZoneOptions = z.infer<typeof zoneSchema>;
 
 export type BoxDetails = z.infer<typeof boxDetailsSchema>;
 

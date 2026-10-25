@@ -101,7 +101,7 @@ export class PieceService {
 
   private static piece(placement: Placement, pieceContext: PieceContext, casts: string[]): string {
     const { context, haze } = pieceContext;
-    const { theme, objects, kit } = context;
+    const { theme, idToObject: objects, kit } = context;
     const object = objects[placement.id] ?? {};
     const cord = PieceService.cordOf(placement, theme.ink);
     const scale = placement.scale.toFixed(PieceService.DIGITS);

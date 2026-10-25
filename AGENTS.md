@@ -49,10 +49,7 @@ pnpm check:licenses  # runtime dependency licenses
 - When the DSL changes, regenerate the skill references (`pnpm skill:refs`) in the same PR.
 - No comments by default. A comment starts with `Why:` and sits above the line whose hidden rule it explains.
 - When behavior or vocabulary changes, update `GLOSSARY.md`, the docs or an ADR in the same PR.
-
-## Legacy debt
-
-Files ported from the JavaScript prototype keep relaxed lint rules, listed in `eslint.config.mjs` under `LEGACY_FILES`: `any`, naming, complexity and magic numbers. `noUncheckedIndexedAccess` is off. All of it is tracked in https://github.com/guilhermebkel/scenec/issues/1; clean one file at a time, remove it from the list, and keep the baselines identical. See ADR 0010.
+- Every rule in `docs/code-standards.md` is enforced on all of `src`; there is no relaxed-rules list.
 
 ## Agent skills
 

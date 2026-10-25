@@ -39,7 +39,8 @@ export class BalanceCritiqueService {
       }
     }
     for (const rect of textRects) {
-      const kindWeight = rect.box ? BalanceCritiqueService.BOXED_TEXT_WEIGHT : BalanceCritiqueService.PLAIN_TEXT_WEIGHT;
+      const isBoxed = rect.hasBox;
+      const kindWeight = isBoxed ? BalanceCritiqueService.BOXED_TEXT_WEIGHT : BalanceCritiqueService.PLAIN_TEXT_WEIGHT;
       const weight = (rect.x1 - rect.x0) * (rect.y1 - rect.y0) * raster.factor * raster.factor * kindWeight;
       totalWeight += weight;
       weightedColumns += weight * ((rect.x0 + rect.x1) / 2) * raster.factor;

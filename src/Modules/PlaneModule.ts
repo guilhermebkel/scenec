@@ -1,4 +1,4 @@
-import type { Library } from "@/Protocols/CompilationProtocol.ts";
+import type { AssetIdToAsset } from "@/Protocols/CompilationProtocol.ts";
 import type { GroundPoint, PlaneWorld } from "@/Protocols/PlaneProtocol.ts";
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import type { Scene } from "@/Protocols/SceneProtocol.ts";
@@ -17,7 +17,7 @@ import { PlaneTitleService } from "@/Services/PlaneTitleService.ts";
 import { PlaneZoneService } from "@/Services/PlaneZoneService.ts";
 
 interface PlaneInput {
-  library: Library;
+  library: AssetIdToAsset;
   theme: Theme;
   warnings: string[];
   width: number;

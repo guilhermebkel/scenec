@@ -20,7 +20,7 @@ export class CritiqueModule {
     }).render().pixels;
     const defs = CritiqueModule.DEFS.exec(bg)?.[0] ?? "";
     const layers = objects
-      .filter((object) => !object.ignore)
+      .filter((object) => !object.isIgnored)
       .toSorted((first, second) => first.z - second.z)
       .map((object) => ({
         id: object.id, kind: object.kind, related: object.related, pixels: render(defs + object.body),

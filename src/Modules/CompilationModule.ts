@@ -69,7 +69,7 @@ export class CompilationModule {
 
   private static compileClassic(scene: Scene, base: CompilationContext): CompilationOutput {
     const objects = GroupService.expandGroups(scene.objects ?? {}, base.warnings);
-    const context: CompilationContext = { ...base, objects };
+    const context: CompilationContext = { ...base, idToObject: objects };
     const resolution = DependencyOrderService.resolve(objects, context.warnings);
     const placed = PlacementService.placeAll(context, resolution);
     GazeService.redraw(placed, context);
@@ -82,7 +82,8 @@ export class CompilationModule {
     const backgroundSvg = CompilationModule.finishBackground(background, light, context, camera);
     // Why: drawing order is by depth value; the description and layout follow the same order.
     const ordered = [...list].sort((first, second) => first.z - second.z);
-    const pieces = PieceService.assemble(ordered, { context, light, haze: background.haze, heldToHolder: resolution.heldToHolder });
+    const { heldToHolder } = resolution;
+    const pieces = PieceService.assemble(ordered, { context, light, haze: background.haze, heldToHolder });
     const castLayer = PieceService.castLayer(pieces.casts, light, context);
     const { width, height } = context;
     const vignette = light && !light.isHatch ? `<rect width="${width}" height="${height}" fill="url(#vignette)"/>` : "";
@@ -151,7 +152,7 @@ export class CompilationModule {
         z: placement.z,
         body: SvgUtil.flattenOpacity(placement.bodySvg),
         related: placement.related,
-        ignore: placement.isBackdrop || context.objects[placement.id]?.critique === false,
+        isIgnored: placement.isBackdrop || context.idToObject[placement.id]?.critique === false,
       })),
     };
   }

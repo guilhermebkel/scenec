@@ -24,7 +24,7 @@ export class FramingCheckService {
   }
 
   private static checkFrame(list: Placement[], context: CompilationContext, camera: Camera): void {
-    const { objects, warnings, width, height, canvas } = context;
+    const { idToObject: objects, warnings, width, height, canvas } = context;
     for (const placement of list) {
       if (placement.isBackdrop) {
         continue;
@@ -74,7 +74,7 @@ export class FramingCheckService {
   }
 
   private static isOverlapIgnored(first: Placement, second: Placement, context: CompilationContext): boolean {
-    const { objects } = context;
+    const { idToObject: objects } = context;
     if (first.related.includes(second.id) || second.related.includes(first.id)) {
       return true;
     }
@@ -91,7 +91,7 @@ export class FramingCheckService {
   ): void {
     const blocking = list.filter((placement) => (
       IdUtil.isOneOf(FramingCheckService.BLOCKING_KINDS, placement.kind)
-      && !context.objects[placement.id]?.on
+      && !context.idToObject[placement.id]?.on
       && !heldToHolder[placement.id]
     ));
     for (let first = 0; first < blocking.length; first++) {

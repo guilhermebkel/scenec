@@ -32,10 +32,10 @@ export class ContextService {
   private static readonly FAR_BASE_FOLLOW = 0.3;
 
   private static readonly SETTING_TO_LINES: Record<SettingName, LayoutLines> = {
-    outdoor: { horizon: 0.64, base: { near: 0.92, mid: 0.8, far: 0.69 } },
-    indoor: { horizon: 0.68, base: { near: 0.93, mid: 0.84, far: 0.74 } },
-    beach: { horizon: 0.5, sea: 0.62, base: { near: 0.93, mid: 0.82, far: 0.71 } },
-    city: { horizon: 0.7, base: { near: 0.94, mid: 0.84, far: 0.74 } },
+    outdoor: { horizon: 0.64, depthToBase: { near: 0.92, mid: 0.8, far: 0.69 } },
+    indoor: { horizon: 0.68, depthToBase: { near: 0.93, mid: 0.84, far: 0.74 } },
+    beach: { horizon: 0.5, sea: 0.62, depthToBase: { near: 0.93, mid: 0.82, far: 0.71 } },
+    city: { horizon: 0.7, depthToBase: { near: 0.94, mid: 0.84, far: 0.74 } },
   };
 
   static create(scene: Scene, options: CompileOptions, warnings: string[]): CompilationContext {
@@ -51,7 +51,7 @@ export class ContextService {
     const failedAssets = new Set<string>();
     const library = ContextService.libraryOf(scene, options, warnings, failedAssets);
     const unit = height * ContextService.UNIT_PER_HEIGHT * (canvas.scale ?? 1);
-    return { canvas, kit, objects: {}, library, failedAssets, theme, warnings, width, height, setting, lines, unit };
+    return { canvas, kit, idToObject: {}, library, failedAssets, theme, warnings, width, height, setting, lines, unit };
   }
 
   private static themeOf(name: string | undefined, warnings: string[]): Theme {
@@ -86,11 +86,11 @@ export class ContextService {
       lines.horizon = canvas.horizon;
     }
     if (canvas.base != null) {
-      const shift = canvas.base - lines.base.near;
-      lines.base = {
+      const shift = canvas.base - lines.depthToBase.near;
+      lines.depthToBase = {
         near: canvas.base,
-        mid: lines.base.mid + shift * ContextService.MID_BASE_FOLLOW,
-        far: lines.base.far + shift * ContextService.FAR_BASE_FOLLOW,
+        mid: lines.depthToBase.mid + shift * ContextService.MID_BASE_FOLLOW,
+        far: lines.depthToBase.far + shift * ContextService.FAR_BASE_FOLLOW,
       };
     }
     return lines;
@@ -103,6 +103,7 @@ export class ContextService {
         warnings.push(`custom asset '${id}' replaces the library asset with the same name`);
       }
     }
-    return Object.keys(custom).length > 0 ? { ...AssetService.ASSET_ID_TO_ASSET, ...custom } : AssetService.ASSET_ID_TO_ASSET;
+    const builtIn = AssetService.ASSET_ID_TO_ASSET;
+    return Object.keys(custom).length > 0 ? { ...builtIn, ...custom } : builtIn;
   }
 }

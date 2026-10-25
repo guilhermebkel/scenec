@@ -20,7 +20,7 @@ interface Square {
 function box(id: string, square: Square, extra: Partial<CritiqueObject> = {}): CritiqueObject {
   const { left, top, side, color } = square;
   const body = `<rect x="${left}" y="${top}" width="${side}" height="${side}" fill="${color}"/>`;
-  return { id, asset: id, kind: "ground", z: 0, body, related: [], ignore: false, ...extra };
+  return { id, asset: id, kind: "ground", z: 0, body, related: [], isIgnored: false, ...extra };
 }
 
 function input(objects: CritiqueObject[], overrides: Partial<CritiqueInput> = {}): CritiqueInput {
@@ -104,7 +104,7 @@ describe("CritiqueModule.critique()", () => {
   });
 
   it("ignores objects marked to be ignored", () => {
-    const messages = CritiqueModule.critique(input([box("ghost", { left: 100, top: 100, side: 120, color: PAPER }, { ignore: true })]));
+    const messages = CritiqueModule.critique(input([box("ghost", { left: 100, top: 100, side: 120, color: PAPER }, { isIgnored: true })]));
 
     expect(messages.some((message) => message.includes("'ghost'"))).toBe(false);
   });

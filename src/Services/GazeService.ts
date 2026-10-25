@@ -12,7 +12,7 @@ export class GazeService {
   private static readonly EYE_HEIGHT_FRACTION = 0.85;
 
   static redraw(idToPlacement: Record<string, Placement>, context: CompilationContext): void {
-    const { objects, library, theme, warnings } = context;
+    const { idToObject: objects, library, theme, warnings } = context;
     for (const placement of Object.values(idToPlacement)) {
       const object = objects[placement.id];
       if (placement.asset !== "person" || !object || typeof object.look !== "string") {

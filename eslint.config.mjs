@@ -10,9 +10,6 @@ const SCENE_FLAG_KEYS = "^(shadow|trim|glasses|beard|cane|handle|steam|mic|stand
 
 const TEST_FILES = ["src/**/*.test.ts", "test/**/*.ts", "scripts/**/*.test.mjs"];
 
-// Why: the legacy files were ported byte-for-byte from the JavaScript prototype to keep the 108 baselines identical (ADR 0010); they are cleaned up one folder at a time.
-const LEGACY_FILES = ["none/**"];
-
 // Why: layer order is Errors, Protocols < Utils < Resources < Services < Modules < Cli; Adapters only see Protocols and Utils, so the core never reaches the native renderer or the file system.
 const LAYER_TO_FORBIDDEN_LAYERS = {
   Errors: ["Protocols", "Utils", "Resources", "Services", "Modules", "Adapters"],
@@ -168,57 +165,6 @@ export default tseslint.config(
     files: ["src/Resources/Assets/**", "src/Utils/Person*Util.ts", "src/Utils/ShapeUtil.ts", "src/Utils/RecolorUtil.ts", "src/Utils/ColorUtil.ts", "src/Services/BackgroundService.ts", "src/Services/LightingService.ts",
       "src/Services/Map*Service.ts", "src/Services/Plane*Service.ts", "src/Utils/TransportUtil.ts", "src/Utils/CurveUtil.ts"],
     rules: { "@typescript-eslint/no-magic-numbers": "off" },
-  },
-  {
-    // Why: legacy debt, recorded in ADR 0010. New code in these folders still has to pass the rules that are not switched off here.
-    files: LEGACY_FILES,
-    rules: {
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/unbound-method": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-member-access": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "@typescript-eslint/no-unsafe-return": "off",
-      "@typescript-eslint/no-magic-numbers": "off",
-      "@typescript-eslint/naming-convention": "off",
-      "@typescript-eslint/restrict-template-expressions": "off",
-      "@typescript-eslint/no-unnecessary-condition": "off",
-      "@typescript-eslint/prefer-nullish-coalescing": "off",
-      "@typescript-eslint/no-unnecessary-type-conversion": "off",
-      "@typescript-eslint/no-confusing-void-expression": "off",
-      "@typescript-eslint/no-dynamic-delete": "off",
-      "id-length": "off",
-      "curly": "off",
-      "no-nested-ternary": "off",
-      "sonarjs/cognitive-complexity": "off",
-      "sonarjs/no-nested-conditional": "off",
-      "sonarjs/no-duplicate-string": "off",
-      "sonarjs/no-identical-functions": "off",
-      "sonarjs/no-duplicated-branches": "off",
-      "sonarjs/no-alphabetical-sort": "off",
-      "sonarjs/super-linear-regex": "off",
-      "max-depth": "off",
-      "max-params": "off",
-      "local/comment-marker": "off",
-      "local/comment-placement": "off",
-      "local/map-name": "off",
-      "local/known-keys": "off",
-      "local/literal-dispatch": "off",
-      "no-restricted-syntax": "off",
-      "@typescript-eslint/restrict-plus-operands": "off",
-      "@typescript-eslint/no-unused-vars": "off",
-      "@stylistic/max-statements-per-line": "off",
-      "@stylistic/no-mixed-operators": "off",
-      "no-useless-assignment": "off",
-      "@typescript-eslint/no-misused-spread": "off",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@stylistic/no-multiple-empty-lines": "off",
-      "@stylistic/max-len": "off",
-      "@stylistic/operator-linebreak": "off",
-      "@stylistic/indent-binary-ops": "off",
-      "@stylistic/quote-props": "off",
-    },
   },
   {
     files: TEST_FILES,

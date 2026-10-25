@@ -1,5 +1,5 @@
 import type { AssetKind } from "@/Protocols/AssetProtocol.ts";
-import type { Library } from "@/Protocols/CompilationProtocol.ts";
+import type { AssetIdToAsset } from "@/Protocols/CompilationProtocol.ts";
 import type { BoxOptions, PathOptions, Scene, ZoneDecor } from "@/Protocols/SceneProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 
@@ -133,7 +133,7 @@ export interface ZoneDefinition {
 export interface PlaneWorld {
   scene: Scene;
   theme: Theme;
-  library: Library;
+  library: AssetIdToAsset;
   warnings: string[];
   camera: PlaneCamera;
   road: Road;

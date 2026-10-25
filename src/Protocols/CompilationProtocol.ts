@@ -10,7 +10,7 @@ export type Depth = "far" | "mid" | "near";
 export interface LayoutLines {
   horizon: number;
   sea?: number;
-  base: Record<Depth, number>;
+  depthToBase: Record<Depth, number>;
 }
 
 export interface Placement {
@@ -51,16 +51,16 @@ export interface TextRect {
   y0: number;
   x1: number;
   y1: number;
-  box: boolean;
+  hasBox: boolean;
 }
 
-export type Library = Record<string, LibraryAsset>;
+export type AssetIdToAsset = Record<string, LibraryAsset>;
 
 export interface CompilationContext {
   canvas: Canvas;
   kit: KitStyle;
-  objects: Record<string, SceneObject>;
-  library: Library;
+  idToObject: Record<string, SceneObject>;
+  library: AssetIdToAsset;
   failedAssets: Set<string>;
   theme: Theme;
   warnings: string[];
@@ -102,7 +102,7 @@ export interface CritiqueObject {
   z: number;
   body: string;
   related: string[];
-  ignore: boolean;
+  isIgnored: boolean;
 }
 
 export interface CritiqueInput {

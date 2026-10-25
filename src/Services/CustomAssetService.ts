@@ -1,16 +1,31 @@
 import type { BBox, CompileOptions } from "@/Protocols/OptionsProtocol.ts";
 import type { CustomArtwork, CustomAssetDefinition } from "@/Protocols/CustomAssetProtocol.ts";
 import { ASSET_KINDS, type AssetKind } from "@/Protocols/AssetProtocol.ts";
+import { FallbackUtil } from "@/Utils/FallbackUtil.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
 import { CustomAsset } from "@/Resources/Assets/CustomAsset.ts";
 import { SanitizeUtil } from "@/Utils/SanitizeUtil.ts";
 
 type ImageExtension = ".png" | ".jpg" | ".jpeg" | ".webp";
 
-export class CustomAssetService {
-  private static readonly KIND_TO_HEIGHT: Record<AssetKind, number> = { ground: 60, surface: 18, any: 40, wall: 50, sky: 50, ceiling: 30, floor: 10, water: 60 };
+type RasterSize = [number, number] | null;
 
-  private static readonly MIME_BY_EXTENSION: Record<ImageExtension, string> = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp" };
+type SizeReader = (bytes: Uint8Array, view: DataView) => RasterSize;
+
+export class CustomAssetService {
+  private static readonly KIND_TO_HEIGHT: Record<AssetKind, number> = {
+    ground: 60, surface: 18, any: 40, wall: 50, sky: 50, ceiling: 30, floor: 10, water: 60,
+  };
+
+  private static readonly EXTENSION_TO_MIME: Record<ImageExtension, string> = {
+    ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp",
+  };
+
+  private static readonly EXTENSION_TO_SIZE_READER: Partial<Record<ImageExtension, SizeReader>> = {
+    ".png": (_bytes, view) => CustomAssetService.pngSize(view),
+    ".jpg": (bytes, view) => CustomAssetService.jpegSize(bytes, view),
+    ".jpeg": (bytes, view) => CustomAssetService.jpegSize(bytes, view),
+  };
 
   private static readonly DEFAULT_SVG_SIZE = 100;
 
@@ -36,32 +51,55 @@ export class CustomAssetService {
     warnings: string[] = [],
     failed = new Set<string>(),
   ): Record<string, CustomAsset> {
-    const assets: Record<string, CustomAsset> = {};
+    const idToAsset: Record<string, CustomAsset> = {};
     let position = 0;
     for (const [id, raw] of Object.entries(definitions)) {
       position++;
       const definition = raw as CustomAssetDefinition;
-      const kind = definition.kind || "any";
-      if (!IdUtil.isOneOf(ASSET_KINDS, kind)) {
-        warnings.push(`custom asset '${id}': kind '${kind}' is invalid (use ${ASSET_KINDS.join(", ")})`);
-        continue;
-      }
-      if (!definition.svg && !definition.image) {
-        warnings.push(`custom asset '${id}': provide 'svg' (a file or inline) or 'image'`);
+      const kind = CustomAssetService.validKindOf(id, definition, warnings);
+      if (kind === null) {
         continue;
       }
       try {
-        const artwork = definition.svg ? CustomAssetService.loadSvg(definition, options, position) : CustomAssetService.loadImage(definition, options);
-        const height = definition.height ?? CustomAssetService.KIND_TO_HEIGHT[kind] ?? 0;
-        assets[id] = new CustomAsset(kind, height, definition, artwork);
+        idToAsset[id] = CustomAssetService.build(kind, definition, options, position);
       } catch (error) {
-        const isMissing = error instanceof Error && (error as NodeJS.ErrnoException).code === "ENOENT";
-        const message = isMissing ? `file '${definition.svg || definition.image}' not found (path is relative to the scene file)` : String(error instanceof Error ? error.message : error);
-        warnings.push(`custom asset '${id}': ${message}`);
+        warnings.push(`custom asset '${id}': ${CustomAssetService.describeFailure(error, definition)}`);
         failed.add(id);
       }
     }
-    return assets;
+    return idToAsset;
+  }
+
+  private static validKindOf(id: string, definition: CustomAssetDefinition, warnings: string[]): AssetKind | null {
+    const kind = FallbackUtil.nonEmpty(definition.kind, "any");
+    if (!IdUtil.isOneOf(ASSET_KINDS, kind)) {
+      warnings.push(`custom asset '${id}': kind '${kind}' is invalid (use ${ASSET_KINDS.join(", ")})`);
+      return null;
+    }
+    if (!definition.svg && !definition.image) {
+      warnings.push(`custom asset '${id}': provide 'svg' (a file or inline) or 'image'`);
+      return null;
+    }
+    return kind;
+  }
+
+  private static build(
+    kind: AssetKind, definition: CustomAssetDefinition, options: CompileOptions, position: number,
+  ): CustomAsset {
+    const artwork = definition.svg
+      ? CustomAssetService.loadSvg(definition, options, position)
+      : CustomAssetService.loadImage(definition, options);
+    const height = definition.height ?? CustomAssetService.KIND_TO_HEIGHT[kind];
+    return new CustomAsset(kind, height, definition, artwork);
+  }
+
+  private static describeFailure(error: unknown, definition: CustomAssetDefinition): string {
+    const isMissing = error instanceof Error && (error as NodeJS.ErrnoException).code === "ENOENT";
+    if (isMissing) {
+      const file = FallbackUtil.nonEmpty(definition.svg, definition.image ?? "");
+      return `file '${file}' not found (path is relative to the scene file)`;
+    }
+    return String(error instanceof Error ? error.message : error);
   }
 
   private static readText(options: CompileOptions, file: string): string {
@@ -85,10 +123,13 @@ export class CustomAssetService {
     if (!open) {
       throw new Error("does not look like an SVG");
     }
-    const [x = 0, y = 0, width = 0, height = 0] = CustomAssetService.viewBoxOf(open);
-    const inner = CustomAssetService.prefixIds(source.slice(source.indexOf(open) + open.length, source.lastIndexOf("</svg>")), `c${position}-`);
-    const probe = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="${[x, y, width, height].join(" ")}" width="${width}" height="${height}">${inner}</svg>`;
-    const declared: BBox = { x, y, width, height };
+    const [minX = 0, minY = 0, width = 0, height = 0] = CustomAssetService.viewBoxOf(open);
+    const body = source.slice(source.indexOf(open) + open.length, source.lastIndexOf("</svg>"));
+    const inner = CustomAssetService.prefixIds(body, `c${position}-`);
+    const viewBox = [minX, minY, width, height].join(" ");
+    const probe = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" `
+      + `viewBox="${viewBox}" width="${width}" height="${height}">${inner}</svg>`;
+    const declared: BBox = { x: minX, y: minY, width, height };
     const measured = options.measure ? options.measure(probe) : declared;
     if (!measured?.width) {
       throw new Error("the drawing is empty");
@@ -101,13 +142,13 @@ export class CustomAssetService {
     if (viewBox) {
       return viewBox.split(/[\s,]+/).map(Number);
     }
-    const width = Number(/\swidth="([\d.]+)/.exec(open)?.[1] || CustomAssetService.DEFAULT_SVG_SIZE);
-    const height = Number(/\sheight="([\d.]+)/.exec(open)?.[1] || CustomAssetService.DEFAULT_SVG_SIZE);
+    const width = Number(/\swidth="([\d.]+)/.exec(open)?.[1] ?? CustomAssetService.DEFAULT_SVG_SIZE);
+    const height = Number(/\sheight="([\d.]+)/.exec(open)?.[1] ?? CustomAssetService.DEFAULT_SVG_SIZE);
     return [0, 0, width, height];
   }
 
-  // Why: internal ids get a prefix so they do not collide with other objects in the scene.
   private static prefixIds(svg: string, prefix: string): string {
+    // Why: internal ids get a prefix so they do not collide with other objects in the scene.
     let prefixed = svg;
     for (const match of svg.matchAll(/\sid="([^"]+)"/g)) {
       const id = match[1] ?? "";
@@ -123,17 +164,20 @@ export class CustomAssetService {
     const file = definition.image ?? "";
     const extension = CustomAssetService.extensionOf(file);
     const bytes = CustomAssetService.readBytes(options, file);
-    const mime = IdUtil.lookup(CustomAssetService.MIME_BY_EXTENSION, extension);
+    const mime = IdUtil.lookup(CustomAssetService.EXTENSION_TO_MIME, extension);
     if (!mime) {
       throw new Error(`format ${extension} is not supported (use png, jpg or webp)`);
     }
-    const declared = definition.size_px ? [definition.size_px[0] ?? 0, definition.size_px[1] ?? 0] : CustomAssetService.rasterSize(bytes, extension);
+    const declared = definition.size_px
+      ? [definition.size_px[0] ?? 0, definition.size_px[1] ?? 0]
+      : CustomAssetService.rasterSize(bytes, extension);
     if (!declared) {
       throw new Error("could not read the dimensions; set size_px: [width, height]");
     }
     const [width = 0, height = 0] = declared;
     return {
-      inner: `<image width="${width}" height="${height}" href="data:${mime};base64,${CustomAssetService.toBase64(bytes)}"/>`,
+      inner: `<image width="${width}" height="${height}" `
+        + `href="data:${mime};base64,${CustomAssetService.toBase64(bytes)}"/>`,
       box: { x: 0, y: 0, width, height },
     };
   }
@@ -151,19 +195,25 @@ export class CustomAssetService {
     return btoa(binary);
   }
 
-  private static rasterSize(bytes: Uint8Array, extension: string): [number, number] | null {
+  private static rasterSize(bytes: Uint8Array, extension: string): RasterSize {
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
-    if (extension === ".png") {
-      return [view.getUint32(CustomAssetService.PNG_WIDTH_OFFSET), view.getUint32(CustomAssetService.PNG_HEIGHT_OFFSET)];
-    }
-    if (extension !== ".jpg" && extension !== ".jpeg") {
-      return null;
-    }
+    const read = IdUtil.lookup(CustomAssetService.EXTENSION_TO_SIZE_READER, extension);
+    return read ? read(bytes, view) : null;
+  }
+
+  private static pngSize(view: DataView): RasterSize {
+    return [view.getUint32(CustomAssetService.PNG_WIDTH_OFFSET), view.getUint32(CustomAssetService.PNG_HEIGHT_OFFSET)];
+  }
+
+  private static jpegSize(bytes: Uint8Array, view: DataView): RasterSize {
     let offset = CustomAssetService.JPEG_FIRST_MARKER;
     while (offset < bytes.length) {
       const marker = bytes[offset + 1] ?? 0;
       if (marker >= CustomAssetService.JPEG_FRAME_FIRST && marker <= CustomAssetService.JPEG_FRAME_LAST) {
-        return [view.getUint16(offset + CustomAssetService.JPEG_WIDTH_OFFSET), view.getUint16(offset + CustomAssetService.JPEG_HEIGHT_OFFSET)];
+        return [
+          view.getUint16(offset + CustomAssetService.JPEG_WIDTH_OFFSET),
+          view.getUint16(offset + CustomAssetService.JPEG_HEIGHT_OFFSET),
+        ];
       }
       offset += 2 + view.getUint16(offset + 2);
     }
