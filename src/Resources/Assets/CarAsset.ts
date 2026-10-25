@@ -15,9 +15,10 @@ export class CarAsset extends BaseAsset {
   readonly tags = ["carro", "automóvel", "automovel", "auto"];
 
   draw(params: AssetParams, theme: Theme) {
-    const mainColor = ShapeUtil.color(theme, params.color, theme.primary), flip = ShapeUtil.directionOf(params.facing);
-    const wheel = (posX: any) => ShapeUtil.circle(posX, -13, 13, theme.ink) + ShapeUtil.circle(posX, -13, 6,
-      theme.metal) + ShapeUtil.circle(posX, -13, 2.5, ColorUtil.sh(theme.metal, -0.3));
+    const mainColor = ShapeUtil.color(theme, params.color, theme.primary);
+    const flip = ShapeUtil.directionOf(params.facing);
+    const wheel = (posX: number): string => ShapeUtil.circle(posX, -13, 13, theme.ink)
+      + ShapeUtil.circle(posX, -13, 6, theme.metal) + ShapeUtil.circle(posX, -13, 2.5, ColorUtil.sh(theme.metal, -0.3));
     return `<g transform="scale(${flip} 1)">` + ShapeUtil.shadow(theme, 70, 4.5)
       + `<path d="M-68 -16 L-68 -34 Q-66 -40 -56 -42 L-36 -44 L-18 -60 Q-12 -64 0 -64 L28 -64 Q38 -64 44 -56 L56 -44 Q68 -42 70 -34 L70 -16 Z" fill="${mainColor}"/>`
       + `<path d="M-68 -26 L70 -26 L70 -16 L-68 -16 Z" fill="${ColorUtil.sh(mainColor, -0.15)}"/>`

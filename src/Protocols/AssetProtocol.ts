@@ -1,7 +1,6 @@
 import type { PersonParams } from "@/Protocols/PersonProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 
-// Why: the slug of every library asset, so code that names an asset by id is checked by the compiler.
 export const ASSET_IDS = [
   "backpack",
   "ball",
@@ -139,7 +138,6 @@ export interface PersonDrawing {
 
 export type AssetDrawing = string | PersonDrawing;
 
-// Why: the surface an asset sits on or hangs from; placement, lighting and custom assets branch on it.
 export const ASSET_KINDS = ["ground", "surface", "any", "wall", "sky", "ceiling", "floor", "water"] as const;
 
 export type AssetKind = typeof ASSET_KINDS[number];

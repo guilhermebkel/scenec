@@ -75,14 +75,14 @@ export class CompilationModule {
     GazeService.redraw(placed, context);
     const camera = CameraService.frame(placed, context);
     const list = Object.values(placed);
-    FramingCheckService.check(list, context, camera, resolution.heldBy);
+    FramingCheckService.check(list, context, camera, resolution.heldToHolder);
     const background = BackgroundService.build(context);
     const text = TextService.render(scene.text ?? [], context, list, background.textBackdrop);
     const light = LightingService.resolve(context, list, background);
     const backgroundSvg = CompilationModule.finishBackground(background, light, context, camera);
     // Why: drawing order is by depth value; the description and layout follow the same order.
     const ordered = [...list].sort((first, second) => first.z - second.z);
-    const pieces = PieceService.assemble(ordered, { context, light, haze: background.haze, heldBy: resolution.heldBy });
+    const pieces = PieceService.assemble(ordered, { context, light, haze: background.haze, heldToHolder: resolution.heldToHolder });
     const castLayer = PieceService.castLayer(pieces.casts, light, context);
     const { width, height } = context;
     const vignette = light && !light.isHatch ? `<rect width="${width}" height="${height}" fill="url(#vignette)"/>` : "";
@@ -90,7 +90,7 @@ export class CompilationModule {
       + `width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
     const artwork = `${backgroundSvg}\n${castLayer}\n${pieces.body}\n${vignette}`;
     // Why: the scene filter wraps background and objects; the texture goes on top, below the text.
-    const sceneFilter = context.kit.scene ? KitService.sceneFilter(context.kit.scene, context.theme) : "";
+    const sceneFilter = context.kit.scene ? KitService.sceneFilter(context.kit.scene) : "";
     const sceneArt = context.kit.scene ? `<defs>${sceneFilter}</defs><g filter="url(#kitScene)">${artwork}</g>` : artwork;
     const grain = CompilationModule.grain(context);
     const texture = KitService.texture(context.kit.texture, context.width, context.height);

@@ -14,9 +14,13 @@ export class FlowersAsset extends BaseAsset {
   readonly tags = ["flores", "canteiro", "flower_bed"];
 
   draw(params: AssetParams, theme: Theme) {
-    const [first, second] = theme.foliage; let svg = ShapeUtil.shadow(theme, 24, 2.5);
-    ([[-16, -16, theme.primary], [-4, -24, theme.accent], [9, -18, theme.paper], [19, -12, theme.primary], [-20, -8,
-      theme.accent]] as [number, number, string][]).forEach(([posX, posY, color]) => {
+    const [first, second] = theme.foliage;
+    let svg = ShapeUtil.shadow(theme, 24, 2.5);
+    const blooms: [number, number, string][] = [
+      [-16, -16, theme.primary], [-4, -24, theme.accent], [9, -18, theme.paper], [19, -12, theme.primary],
+      [-20, -8, theme.accent],
+    ];
+    blooms.forEach(([posX, posY, color]) => {
       svg += `<path d="M${posX} 0 Q${posX + 1} ${posY / 2} ${posX} ${posY}" stroke="${second}" stroke-width="2" fill="none"/>`
         + [0, 72, 144, 216, 288].map((angle) => ShapeUtil.circle(posX + Math.cos(ShapeUtil.toRadians(angle)) * 3,
           posY + Math.sin(ShapeUtil.toRadians(angle)) * 3, 2.6, color)).join("") + ShapeUtil.circle(posX, posY, 1.8,

@@ -52,17 +52,34 @@ export class ParsingModule {
   private static valueAt(root: unknown, path: PropertyKey[]): unknown {
     let current: unknown = root;
     for (const key of path) {
-      current = typeof current === "object" && current !== null ? (current as Record<PropertyKey, unknown>)[key] : undefined;
+      const isObject = typeof current === "object" && current !== null;
+      current = isObject ? (current as Record<PropertyKey, unknown>)[key] : undefined;
     }
     return current;
   }
 
-  private static describeIssue(path: PropertyKey[], message: string, values?: readonly unknown[], received?: unknown): string {
+  private static hintFor(suggestion: string | undefined, options: readonly string[]): string {
+    if (suggestion) {
+      return `; did you mean '${suggestion}'?`;
+    }
+    return options.length ? `; accepted values: ${options.join(", ")}` : "";
+  }
+
+  private static describeIssue(
+    path: PropertyKey[], message: string, values?: readonly unknown[], received?: unknown,
+  ): string {
     const where = path.length ? path.map(String).join(".") : "(scene)";
     const options = values?.map(String) ?? [];
     const [suggestion] = typeof received === "string" ? SuggestUtil.closest(received, options, 1) : [];
-    const hint = suggestion ? `; did you mean '${suggestion}'?` : options.length ? `; accepted values: ${options.join(", ")}` : "";
-    return `${where}: ${message}${hint}`;
+    return `${where}: ${message}${ParsingModule.hintFor(suggestion, options)}`;
+  }
+
+  private static valuesOf(issue: z.core.$ZodIssue): readonly unknown[] | undefined {
+    if (issue.code === "invalid_union") {
+      const field = String(issue.path.at(-1));
+      return IdUtil.lookup(ParsingModule.UNION_FIELD_TO_NAMES, field);
+    }
+    return "values" in issue ? issue.values : undefined;
   }
 
   static parseScene(input: unknown): ParsedScene {
@@ -77,8 +94,7 @@ export class ParsingModule {
     const result = sceneSchema.safeParse(raw, { error: z.locales.en().localeError });
     if (!result.success) {
       throw new SceneError(result.error.issues.map((issue) => {
-        const field = String(issue.path.at(-1));
-        const values = issue.code === "invalid_union" ? IdUtil.lookup(ParsingModule.UNION_FIELD_TO_NAMES, field) : "values" in issue ? issue.values as unknown[] : undefined;
+        const values = ParsingModule.valuesOf(issue);
         return ParsingModule.describeIssue(issue.path, issue.message, values, ParsingModule.valueAt(raw, issue.path));
       }));
     }

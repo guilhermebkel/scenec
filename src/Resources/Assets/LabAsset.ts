@@ -28,7 +28,6 @@ export class LabAsset extends BaseAsset {
     svg += ShapeUtil.rect(-16, -30, 32, 30, ColorUtil.sh(mainColor, -0.35), { rx: 2 }) + ShapeUtil.rect(-14, -28, 13,
       28, theme.glass, { rx: 1, extra: "opacity=\"0.8\"" }) + ShapeUtil.rect(1, -28, 13, 28, theme.glass, { rx: 1,
       extra: "opacity=\"0.8\"" });
-    // dome do observatório + frasco no letreiro
     svg += `<path d="M30 -106 A26 26 0 0 1 82 -106 Z" fill="${theme.metal}"/><path d="M56 -132 A26 26 0 0 1 82 -106 L56 -106 Z" fill="${ColorUtil.sh(theme.metal, -0.15)}"/><path d="M52 -128 L70 -140" stroke="${theme.ink}" stroke-width="4" stroke-linecap="round"/>`;
     svg += ShapeUtil.rect(-60, -128, 54, 20, theme.paper, { rx: 4 })
       + `<path d="M-46 -125 L-46 -119 L-51 -111 L-37 -111 L-42 -119 L-42 -125 Z" fill="${theme.accent}"/>`

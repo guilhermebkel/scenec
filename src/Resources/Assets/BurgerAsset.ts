@@ -1,4 +1,3 @@
-import type { AssetParams, Theme } from "@/Protocols/AssetProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 import { ShapeUtil } from "@/Utils/ShapeUtil.ts";
@@ -14,7 +13,7 @@ export class BurgerAsset extends BaseAsset {
 
   readonly tags = ["hambúrguer", "hamburguer", "sanduíche", "lanche"];
 
-  draw(params: AssetParams, theme: Theme) {
+  draw() {
     return ShapeUtil.rect(-10, -4, 20, 4, "#D99A4E", { rx: 2 }) + ShapeUtil.rect(-11, -8, 22, 4, "#5A3322",
       { rx: 2 }) + `<path d="M-12 -9 L12 -9 L9 -7 L5 -9 L1 -7 L-3 -9 L-7 -7 Z" fill="#8DBA4A"/>`
       + ShapeUtil.rect(-11, -10, 22, 2, "#F2C14E")

@@ -6,6 +6,10 @@ export interface RectStyle {
   extra?: string;
 }
 
+export type RectArguments = [
+  posX: number, posY: number, width: number, height: number, fill: string, style?: RectStyle,
+];
+
 export interface EllipsePaint {
   fill: string;
   extra?: string;
@@ -32,15 +36,17 @@ export class ShapeUtil {
     return `<circle cx="${cx}" cy="${cy}" r="${ShapeUtil.round(radius)}" fill="${fill}" ${extra}/>`;
   }
 
-  static rect(posX: number, posY: number, width: number, height: number, fill: string, style: RectStyle = {}): string {
+  static rect(...[posX, posY, width, height, fill, style = {}]: RectArguments): string {
     const { rx = 0, extra = "" } = style;
-    const x = ShapeUtil.round(posX);
-    const y = ShapeUtil.round(posY);
+    const column = ShapeUtil.round(posX);
+    const row = ShapeUtil.round(posY);
     const attributes = `width="${ShapeUtil.round(width)}" height="${ShapeUtil.round(height)}" rx="${rx}" fill="${fill}"`;
-    return `<rect x="${x}" y="${y}" ${attributes} ${extra}/>`;
+    return `<rect x="${column}" y="${row}" ${attributes} ${extra}/>`;
   }
 
-  static ellipse(centerX: number, centerY: number, radiusX: number, radiusY: number, paint: string | EllipsePaint): string {
+  static ellipse(
+    centerX: number, centerY: number, radiusX: number, radiusY: number, paint: string | EllipsePaint,
+  ): string {
     const { fill, extra = "" } = typeof paint === "string" ? { fill: paint } : paint;
     const cx = ShapeUtil.round(centerX);
     const cy = ShapeUtil.round(centerY);

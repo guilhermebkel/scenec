@@ -2,13 +2,11 @@ import { GroupService } from "@/Services/GroupService.ts";
 import { describe, expect, it } from "vitest";
 import { GROUP_IDS } from "@/Protocols/GroupProtocol.ts";
 
-describe("GroupService", () => {
-  it("registers exactly the groups named in GROUP_IDS", () => {
-    expect(Object.keys(GroupService.GROUPS).sort()).toEqual([...GROUP_IDS].sort());
-  });
-});
-
 describe("GroupService.expandGroups()", () => {
+  it("registers exactly the groups named in GROUP_IDS", () => {
+    expect(Object.keys(GroupService.GROUP_ID_TO_GROUP).sort()).toStrictEqual([...GROUP_IDS].sort());
+  });
+
   describe("when an object names a group", () => {
     it("creates one object per part with the group id as a prefix", () => {
       const objects = GroupService.expandGroups({ desk: { group: "workspace", at: 0.4 } }, []);

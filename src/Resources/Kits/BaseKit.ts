@@ -1,5 +1,5 @@
 import type { ThemeColorName } from "@/Protocols/ThemeProtocol.ts";
-import type { KitId, KitLight, KitOutline, KitSceneName, KitStyle } from "@/Protocols/KitProtocol.ts";
+import type { KitId, KitLight, KitOutline, KitSceneName, KitStyle, KitTextureName } from "@/Protocols/KitProtocol.ts";
 
 export abstract class BaseKit implements KitStyle {
   abstract readonly id: KitId;
@@ -10,9 +10,9 @@ export abstract class BaseKit implements KitStyle {
 
   readonly light?: KitLight;
 
-  readonly texture?: string;
+  readonly texture?: KitTextureName;
 
-  readonly colors?: Partial<Record<ThemeColorName, string>>;
+  readonly themeColorToColor?: Partial<Record<ThemeColorName, string>>;
 
   readonly scene?: KitSceneName;
 

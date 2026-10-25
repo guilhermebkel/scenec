@@ -1,8 +1,8 @@
-import type { AssetId, AssetParams, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
+import type { AssetId, AssetKind, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
 import type { CompilationContext, Depth, Placement } from "@/Protocols/CompilationProtocol.ts";
 import type { SeatedPoseName } from "@/Protocols/PersonProtocol.ts";
 import { DEPTH_NAMES } from "@/Protocols/SceneProtocol.ts";
-import type { ObjectLayer, SceneObject, SizeName, SlotName } from "@/Protocols/SceneProtocol.ts";
+import type { ObjectLayer, SceneObject, SettingName, SizeName, SlotName } from "@/Protocols/SceneProtocol.ts";
 import { AssetService } from "@/Services/AssetService.ts";
 import { DependencyOrderService, type ResolutionOrder } from "@/Services/DependencyOrderService.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
@@ -10,6 +10,10 @@ import { RequireUtil } from "@/Utils/RequireUtil.ts";
 import { PersonUtil } from "@/Utils/PersonUtil.ts";
 
 type SeatedPose = SeatedPoseName | "sitting_floor" | "hugging_knees";
+
+type ReferenceKey = "left_of" | "right_of" | "behind" | "in_front_of" | "on" | "under" | "above";
+
+type Positioner = (request: PlacementRequest, context: CompilationContext) => Position | null;
 
 interface Position {
   x: number;
@@ -26,8 +30,8 @@ interface PlacementRequest {
   assetId: string;
   size: { w: number; h: number };
   sizeFactor: number;
-  placed: Record<string, Placement>;
-  heldBy: Record<string, string>;
+  idToPlacement: Record<string, Placement>;
+  heldToHolder: Record<string, string>;
 }
 
 export class PlacementService {
@@ -41,14 +45,47 @@ export class PlacementService {
 
   private static readonly DEPTHS: readonly Depth[] = DEPTH_NAMES;
 
+  private static readonly GROUND_REFERENCE_KEYS: readonly ReferenceKey[] = [
+    "left_of", "right_of", "behind", "in_front_of", "under",
+  ];
+
+  private static readonly KIND_TO_POSITIONER: Partial<Record<AssetKind, Positioner>> = {
+    sky: (request, context) => PlacementService.positionSky(request, context),
+    wall: (request, context) => PlacementService.positionWall(request, context),
+    ceiling: (request, context) => PlacementService.positionCeiling(request, context),
+    water: (request, context) => PlacementService.positionWater(request, context),
+  };
+
+  private static readonly KIND_TO_HELD_WIDTH_FACTOR: Partial<Record<AssetKind, number>> = { any: 0.42 };
+
+  private static readonly KIND_TO_GROUND_Z_SHIFT: Partial<Record<AssetKind, number>> = { floor: -400 };
+
+  private static readonly LAYER_TO_GROUND_Z_SHIFT: Record<ObjectLayer, number> = { back: -300, front: 300 };
+
+  private static readonly FACING_TO_BACKSET: Partial<Record<"left" | "right", number>> = { left: 1 };
+
+  private static readonly ASSET_TO_BODY_SCALE_Y: Partial<Record<AssetId, (object: SceneObject) => number>> = {
+    person: (object) => PersonUtil.bodyScale(object).by,
+  };
+
   private static readonly DEPTH_TO_SCALE: Record<Depth, number> = { near: 1, mid: 0.8, far: 0.6 };
 
   // Why: the height, in drawing units, of the point where a hand grips each object.
-  private static readonly ASSET_TO_GRIP_HEIGHT: Partial<Record<AssetId, number>> = { cup: 6, suitcase: 44, books: 8, ball: 12 };
+  private static readonly ASSET_TO_GRIP_HEIGHT: Partial<Record<AssetId, number>> = {
+    cup: 6, suitcase: 44, books: 8, ball: 12,
+  };
 
-  private static readonly SEATED_POSES: readonly SeatedPose[] = ["sitting", "typing", "reading", "drinking", "sitting_floor", "hugging_knees"];
+  private static readonly SEATED_POSES: readonly SeatedPose[] = [
+    "sitting", "typing", "reading", "drinking", "sitting_floor", "hugging_knees",
+  ];
 
-  private static readonly SEAT_ALIGN_TO_OFFSET: Record<"left" | "right" | "center", number> = { left: -0.28, right: 0.28, center: 0 };
+  private static readonly SEAT_ALIGN_TO_OFFSET: Record<"left" | "right" | "center", number> = {
+    left: -0.28, right: 0.28, center: 0,
+  };
+
+  private static readonly SETTING_TO_IS_INDOOR: Record<SettingName, boolean> = {
+    indoor: true, outdoor: false, beach: false, city: false,
+  };
 
   private static readonly SURFACE_ALIGN_TO_OFFSET: Record<"left" | "right" | "center" | "far-left" | "far-right", number> = {
     "left": -0.3, "right": 0.3, "center": 0, "far-left": -0.42, "far-right": 0.42,
@@ -63,6 +100,8 @@ export class PlacementService {
   private static readonly WATER_SCALE = 0.55;
 
   private static readonly DEFAULT_SKY_ALTITUDE = 0.14;
+
+  private static readonly DEFAULT_WATER_SLOT = 0.7;
 
   private static readonly SKY_Z = -900;
 
@@ -88,17 +127,11 @@ export class PlacementService {
 
   private static readonly SEAT_BACKSET_UNITS = 4;
 
-  private static readonly HELD_ANY_WIDTH_FACTOR = 0.42;
-
   private static readonly DEFAULT_GAP = 0.015;
 
   private static readonly BEHIND_OFFSET = 0.35;
 
   private static readonly DEPTH_Z_STEP = 1000;
-
-  private static readonly FLOOR_Z_SHIFT = 400;
-
-  private static readonly LAYER_Z_SHIFT = 300;
 
   static slotFraction(at: unknown, fallback: number): number {
     if (typeof at === "number") {
@@ -108,20 +141,21 @@ export class PlacementService {
   }
 
   static placeAll(context: CompilationContext, resolution: ResolutionOrder): Record<string, Placement> {
-    const placed: Record<string, Placement> = {};
+    const idToPlacement: Record<string, Placement> = {};
     for (const id of resolution.order) {
-      const placement = PlacementService.place(id, context, { placed, heldBy: resolution.heldBy });
+      const state = { idToPlacement, heldToHolder: resolution.heldToHolder };
+      const placement = PlacementService.place(id, context, state);
       if (placement) {
-        placed[id] = placement;
+        idToPlacement[id] = placement;
       }
     }
-    return placed;
+    return idToPlacement;
   }
 
   private static place(
     id: string,
     context: CompilationContext,
-    state: { placed: Record<string, Placement>; heldBy: Record<string, string> },
+    state: { idToPlacement: Record<string, Placement>; heldToHolder: Record<string, string> },
   ): Placement | null {
     const { objects, library, warnings, theme } = context;
     const object = objects[id] ?? {};
@@ -131,31 +165,37 @@ export class PlacementService {
       if (context.failedAssets.has(requested)) {
         warnings.push(`'${id}' was ignored because custom asset '${requested}' failed to load`);
       } else {
-        warnings.push(`asset '${requested}' (in '${id}') does not exist; did you mean: ${(resolved.suggest ?? []).join(", ")}?`);
+        const suggestions = (resolved.suggest ?? []).join(", ");
+        warnings.push(`asset '${requested}' (in '${id}') does not exist; did you mean: ${suggestions}?`);
       }
       return null;
     }
     const asset = RequireUtil.defined(library[resolved.id], `library asset ${resolved.id}`);
-    const size = asset.size ? asset.size(object as AssetParams) : { w: asset.width, h: asset.height };
+    const size = asset.size ? asset.size(object) : { w: asset.width, h: asset.height };
+    const sizeFactor = PlacementService.sizeFactor(id, object, warnings);
     const request: PlacementRequest = {
-      id, object, asset, assetId: resolved.id, size, sizeFactor: PlacementService.sizeFactor(id, object, warnings),
-      placed: state.placed, heldBy: state.heldBy,
+      id, object, asset, assetId: resolved.id, size, sizeFactor,
+      idToPlacement: state.idToPlacement, heldToHolder: state.heldToHolder,
     };
     const position = PlacementService.position(request, context);
     if (!position) {
       return null;
     }
-    const drawn = asset.draw({ ...object } as AssetParams, theme);
+    const drawn = asset.draw({ ...object }, theme);
     const drawnSize = typeof drawn === "string" ? size : drawn.box;
     const width = drawnSize.w * position.scale;
     const height = drawnSize.h * position.scale;
+    const isPlain = typeof drawn === "string";
     return {
-      id, asset: resolved.id, kind: asset.kind, x: position.x, y: position.y, scale: position.scale, width, height, z: position.z,
-      depth: position.depth, svg: typeof drawn === "string" ? drawn : drawn.svg, bodySvg: "",
-      surfaceTop: asset.topOf ? asset.topOf(object as AssetParams) : asset.top,
-      hasHaze: object.haze !== false, isBackdrop: Boolean(asset.isBackdrop), isHollow: Boolean(asset.isHollow), hand: typeof drawn === "string" ? undefined : drawn.hand,
-      boxLeft: position.x - width / 2, boxRight: position.x + width / 2, boxTop: position.y - height, boxBottom: position.y,
-      related: DependencyOrderService.dependenciesOf(object).concat(object.holds ?? [], state.heldBy[id] ?? []),
+      id, asset: resolved.id, kind: asset.kind, x: position.x, y: position.y, scale: position.scale,
+      width, height, z: position.z,
+      depth: position.depth, svg: isPlain ? drawn : drawn.svg, bodySvg: "",
+      surfaceTop: asset.topOf ? asset.topOf(object) : asset.top,
+      hasHaze: object.haze !== false, isBackdrop: Boolean(asset.isBackdrop), isHollow: Boolean(asset.isHollow),
+      hand: isPlain ? undefined : drawn.hand,
+      boxLeft: position.x - width / 2, boxRight: position.x + width / 2,
+      boxTop: position.y - height, boxBottom: position.y,
+      related: DependencyOrderService.dependenciesOf(object).concat(object.holds ?? [], state.heldToHolder[id] ?? []),
       isOffView: false, isFocus: false,
     };
   }
@@ -168,87 +208,92 @@ export class PlacementService {
     if (known !== undefined) {
       return known;
     }
-    warnings.push(`size '${object.size}' is invalid in '${id}' (use ${Object.keys(PlacementService.SIZE_NAME_TO_FACTOR).join(", ")})`);
+    const names = Object.keys(PlacementService.SIZE_NAME_TO_FACTOR).join(", ");
+    warnings.push(`size '${object.size}' is invalid in '${id}' (use ${names})`);
     return 1;
   }
 
   private static position(request: PlacementRequest, context: CompilationContext): Position | null {
-    const { asset, object, id, heldBy, placed } = request;
-    if (asset.kind === "sky") {
-      return PlacementService.positionSky(request, context);
-    }
-    if (asset.kind === "wall") {
-      return PlacementService.positionWall(request, context);
-    }
-    if (asset.kind === "ceiling") {
-      return PlacementService.positionCeiling(request, context);
-    }
-    if (asset.kind === "water") {
-      return PlacementService.positionWater(request, context);
+    const { asset, object, id, heldToHolder, idToPlacement } = request;
+    const positioner = IdUtil.lookup(PlacementService.KIND_TO_POSITIONER, asset.kind);
+    if (positioner) {
+      return positioner(request, context);
     }
     if (object.on) {
       return PlacementService.positionOnTop(request, context);
     }
-    const holder = heldBy[id] ? placed[heldBy[id]] : undefined;
+    const holder = heldToHolder[id] ? idToPlacement[heldToHolder[id]] : undefined;
     if (holder) {
       return PlacementService.positionHeld(request, holder);
     }
     return PlacementService.positionOnGround(request, context);
   }
 
-  private static reference(request: PlacementRequest, key: "left_of" | "right_of" | "behind" | "in_front_of" | "on" | "under" | "above"): Placement | undefined {
+  private static reference(request: PlacementRequest, key: ReferenceKey): Placement | undefined {
     const id = request.object[key];
-    return id ? request.placed[id] : undefined;
+    return id ? request.idToPlacement[id] : undefined;
+  }
+
+  private static isUnset(at: unknown): boolean {
+    // Why: an empty string or a zero in `at` counts as "not set" for sky objects, the same as leaving it out.
+    return !at;
   }
 
   private static positionSky(request: PlacementRequest, context: CompilationContext): Position {
     const { object, size, sizeFactor, assetId } = request;
     const { width, height, unit } = context;
-    let scale = unit * sizeFactor * PlacementService.SKY_SCALE;
-    const slot = String(object.at || "top-right").replace("top-", "").replace("sky-", "");
-    const fallback = typeof object.at === "number" ? object.at : 0.5;
-    let x = (IdUtil.lookup(PlacementService.SLOT_TO_FRACTION, slot) ?? fallback) * width;
-    let y = height * (object.altitude ?? PlacementService.DEFAULT_SKY_ALTITUDE) + (size.h * scale) / 2;
+    const depth = object.depth ?? null;
     if (assetId === "stars") {
-      x = width / 2;
-      y = height * PlacementService.STARS_HEIGHT_FRACTION;
-      scale = width / PlacementService.STARS_REFERENCE_WIDTH;
+      return {
+        x: width / 2,
+        y: height * PlacementService.STARS_HEIGHT_FRACTION,
+        scale: width / PlacementService.STARS_REFERENCE_WIDTH,
+        z: PlacementService.SKY_Z,
+        depth,
+      };
     }
-    return { x, y, scale, z: PlacementService.SKY_Z, depth: object.depth ?? null };
+    const scale = unit * sizeFactor * PlacementService.SKY_SCALE;
+    const slot = String(PlacementService.isUnset(object.at) ? "top-right" : object.at).replace("top-", "").replace("sky-", "");
+    const fallback = typeof object.at === "number" ? object.at : 0.5;
+    const slotX = (IdUtil.lookup(PlacementService.SLOT_TO_FRACTION, slot) ?? fallback) * width;
+    const slotY = height * (object.altitude ?? PlacementService.DEFAULT_SKY_ALTITUDE) + (size.h * scale) / 2;
+    return { x: slotX, y: slotY, scale, z: PlacementService.SKY_Z, depth };
   }
 
   private static positionWall(request: PlacementRequest, context: CompilationContext): Position {
     const { object, size, sizeFactor, asset, id } = request;
     const { width, height, unit, warnings, setting, lines } = context;
-    if (setting !== "indoor") {
+    if (!PlacementService.SETTING_TO_IS_INDOOR[setting]) {
       warnings.push(`'${id}' is a wall object, but the setting is '${setting}'`);
     }
     const scale = unit * sizeFactor * PlacementService.WALL_SCALE;
     const margin = PlacementService.WALL_SIDE_MARGIN * width;
-    let x = PlacementService.slotFraction(object.at, 0.5) * width;
+    let centerX = PlacementService.slotFraction(object.at, 0.5) * width;
     const leftOf = PlacementService.reference(request, "left_of");
     const rightOf = PlacementService.reference(request, "right_of");
     const above = PlacementService.reference(request, "above");
     if (leftOf) {
-      x = leftOf.boxLeft - margin - (size.w * scale) / 2;
+      centerX = leftOf.boxLeft - margin - (size.w * scale) / 2;
     }
     if (rightOf) {
-      x = rightOf.boxRight + margin + (size.w * scale) / 2;
+      centerX = rightOf.boxRight + margin + (size.w * scale) / 2;
     }
     if (above) {
-      x = above.x + (typeof object.offset === "number" ? object.offset : 0) * above.width;
+      centerX = above.x + (typeof object.offset === "number" ? object.offset : 0) * above.width;
     }
-    const y = height * lines.horizon - (object.elevation ?? asset.elevation ?? 0) * unit * PlacementService.WALL_SCALE;
-    return { x, y, scale, z: PlacementService.WALL_Z, depth: object.depth ?? null };
+    const lift = (object.elevation ?? asset.elevation ?? 0) * unit * PlacementService.WALL_SCALE;
+    const baseY = height * lines.horizon - lift;
+    return { x: centerX, y: baseY, scale, z: PlacementService.WALL_Z, depth: object.depth ?? null };
   }
 
   private static positionCeiling(request: PlacementRequest, context: CompilationContext): Position {
-    const { object, sizeFactor, placed } = request;
+    const { object, sizeFactor, idToPlacement } = request;
     const { width, unit } = context;
-    const above = object.above ? placed[object.above] : undefined;
-    const x = above ? above.x : PlacementService.slotFraction(object.at, 0.5) * width;
-    const y = (object.hang ?? PlacementService.DEFAULT_HANG) * unit;
-    return { x, y, scale: unit * sizeFactor, z: PlacementService.CEILING_Z, depth: object.depth ?? null };
+    const above = object.above ? idToPlacement[object.above] : undefined;
+    const centerX = above ? above.x : PlacementService.slotFraction(object.at, 0.5) * width;
+    const hangY = (object.hang ?? PlacementService.DEFAULT_HANG) * unit;
+    const depth = object.depth ?? null;
+    return { x: centerX, y: hangY, scale: unit * sizeFactor, z: PlacementService.CEILING_Z, depth };
   }
 
   private static positionWater(request: PlacementRequest, context: CompilationContext): Position {
@@ -258,7 +303,7 @@ export class PlacementService {
       warnings.push(`'${id}' is a water object, but the scene has no sea (use setting: beach)`);
     }
     return {
-      x: PlacementService.slotFraction(object.at, 0.7) * width,
+      x: PlacementService.slotFraction(object.at, PlacementService.DEFAULT_WATER_SLOT) * width,
       y: height * ((lines.sea ?? lines.horizon) - PlacementService.WATER_LINE_OFFSET),
       scale: unit * sizeFactor * PlacementService.WATER_SCALE,
       z: PlacementService.WATER_Z,
@@ -266,17 +311,17 @@ export class PlacementService {
     };
   }
 
-  private static alignOffset<Name extends string>(align: unknown, names: Record<Name, number>): number {
+  private static alignOffset<Name extends string>(align: unknown, nameToOffset: Record<Name, number>): number {
     if (typeof align === "number") {
       return align;
     }
-    return IdUtil.lookup(names, typeof align === "string" ? align : "center") ?? 0;
+    return IdUtil.lookup(nameToOffset, typeof align === "string" ? align : "center") ?? 0;
   }
 
   private static positionOnTop(request: PlacementRequest, context: CompilationContext): Position | null {
-    const { object, sizeFactor, id, assetId, placed } = request;
+    const { object, sizeFactor, id, assetId, idToPlacement } = request;
     const { library, warnings } = context;
-    const support = object.on ? placed[object.on] : undefined;
+    const support = object.on ? idToPlacement[object.on] : undefined;
     if (!support) {
       warnings.push(`'${id}' has 'on: ${object.on}', but '${object.on}' was not positioned`);
       return null;
@@ -286,18 +331,22 @@ export class PlacementService {
     const isSeated = IdUtil.isOneOf(PlacementService.SEATED_POSES, object.pose);
     if (supportAsset.seat && isSeated) {
       const offset = PlacementService.alignOffset(object.align, PlacementService.SEAT_ALIGN_TO_OFFSET);
-      const backset = object.facing === "left" ? 1 : -1;
-      const bodyScaleY = assetId === "person" ? PersonUtil.bodyScale(object).by : 1;
+      const backset = IdUtil.lookup(PlacementService.FACING_TO_BACKSET, object.facing) ?? -1;
+      const bodyScaleY = IdUtil.lookup(PlacementService.ASSET_TO_BODY_SCALE_Y, assetId)?.(object) ?? 1;
+      const hip = PlacementService.SEAT_HIP_UNITS * bodyScaleY * support.scale * sizeFactor;
       return {
         x: support.x + offset * support.width + backset * PlacementService.SEAT_BACKSET_UNITS * support.scale,
-        y: support.y - supportAsset.seat * support.scale + PlacementService.SEAT_HIP_UNITS * bodyScaleY * support.scale * sizeFactor,
+        y: support.y - supportAsset.seat * support.scale + hip,
         scale, z: support.z + PlacementService.ON_Z_STEP, depth: support.depth,
       };
     }
     const surfaceTop = support.surfaceTop ?? supportAsset.top;
     if (!surfaceTop) {
       warnings.push(`'${object.on}' has no supporting surface; '${id}' cannot sit on top of it`);
-      return { x: support.x, y: support.y - support.height, scale, z: support.z + PlacementService.ON_Z_STEP, depth: support.depth };
+      return {
+        x: support.x, y: support.y - support.height, scale,
+        z: support.z + PlacementService.ON_Z_STEP, depth: support.depth,
+      };
     }
     const offset = PlacementService.alignOffset(object.align, PlacementService.SURFACE_ALIGN_TO_OFFSET);
     const layerShift = IdUtil.lookup(PlacementService.LAYER_TO_Z_SHIFT, object.layer) ?? 0;
@@ -312,7 +361,8 @@ export class PlacementService {
     const scale = holder.scale * sizeFactor;
     const [handX, handY] = holder.hand ?? [0, 0];
     const side = Math.sign(handX) || 1;
-    const anyShift = asset.kind === "any" ? side * size.w * PlacementService.HELD_ANY_WIDTH_FACTOR * scale : 0;
+    const widthFactor = IdUtil.lookup(PlacementService.KIND_TO_HELD_WIDTH_FACTOR, asset.kind) ?? 0;
+    const anyShift = widthFactor ? side * size.w * widthFactor * scale : 0;
     const grip = PlacementService.ASSET_TO_GRIP_HEIGHT[assetId as AssetId] ?? size.h / 2;
     return {
       x: holder.x + handX * holder.scale + anyShift,
@@ -345,49 +395,48 @@ export class PlacementService {
     return depth;
   }
 
-  private static positionOnGround(request: PlacementRequest, context: CompilationContext): Position {
-    const { object, size, sizeFactor, asset, id, assetId } = request;
-    const { width, height, unit, lines, warnings } = context;
-    if (asset.kind === "surface") {
-      warnings.push(`'${id}' (${assetId}) usually sits on a surface; add 'on: <table>'`);
+  private static warnSurface(request: PlacementRequest, warnings: string[]): void {
+    const { asset, id, assetId } = request;
+    if (asset.kind !== "surface") {
+      return;
     }
-    const reference = ["left_of", "right_of", "behind", "in_front_of", "under"]
-      .map((key) => PlacementService.reference(request, key as "left_of"))
+    warnings.push(`'${id}' (${assetId}) usually sits on a surface; add 'on: <table>'`);
+  }
+
+  private static positionOnGround(request: PlacementRequest, context: CompilationContext): Position {
+    const { object, size, sizeFactor, asset } = request;
+    const { width, height, unit, lines, warnings } = context;
+    PlacementService.warnSurface(request, warnings);
+    const reference = PlacementService.GROUND_REFERENCE_KEYS
+      .map((key) => PlacementService.reference(request, key))
       .find(Boolean);
     const depth = PlacementService.depthFor(request, reference, warnings);
     const scale = unit * sizeFactor * PlacementService.DEPTH_TO_SCALE[depth];
     const gap = (object.gap ?? PlacementService.DEFAULT_GAP) * width;
     const halfWidth = (size.w * scale) / 2;
     const offsetOf = (fallback: number): number => (typeof object.offset === "number" ? object.offset : fallback);
-    let x = PlacementService.slotFraction(object.at, 0.5) * width;
+    let centerX = PlacementService.slotFraction(object.at, 0.5) * width;
     if (reference) {
       if (object.left_of) {
-        x = reference.boxLeft - gap - halfWidth;
+        centerX = reference.boxLeft - gap - halfWidth;
       }
       if (object.right_of) {
-        x = reference.boxRight + gap + halfWidth;
+        centerX = reference.boxRight + gap + halfWidth;
       }
       if (object.behind) {
-        x = reference.x + offsetOf(PlacementService.BEHIND_OFFSET) * reference.width;
+        centerX = reference.x + offsetOf(PlacementService.BEHIND_OFFSET) * reference.width;
       }
       if (object.in_front_of) {
-        x = reference.x + offsetOf(0) * reference.width;
+        centerX = reference.x + offsetOf(0) * reference.width;
       }
       if (object.under) {
-        x = reference.x;
+        centerX = reference.x;
       }
     }
-    const y = height * lines.base[depth];
-    let z = PlacementService.DEPTHS.indexOf(depth) * PlacementService.DEPTH_Z_STEP + y;
-    if (asset.kind === "floor") {
-      z -= PlacementService.FLOOR_Z_SHIFT;
-    }
-    if (object.layer === "back") {
-      z -= PlacementService.LAYER_Z_SHIFT;
-    }
-    if (object.layer === "front") {
-      z += PlacementService.LAYER_Z_SHIFT;
-    }
-    return { x, y, scale, z, depth };
+    const baseY = height * lines.base[depth];
+    let depthZ = PlacementService.DEPTHS.indexOf(depth) * PlacementService.DEPTH_Z_STEP + baseY;
+    depthZ += IdUtil.lookup(PlacementService.KIND_TO_GROUND_Z_SHIFT, asset.kind) ?? 0;
+    depthZ += IdUtil.lookup(PlacementService.LAYER_TO_GROUND_Z_SHIFT, object.layer) ?? 0;
+    return { x: centerX, y: baseY, scale, z: depthZ, depth };
   }
 }

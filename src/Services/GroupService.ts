@@ -25,56 +25,62 @@ export class GroupService {
 
   private static readonly FACING_TO_OPPOSITE: Record<Facing, Facing> = { left: "right", right: "left" };
 
-  static readonly GROUPS: Record<GroupId, BaseGroup> = RegistryUtil.indexById(
-    [new WorkspaceGroup(), new ReadingCornerGroup(), new DiningGroup(), new ConversationGroup(), new ParkBenchGroup(), new CelebrationGroup(), new MeetingGroup()],
+  static readonly GROUP_ID_TO_GROUP: Record<GroupId, BaseGroup> = RegistryUtil.indexById(
+    [
+      new WorkspaceGroup(), new ReadingCornerGroup(), new DiningGroup(), new ConversationGroup(),
+      new ParkBenchGroup(), new CelebrationGroup(), new MeetingGroup(),
+    ],
   );
 
-  static expandGroups(objects: Record<string, SceneObject>, warnings: string[]): Record<string, SceneObject> {
-    const expanded: Record<string, SceneObject> = {};
+  static expandGroups(
+    idToObject: Record<string, SceneObject>, warnings: string[],
+  ): Record<string, SceneObject> {
+    const idToExpanded: Record<string, SceneObject> = {};
     const groupIdToAnchorId: Record<string, string> = {};
-    for (const [id, object] of Object.entries(objects)) {
+    for (const [id, object] of Object.entries(idToObject)) {
       if (!object.group) {
-        expanded[id] = object;
+        idToExpanded[id] = object;
         continue;
       }
-      const group = IdUtil.isOneOf(GROUP_IDS, object.group) ? GroupService.GROUPS[object.group] : undefined;
+      const group = IdUtil.isOneOf(GROUP_IDS, object.group) ? GroupService.GROUP_ID_TO_GROUP[object.group] : undefined;
       if (!group) {
-        const available = Object.keys(GroupService.GROUPS).join(", ");
+        const available = Object.keys(GroupService.GROUP_ID_TO_GROUP).join(", ");
         warnings.push(`group '${object.group}' (in '${id}') does not exist; available: ${available}`);
         continue;
       }
-      const { parts, removed } = GroupService.buildParts(group, object);
-      for (const [partId, part] of Object.entries(parts)) {
-        // Why: a placed part has the same shape as a scene object, so the compiler can treat both alike.
-        expanded[`${id}_${partId}`] = GroupService.placePart(part, { groupId: id, parts, removed, object }) as SceneObject;
+      const { partIdToPart, removed } = GroupService.buildParts(group, object);
+      for (const [partId, part] of Object.entries(partIdToPart)) {
+        idToExpanded[`${id}_${partId}`] = GroupService.placePart(part, { groupId: id, partIdToPart, removed, object });
       }
       groupIdToAnchorId[id] = `${id}_${group.anchor}`;
     }
-    GroupService.pointReferencesAtAnchors(expanded, groupIdToAnchorId);
-    return expanded;
+    GroupService.pointReferencesAtAnchors(idToExpanded, groupIdToAnchorId);
+    return idToExpanded;
   }
 
-  private static buildParts(group: BaseGroup, object: SceneObject): { parts: Record<string, GroupPart>; removed: Set<string> } {
-    const parts = group.build({ ...object, at: object.at ?? 0.5 });
+  private static buildParts(
+    group: BaseGroup, object: SceneObject,
+  ): { partIdToPart: Record<string, GroupPart>; removed: Set<string> } {
+    const partIdToPart = group.build({ ...object, at: object.at ?? 0.5 });
     const removed = new Set<string>();
     for (const [partId, override] of Object.entries(object.parts ?? {})) {
       if (override === false) {
-        delete parts[partId];
+        Reflect.deleteProperty(partIdToPart, partId);
         removed.add(partId);
       } else {
-        parts[partId] = { ...parts[partId], ...override };
+        partIdToPart[partId] = { ...partIdToPart[partId], ...override };
       }
     }
-    return { parts, removed };
+    return { partIdToPart, removed };
   }
 
   private static placePart(
     part: GroupPart,
-    context: { groupId: string; parts: Record<string, GroupPart>; removed: Set<string>; object: SceneObject },
+    context: { groupId: string; partIdToPart: Record<string, GroupPart>; removed: Set<string>; object: SceneObject },
   ): GroupPart {
-    const { groupId, parts, removed, object } = context;
+    const { groupId, partIdToPart, removed, object } = context;
     const prefixed = (reference: unknown): unknown => {
-      if (typeof reference === "string" && parts[reference]) {
+      if (typeof reference === "string" && partIdToPart[reference]) {
         return `${groupId}_${reference}`;
       }
       return typeof reference === "string" && removed.has(reference) ? undefined : reference;
@@ -118,7 +124,7 @@ export class GroupService {
     GroupService.deleteUndefined(part);
     for (const key of ["facing", "align"]) {
       if (part[key] == null) {
-        delete part[key];
+        Reflect.deleteProperty(part, key);
       }
     }
   }
@@ -130,13 +136,15 @@ export class GroupService {
   private static deleteUndefined(part: GroupPart): void {
     for (const key of Object.keys(part)) {
       if (part[key] === undefined) {
-        delete part[key];
+        Reflect.deleteProperty(part, key);
       }
     }
   }
 
-  private static pointReferencesAtAnchors(expanded: Record<string, SceneObject>, groupIdToAnchorId: Record<string, string>): void {
-    for (const part of Object.values(expanded)) {
+  private static pointReferencesAtAnchors(
+    idToExpanded: Record<string, SceneObject>, groupIdToAnchorId: Record<string, string>,
+  ): void {
+    for (const part of Object.values(idToExpanded)) {
       const fields: Record<string, unknown> = part;
       for (const key of GroupService.REFERENCE_KEYS) {
         const reference = fields[key];

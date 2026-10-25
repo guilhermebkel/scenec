@@ -16,7 +16,6 @@ export interface GroupParams {
   people?: GroupPart[];
 }
 
-// Why: the slug of every group, so code that names a group by id is checked by the compiler.
 export const GROUP_IDS = [
   "celebration",
   "conversation",

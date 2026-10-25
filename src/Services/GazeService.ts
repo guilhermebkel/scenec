@@ -11,14 +11,14 @@ export class GazeService {
 
   private static readonly EYE_HEIGHT_FRACTION = 0.85;
 
-  static redraw(placed: Record<string, Placement>, context: CompilationContext): void {
+  static redraw(idToPlacement: Record<string, Placement>, context: CompilationContext): void {
     const { objects, library, theme, warnings } = context;
-    for (const placement of Object.values(placed)) {
+    for (const placement of Object.values(idToPlacement)) {
       const object = objects[placement.id];
       if (placement.asset !== "person" || !object || typeof object.look !== "string") {
         continue;
       }
-      const target = placed[object.look];
+      const target = idToPlacement[object.look];
       if (!target) {
         if (!IdUtil.isOneOf(GazeService.DIRECTION_NAMES, object.look)) {
           warnings.push(`'${placement.id}' looks at '${object.look}', which does not exist in the scene`);

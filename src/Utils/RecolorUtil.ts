@@ -51,28 +51,42 @@ export class RecolorUtil {
 
   private static readonly WHITE_Z = 1.08883;
 
-  private static readonly RGB_TO_XYZ: Triple[] = [[0.4124, 0.3576, 0.1805], [0.2126, 0.7152, 0.0722], [0.0193, 0.1192, 0.9505]];
+  private static readonly RGB_TO_XYZ: Triple[] = [
+    [0.4124, 0.3576, 0.1805], [0.2126, 0.7152, 0.0722], [0.0193, 0.1192, 0.9505],
+  ];
 
-  private static readonly XYZ_TO_RGB: Triple[] = [[3.2406, -1.5372, -0.4986], [-0.9689, 1.8758, 0.0415], [0.0557, -0.204, 1.057]];
+  private static readonly XYZ_TO_RGB: Triple[] = [
+    [3.2406, -1.5372, -0.4986], [-0.9689, 1.8758, 0.0415], [0.0557, -0.204, 1.057],
+  ];
 
-  /** Returns a function that moves the colors of an SVG toward the theme palette, keeping their relative lightness. */
   static makeRecolor(theme: Theme, strength = RecolorUtil.DEFAULT_STRENGTH): (svg: string) => string {
-    const swatches = [theme.primary, theme.secondary, theme.accent, ...theme.foliage, theme.trunk, theme.wood, theme.glass]
+    // Why: the returned function moves the colors of an SVG toward the theme palette, keeping their relative lightness.
+    const base = [theme.primary, theme.secondary, theme.accent, ...theme.foliage];
+    const colors = [...base, theme.trunk, theme.wood, theme.glass];
+    const swatches = colors
       .filter((color) => color.startsWith("#"))
-      .map((color) => RecolorUtil.toLch(RecolorUtil.toLab(RecolorUtil.toRgb(color))))
+      .map((color) => RecolorUtil.hexToLch(color))
       .filter((swatch) => swatch[1] > RecolorUtil.MIN_SWATCH_CHROMA);
     const neutral = RecolorUtil.toLab(RecolorUtil.toRgb(theme.metal));
-    const cache = new Map<string, string>();
+    const hexToRecolored = new Map<string, string>();
     const recolorOne = (hex: string): string => {
-      const cached = cache.get(hex);
+      const cached = hexToRecolored.get(hex);
       if (cached) {
         return cached;
       }
       const recolored = RecolorUtil.recolorColor(hex, { swatches, neutral, strength });
-      cache.set(hex, recolored);
+      hexToRecolored.set(hex, recolored);
       return recolored;
     };
-    return (svg) => svg.replace(RecolorUtil.COLOR_ATTRIBUTE, (_match, attribute: string, color: string) => `${attribute}="${recolorOne(color)}"`);
+    return (svg) => svg.replace(
+      RecolorUtil.COLOR_ATTRIBUTE,
+      (_match, attribute: string, color: string) => `${attribute}="${recolorOne(color)}"`,
+    );
+  }
+
+  private static hexToLch(hex: string): Triple {
+    const rgb = RecolorUtil.toRgb(hex);
+    return RecolorUtil.toLch(RecolorUtil.toLab(rgb));
   }
 
   private static recolorColor(hex: string, palette: { swatches: Triple[]; neutral: Triple; strength: number }): string {
@@ -82,13 +96,20 @@ export class RecolorUtil {
     if (chroma < RecolorUtil.GRAY_CHROMA) {
       // Why: a gray moves slightly toward the theme's neutral instead of taking a hue.
       const pull = strength * RecolorUtil.NEUTRAL_PULL;
-      return RecolorUtil.fromLab([lightness, lab[1] * (1 - strength) + neutral[1] * pull, lab[2] * (1 - strength) + neutral[2] * pull]);
+      return RecolorUtil.fromLab([
+        lightness,
+        lab[1] * (1 - strength) + neutral[1] * pull,
+        lab[2] * (1 - strength) + neutral[2] * pull,
+      ]);
     }
     const best = RecolorUtil.nearestSwatch(swatches, chroma, hue);
     if (!best) {
       return hex;
     }
-    const newHue = Math.atan2(Math.sin(hue) * (1 - strength) + Math.sin(best[2]) * strength, Math.cos(hue) * (1 - strength) + Math.cos(best[2]) * strength);
+    const newHue = Math.atan2(
+      Math.sin(hue) * (1 - strength) + Math.sin(best[2]) * strength,
+      Math.cos(hue) * (1 - strength) + Math.cos(best[2]) * strength,
+    );
     const newChroma = chroma * (1 - strength) + Math.min(chroma, best[1]) * strength;
     const lightnessPull = strength * RecolorUtil.LIGHTNESS_PULL;
     const newLightness = lightness * (1 - lightnessPull) + best[0] * lightnessPull;
@@ -99,8 +120,10 @@ export class RecolorUtil {
     let best: Triple | undefined = swatches[0];
     let bestDistance = Infinity;
     for (const swatch of swatches) {
-      const hueDistance = Math.abs(Math.atan2(Math.sin(hue - swatch[2]), Math.cos(hue - swatch[2])));
-      const distance = hueDistance * RecolorUtil.HUE_WEIGHT + Math.abs(chroma - swatch[1]) / RecolorUtil.CHROMA_DISTANCE_SCALE;
+      const hueGap = Math.atan2(Math.sin(hue - swatch[2]), Math.cos(hue - swatch[2]));
+      const hueDistance = Math.abs(hueGap);
+      const chromaDistance = Math.abs(chroma - swatch[1]) / RecolorUtil.CHROMA_DISTANCE_SCALE;
+      const distance = hueDistance * RecolorUtil.HUE_WEIGHT + chromaDistance;
       if (distance < bestDistance) {
         bestDistance = distance;
         best = swatch;
@@ -112,9 +135,11 @@ export class RecolorUtil {
   private static toRgb(hex: string): Triple {
     let digits = hex.replace("#", "");
     if (digits.length === 3) {
-      digits = [...digits].map((char) => char + char).join("");
+      digits = Array.from(digits, (char) => char + char).join("");
     }
-    const channel = (start: number): number => parseInt(digits.slice(start, start + 2), 16) / RecolorUtil.CHANNEL_MAX;
+    const channel = (start: number): number => {
+      return parseInt(digits.slice(start, start + 2), 16) / RecolorUtil.CHANNEL_MAX;
+    };
     return [channel(0), channel(2), channel(4)];
   }
 
@@ -132,31 +157,43 @@ export class RecolorUtil {
 
   private static multiply(matrix: Triple[], vector: Triple): Triple {
     const [row0 = [0, 0, 0], row1 = [0, 0, 0], row2 = [0, 0, 0]] = matrix;
-    const dot = (row: number[]): number => (row[0] ?? 0) * vector[0] + (row[1] ?? 0) * vector[1] + (row[2] ?? 0) * vector[2];
+    const dot = (row: number[]): number => (
+      (row[0] ?? 0) * vector[0] + (row[1] ?? 0) * vector[1] + (row[2] ?? 0) * vector[2]
+    );
     return [dot(row0), dot(row1), dot(row2)];
   }
 
   private static toLab(rgb: Triple): Triple {
     const [red, green, blue] = rgb;
-    const [rawX, y, rawZ] = RecolorUtil.multiply(RecolorUtil.RGB_TO_XYZ, [RecolorUtil.linearize(red), RecolorUtil.linearize(green), RecolorUtil.linearize(blue)]);
-    const x = rawX / RecolorUtil.WHITE_X;
-    const z = rawZ / RecolorUtil.WHITE_Z;
-    const curve = (value: number): number => (value > RecolorUtil.LAB_EPSILON ? Math.cbrt(value) : RecolorUtil.LAB_SLOPE * value + RecolorUtil.LAB_OFFSET);
+    const linear: Triple = [RecolorUtil.linearize(red), RecolorUtil.linearize(green), RecolorUtil.linearize(blue)];
+    const [rawX, tristimulusY, rawZ] = RecolorUtil.multiply(RecolorUtil.RGB_TO_XYZ, linear);
+    const relativeX = rawX / RecolorUtil.WHITE_X;
+    const relativeZ = rawZ / RecolorUtil.WHITE_Z;
+    const curve = (value: number): number => (
+      value > RecolorUtil.LAB_EPSILON ? Math.cbrt(value) : RecolorUtil.LAB_SLOPE * value + RecolorUtil.LAB_OFFSET
+    );
     return [
-      RecolorUtil.LIGHTNESS_SCALE * curve(y) - RecolorUtil.LIGHTNESS_SHIFT,
-      RecolorUtil.A_SCALE * (curve(x) - curve(y)),
-      RecolorUtil.B_SCALE * (curve(y) - curve(z)),
+      RecolorUtil.LIGHTNESS_SCALE * curve(tristimulusY) - RecolorUtil.LIGHTNESS_SHIFT,
+      RecolorUtil.A_SCALE * (curve(relativeX) - curve(tristimulusY)),
+      RecolorUtil.B_SCALE * (curve(tristimulusY) - curve(relativeZ)),
     ];
   }
 
   private static fromLab(lab: Triple): string {
-    const [lightness, a, b] = lab;
+    const [lightness, greenRed, blueYellow] = lab;
     const fy = (lightness + RecolorUtil.LIGHTNESS_SHIFT) / RecolorUtil.LIGHTNESS_SCALE;
-    const fx = fy + a / RecolorUtil.A_SCALE;
-    const fz = fy - b / RecolorUtil.B_SCALE;
-    const inverse = (value: number): number => (value ** 3 > RecolorUtil.LAB_EPSILON ? value ** 3 : (value - RecolorUtil.LAB_OFFSET) / RecolorUtil.LAB_SLOPE);
-    const rgb = RecolorUtil.multiply(RecolorUtil.XYZ_TO_RGB, [inverse(fx) * RecolorUtil.WHITE_X, inverse(fy), inverse(fz) * RecolorUtil.WHITE_Z]);
-    const hex = rgb.map((channel) => Math.round(Math.min(1, Math.max(0, RecolorUtil.delinearize(channel))) * RecolorUtil.CHANNEL_MAX).toString(16).padStart(2, "0"));
+    const fx = fy + greenRed / RecolorUtil.A_SCALE;
+    const fz = fy - blueYellow / RecolorUtil.B_SCALE;
+    const inverse = (value: number): number => (
+      value ** 3 > RecolorUtil.LAB_EPSILON ? value ** 3 : (value - RecolorUtil.LAB_OFFSET) / RecolorUtil.LAB_SLOPE
+    );
+    const xyz: Triple = [inverse(fx) * RecolorUtil.WHITE_X, inverse(fy), inverse(fz) * RecolorUtil.WHITE_Z];
+    const rgb = RecolorUtil.multiply(RecolorUtil.XYZ_TO_RGB, xyz);
+    const hex = rgb.map((channel) => {
+      const encoded = RecolorUtil.delinearize(channel);
+      const clamped = Math.min(1, Math.max(0, encoded));
+      return Math.round(clamped * RecolorUtil.CHANNEL_MAX).toString(16).padStart(2, "0");
+    });
     return `#${hex.join("")}`;
   }
 

@@ -1,7 +1,7 @@
 import type { CritiqueName } from "@/Protocols/CritiqueProtocol.ts";
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import type { KitStyle } from "@/Protocols/KitProtocol.ts";
-import type { AssetId, AssetKind, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
+import type { AssetKind, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
 import type { Canvas, SceneObject, SettingName } from "@/Protocols/SceneProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 
@@ -54,9 +54,7 @@ export interface TextRect {
   box: boolean;
 }
 
-export interface Library {
-  [assetId: string]: LibraryAsset;
-}
+export type Library = Record<string, LibraryAsset>;
 
 export interface CompilationContext {
   canvas: Canvas;

@@ -27,9 +27,9 @@ export class BuildingAsset extends BaseAsset {
     let index = 0;
     for (let posY = -height + 20; posY < -25; posY += 30) {
       for (let posX = -wide / 2 + 12; posX < wide / 2 - 14; posX += 22) {
-        const lit = ((index++ * 7 + Math.floor(wide) + (params.seed ?? 0)) % 5) < 2;
-        svg += ShapeUtil.rect(posX, posY, 12, 16, lit ? theme.glass : ColorUtil.sh(mainColor, -0.35), { rx: 1 })
-          + (lit ? ShapeUtil.rect(posX, posY + 12, 12, 4, ColorUtil.sh(theme.glass, -0.12)) : "");
+        const isLit = ((index++ * 7 + Math.floor(wide) + (params.seed ?? 0)) % 5) < 2;
+        svg += ShapeUtil.rect(posX, posY, 12, 16, isLit ? theme.glass : ColorUtil.sh(mainColor, -0.35), { rx: 1 })
+          + (isLit ? ShapeUtil.rect(posX, posY + 12, 12, 4, ColorUtil.sh(theme.glass, -0.12)) : "");
       }
     }
     return svg + ShapeUtil.rect(-10, -24, 20, 24, ColorUtil.sh(mainColor, -0.4), { rx: 2 });

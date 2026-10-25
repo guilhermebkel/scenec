@@ -24,7 +24,15 @@ export class CameraService {
     close: { show: 0.3, top: 0.08 },
   };
 
-  private static readonly FRAME_TO_FRACTION: Record<"left" | "center" | "right", number> = { left: 1 / 3, center: 0.5, right: 2 / 3 };
+  private static readonly LEFT_THIRD = 0.3333333333333333;
+
+  private static readonly RIGHT_THIRD = 0.6666666666666666;
+
+  private static readonly FOCUSABLE_KINDS = ["ground", "any"] as const;
+
+  private static readonly FRAME_TO_FRACTION: Record<"left" | "center" | "right", number> = {
+    left: CameraService.LEFT_THIRD, center: 0.5, right: CameraService.RIGHT_THIRD,
+  };
 
   private static readonly MAX_ZOOM = 6;
 
@@ -36,7 +44,7 @@ export class CameraService {
 
   private static readonly OFF_VIEW_MARGIN = 0.02;
 
-  static frame(placed: Record<string, Placement>, context: CompilationContext): Camera {
+  static frame(idToPlacement: Record<string, Placement>, context: CompilationContext): Camera {
     const shot = context.canvas.shot ?? "wide";
     if (shot === "wide") {
       return CameraService.NEUTRAL;
@@ -46,12 +54,13 @@ export class CameraService {
       context.warnings.push(`shot '${shot}' is invalid; use wide, full, medium or close`);
       return CameraService.NEUTRAL;
     }
-    const focused = CameraService.focusedPlacements(placed, context, config);
+    const focused = CameraService.focusedPlacements(idToPlacement, context, config);
     if (focused.length === 0) {
       return CameraService.NEUTRAL;
     }
-    const camera = CameraService.cameraFor(CameraService.boundsOf(focused), config, context);
-    for (const placement of Object.values(placed)) {
+    const bounds = CameraService.boundsOf(focused);
+    const camera = CameraService.cameraFor(bounds, config, context);
+    for (const placement of Object.values(idToPlacement)) {
       CameraService.transform(placement, camera, context);
     }
     for (const placement of focused) {
@@ -60,11 +69,17 @@ export class CameraService {
     return camera;
   }
 
-  private static focusIds(placed: Record<string, Placement>, context: CompilationContext): string[] {
+  private static isPerson(placement: Placement): boolean {
+    return placement.asset === "person";
+  }
+
+  private static focusIds(idToPlacement: Record<string, Placement>, context: CompilationContext): string[] {
     const requested = ([] as string[]).concat(context.canvas.focus ?? []);
     const ids: string[] = [];
     for (const focus of requested) {
-      const matches = placed[focus] ? [focus] : Object.keys(placed).filter((key) => key.startsWith(`${focus}_`));
+      const matches = idToPlacement[focus]
+        ? [focus]
+        : Object.keys(idToPlacement).filter((key) => key.startsWith(`${focus}_`));
       if (matches.length === 0) {
         context.warnings.push(`focus '${focus}' does not exist in the scene`);
       }
@@ -73,23 +88,29 @@ export class CameraService {
     if (ids.length > 0) {
       return ids;
     }
-    const people = Object.values(placed).filter((placement) => placement.asset === "person");
+    const all = Object.values(idToPlacement);
+    const people = all.filter((placement) => CameraService.isPerson(placement));
     if (people.length > 0) {
       return people.map((placement) => placement.id);
     }
-    return Object.values(placed).filter((placement) => ["ground", "any"].includes(placement.kind)).map((placement) => placement.id);
+    return all.filter((placement) => IdUtil.isOneOf(CameraService.FOCUSABLE_KINDS, placement.kind))
+      .map((placement) => placement.id);
   }
 
-  private static focusedPlacements(placed: Record<string, Placement>, context: CompilationContext, config: ShotConfig): Placement[] {
-    const focused = CameraService.focusIds(placed, context).flatMap((id) => placed[id] ?? []);
+  private static focusedPlacements(
+    idToPlacement: Record<string, Placement>, context: CompilationContext, config: ShotConfig,
+  ): Placement[] {
+    const focused = CameraService.focusIds(idToPlacement, context).flatMap((id) => idToPlacement[id] ?? []);
     // Why: medium and close frame people (head and torso), so the group's table must not decide the zoom.
-    const hasPerson = focused.some((placement) => placement.asset === "person");
-    return config.top != null && hasPerson ? focused.filter((placement) => placement.asset === "person") : focused;
+    const hasPerson = focused.some((placement) => CameraService.isPerson(placement));
+    return config.top != null && hasPerson ? focused.filter((placement) => CameraService.isPerson(placement)) : focused;
   }
 
   private static boundsOf(focused: Placement[]): Bounds {
-    // Why: open or raised arms extend past a person's box, so people get side padding.
-    const padding = (placement: Placement): number => (placement.asset === "person" ? placement.width * CameraService.PERSON_SIDE_PADDING : 0);
+    const padding = (placement: Placement): number => {
+      // Why: open or raised arms extend past a person's box, so people get side padding.
+      return CameraService.isPerson(placement) ? placement.width * CameraService.PERSON_SIDE_PADDING : 0;
+    };
     return {
       left: Math.min(...focused.map((placement) => placement.boxLeft - padding(placement))),
       right: Math.max(...focused.map((placement) => placement.boxRight + padding(placement))),
@@ -107,8 +128,10 @@ export class CameraService {
       ? (config.fill * height) / focusHeight
       : ((1 - (top ?? 0)) * height) / ((config.show ?? 1) * focusHeight);
     const widthZoom = (CameraService.FOCUS_WIDTH_FRACTION * width) / Math.max(1, bounds.right - bounds.left);
-    const zoom = Math.max(1, Math.min(CameraService.MAX_ZOOM, heightZoom, widthZoom));
-    const target = typeof canvas.frame === "number" ? canvas.frame : IdUtil.lookup(CameraService.FRAME_TO_FRACTION, canvas.frame ?? "center") ?? 0.5;
+    const limited = Math.min(CameraService.MAX_ZOOM, heightZoom, widthZoom);
+    const zoom = Math.max(1, limited);
+    const named = IdUtil.lookup(CameraService.FRAME_TO_FRACTION, canvas.frame ?? "center") ?? 0.5;
+    const target = typeof canvas.frame === "number" ? canvas.frame : named;
     const translateX = target * width - ((bounds.left + bounds.right) / 2) * zoom;
     const translateY = top == null
       ? CameraService.CENTERED_FOCUS_HEIGHT * height - ((bounds.top + bounds.bottom) / 2) * zoom

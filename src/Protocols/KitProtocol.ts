@@ -8,22 +8,29 @@ export interface KitOutline {
   inner: number;
 }
 
+export const KIT_TEXTURE_NAMES = ["paper", "fiber"] as const;
+
+export type KitTextureName = (typeof KIT_TEXTURE_NAMES)[number];
+
+export const KIT_LIGHT_MODES = ["none", "hatch"] as const;
+
+export type KitLightMode = (typeof KIT_LIGHT_MODES)[number];
+
 export interface KitLight {
   strength?: number;
-  mode?: string;
+  mode?: KitLightMode;
   hasCasts?: boolean;
 }
 
 export interface KitStyle {
   readonly outline?: KitOutline;
   readonly light?: KitLight;
-  readonly texture?: string;
-  readonly colors?: Partial<Record<ThemeColorName, string>>;
+  readonly texture?: KitTextureName;
+  readonly themeColorToColor?: Partial<Record<ThemeColorName, string>>;
   readonly scene?: KitSceneName;
   readonly hasDrop?: boolean;
 }
 
-// Why: the slug of every kit, so code that names a kit by id is checked by the compiler.
 export const KIT_IDS = [
   "flat",
   "hatch",

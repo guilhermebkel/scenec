@@ -41,9 +41,11 @@ export class ContextService {
   static create(scene: Scene, options: CompileOptions, warnings: string[]): CompilationContext {
     const canvas = scene.canvas ?? {};
     const width = canvas.width ?? ContextService.DEFAULT_WIDTH;
-    const height = canvas.height ?? (IdUtil.isOneOf(ContextService.TALL_MODES, canvas.mode) ? ContextService.TALL_HEIGHT : ContextService.CLASSIC_HEIGHT);
+    const isTall = IdUtil.isOneOf(ContextService.TALL_MODES, canvas.mode);
+    const height = canvas.height ?? (isTall ? ContextService.TALL_HEIGHT : ContextService.CLASSIC_HEIGHT);
     const kit = ContextService.kitOf(canvas.kit, warnings);
-    const theme: Theme = { ...ContextService.themeOf(canvas.theme, warnings), ...(kit.colors ?? {}), ...(canvas.colors ?? {}) };
+    const base = ContextService.themeOf(canvas.theme, warnings);
+    const theme: Theme = { ...base, ...(kit.themeColorToColor ?? {}), ...(canvas.colors ?? {}) };
     const setting = canvas.setting ?? ContextService.DEFAULT_SETTING;
     const lines = ContextService.linesOf(setting, canvas, warnings);
     const failedAssets = new Set<string>();
@@ -54,24 +56,24 @@ export class ContextService {
 
   private static themeOf(name: string | undefined, warnings: string[]): Theme {
     if (name === undefined) {
-      return ThemeService.THEMES[ContextService.DEFAULT_THEME];
+      return ThemeService.THEME_ID_TO_THEME[ContextService.DEFAULT_THEME];
     }
     if (IdUtil.isOneOf(THEME_IDS, name)) {
-      return ThemeService.THEMES[name];
+      return ThemeService.THEME_ID_TO_THEME[name];
     }
     warnings.push(`theme '${name}' does not exist; using '${ContextService.DEFAULT_THEME}'. Available: ${THEME_IDS.join(", ")}`);
-    return ThemeService.THEMES[ContextService.DEFAULT_THEME];
+    return ThemeService.THEME_ID_TO_THEME[ContextService.DEFAULT_THEME];
   }
 
   private static kitOf(name: string | undefined, warnings: string[]): CompilationContext["kit"] {
     if (name === undefined) {
-      return KitService.KITS[ContextService.DEFAULT_KIT];
+      return KitService.KIT_ID_TO_KIT[ContextService.DEFAULT_KIT];
     }
     if (IdUtil.isOneOf(KIT_IDS, name)) {
-      return KitService.KITS[name];
+      return KitService.KIT_ID_TO_KIT[name];
     }
     warnings.push(`kit '${name}' does not exist; available: ${KIT_IDS.join(", ")}`);
-    return KitService.KITS[ContextService.DEFAULT_KIT];
+    return KitService.KIT_ID_TO_KIT[ContextService.DEFAULT_KIT];
   }
 
   private static linesOf(setting: string, canvas: CompilationContext["canvas"], warnings: string[]): LayoutLines {
@@ -97,10 +99,10 @@ export class ContextService {
   private static libraryOf(scene: Scene, options: CompileOptions, warnings: string[], failed: Set<string>): CompilationContext["library"] {
     const custom = CustomAssetService.loadCustomAssets(scene.assets, options, warnings, failed);
     for (const id of Object.keys(custom)) {
-      if (id in AssetService.ASSETS) {
+      if (id in AssetService.ASSET_ID_TO_ASSET) {
         warnings.push(`custom asset '${id}' replaces the library asset with the same name`);
       }
     }
-    return Object.keys(custom).length > 0 ? { ...AssetService.ASSETS, ...custom } : AssetService.ASSETS;
+    return Object.keys(custom).length > 0 ? { ...AssetService.ASSET_ID_TO_ASSET, ...custom } : AssetService.ASSET_ID_TO_ASSET;
   }
 }

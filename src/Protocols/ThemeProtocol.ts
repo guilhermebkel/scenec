@@ -1,4 +1,3 @@
-// Why: the theme fields that hold a single color string, so kits and scenes can override them by a checked name.
 export const THEME_COLOR_NAMES = [
   "skyTop", "skyBottom", "ground", "groundDark", "wall", "floor", "sea", "seaLight", "primary", "secondary", "accent",
   "trunk", "wood", "woodDark", "ink", "paper", "glass", "metal", "text", "textOnDark", "shadow",
@@ -32,7 +31,6 @@ export interface Theme {
   [key: string]: string | string[] | undefined;
 }
 
-// Why: the slug of every theme, in the order the catalog lists them, so code that names a theme by id is checked by the compiler.
 export const THEME_IDS = ["flat-autumn", "flat-cool", "night", "warm-cafe", "beach"] as const;
 
 export type ThemeId = (typeof THEME_IDS)[number];

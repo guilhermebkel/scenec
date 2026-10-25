@@ -1,3 +1,4 @@
+import type { KitLight } from "@/Protocols/KitProtocol.ts";
 import { BaseKit } from "@/Resources/Kits/BaseKit.ts";
 
 export class HatchKit extends BaseKit {
@@ -5,7 +6,7 @@ export class HatchKit extends BaseKit {
 
   readonly description = "engraving/comics: ink outline, hatched shadows instead of gradients, light paper";
   readonly outline = { w: 2.4, inner: 1.0 };
-  readonly light = { mode: "hatch" };
+  readonly light: KitLight = { mode: "hatch" };
   readonly texture = "paper";
-  readonly colors = { shadow: "rgba(40,30,30,0.18)" };
+  readonly themeColorToColor = { shadow: "rgba(40,30,30,0.18)" };
 }

@@ -89,11 +89,6 @@ import { LightSwitchAsset } from "@/Resources/Assets/LightSwitchAsset.ts";
 import { GlassShelfAsset } from "@/Resources/Assets/GlassShelfAsset.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 
-// Biblioteca de assets (estilo próprio, flat com segunda tonalidade de luz/sombra).
-// Cada asset desenha em unidades (pessoa em pé = 100), com origem no centro da base
-// (y negativo = para cima). Metadados: kind (onde pode ficar), w/h (caixa),
-// top (altura da superfície de apoio), seat (altura do assento), tags (sinônimos).
-
 export interface AssetResolution {
   id: string | null;
   suggest?: string[];
@@ -104,11 +99,30 @@ export class AssetService {
 
   private static readonly SUGGESTION_COUNT = 3;
 
-  static readonly ASSETS: Record<AssetId, BaseAsset> = RegistryUtil.indexById(
-    [new PersonAsset(), new HouseAsset(), new TreeAsset(), new PineAsset(), new PalmAsset(), new BushAsset(), new FlowersAsset(), new FenceAsset(), new BuildingAsset(), new MountainAsset(), new SunAsset(), new MoonAsset(), new CloudAsset(), new BirdAsset(), new StarAsset(), new StarsAsset(), new CarAsset(), new BicycleAsset(), new DogAsset(), new CatAsset(), new StreetlightAsset(), new BenchAsset(), new WindowAsset(), new FrameAsset(), new ClockAsset(), new BoardAsset(), new ShelfWallAsset(), new BookshelfAsset(), new DeskAsset(), new TableAsset(), new CounterAsset(), new ChairAsset(), new SofaAsset(), new BedAsset(), new TvAsset(), new TvStandAsset(), new FloorLampAsset(), new RugAsset(), new PendantLampAsset(), new LaptopAsset(), new MonitorAsset(), new LampAsset(), new PlantAsset(), new BigPlantAsset(), new CupAsset(), new CakeAsset(), new PizzaAsset(), new FruitBowlAsset(), new BurgerAsset(), new PlateAsset(), new VaseFlowersAsset(), new BooksAsset(), new CoffeeMachineAsset(), new UmbrellaAsset(), new BoatAsset(), new SuitcaseAsset(), new BackpackAsset(), new BeachTowelAsset(), new BallAsset(), new SandcastleAsset(), new SchoolAsset(), new UniversityAsset(), new LabAsset(), new StageAsset(), new FinishFlagAsset(), new PennantAsset(), new BalloonsAsset(), new DiplomaAsset(), new TrophyAsset(), new DeskSlabAsset(), new DrawerUnitAsset(), new CabinetAsset(), new RollingCartAsset(), new TrashCanAsset(), new OfficeChairAsset(), new LaptopOpenAsset(), new HeadphonesAsset(), new CapAsset(), new PhotoFrameAsset(), new FigurineAsset(), new TumblerAsset(), new PaperCupAsset(), new PlasticBagAsset(), new CablesAsset(), new LightSwitchAsset(), new GlassShelfAsset()],
+  static readonly ASSET_ID_TO_ASSET: Record<AssetId, BaseAsset> = RegistryUtil.indexById(
+    [
+      new PersonAsset(), new HouseAsset(), new TreeAsset(), new PineAsset(), new PalmAsset(), new BushAsset(),
+      new FlowersAsset(), new FenceAsset(), new BuildingAsset(), new MountainAsset(), new SunAsset(), new MoonAsset(),
+      new CloudAsset(), new BirdAsset(), new StarAsset(), new StarsAsset(), new CarAsset(), new BicycleAsset(),
+      new DogAsset(), new CatAsset(), new StreetlightAsset(), new BenchAsset(), new WindowAsset(), new FrameAsset(),
+      new ClockAsset(), new BoardAsset(), new ShelfWallAsset(), new BookshelfAsset(), new DeskAsset(),
+      new TableAsset(), new CounterAsset(), new ChairAsset(), new SofaAsset(), new BedAsset(), new TvAsset(),
+      new TvStandAsset(), new FloorLampAsset(), new RugAsset(), new PendantLampAsset(), new LaptopAsset(),
+      new MonitorAsset(), new LampAsset(), new PlantAsset(), new BigPlantAsset(), new CupAsset(), new CakeAsset(),
+      new PizzaAsset(), new FruitBowlAsset(), new BurgerAsset(), new PlateAsset(), new VaseFlowersAsset(),
+      new BooksAsset(), new CoffeeMachineAsset(), new UmbrellaAsset(), new BoatAsset(), new SuitcaseAsset(),
+      new BackpackAsset(), new BeachTowelAsset(), new BallAsset(), new SandcastleAsset(), new SchoolAsset(),
+      new UniversityAsset(), new LabAsset(), new StageAsset(), new FinishFlagAsset(), new PennantAsset(),
+      new BalloonsAsset(), new DiplomaAsset(), new TrophyAsset(), new DeskSlabAsset(), new DrawerUnitAsset(),
+      new CabinetAsset(), new RollingCartAsset(), new TrashCanAsset(), new OfficeChairAsset(), new LaptopOpenAsset(),
+      new HeadphonesAsset(), new CapAsset(), new PhotoFrameAsset(), new FigurineAsset(), new TumblerAsset(),
+      new PaperCupAsset(), new PlasticBagAsset(), new CablesAsset(), new LightSwitchAsset(), new GlassShelfAsset(),
+    ],
   );
 
-  static resolveAsset(name: string, library: Record<string, LibraryAsset> = AssetService.ASSETS): AssetResolution {
+  static resolveAsset(
+    name: string, library: Record<string, LibraryAsset> = AssetService.ASSET_ID_TO_ASSET,
+  ): AssetResolution {
     if (library[name]) {
       return { id: name };
     }
@@ -117,7 +131,7 @@ export class AssetService {
     if (byTag) {
       return { id: byTag[0] };
     }
-    const candidates: Array<[number, string]> = [];
+    const candidates: [number, string][] = [];
     for (const [id, asset] of Object.entries(library)) {
       for (const key of [id, ...(asset.tags ?? [])]) {
         candidates.push([SuggestUtil.distance(lowered, key), id]);

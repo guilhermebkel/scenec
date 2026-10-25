@@ -3,7 +3,7 @@ import { MapModule } from "@/Modules/MapModule.ts";
 import type { Scene } from "@/Protocols/SceneProtocol.ts";
 import { ThemeService } from "@/Services/ThemeService.ts";
 
-const THEME = ThemeService.THEMES["flat-cool"];
+const THEME = ThemeService.THEME_ID_TO_THEME["flat-cool"];
 
 function compile(scene: Scene): { svg: string; warnings: string[]; description: string } {
   const warnings: string[] = [];

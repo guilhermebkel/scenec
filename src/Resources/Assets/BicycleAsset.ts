@@ -14,8 +14,9 @@ export class BicycleAsset extends BaseAsset {
   readonly tags = ["bicicleta", "bike"];
 
   draw(params: AssetParams, theme: Theme) {
-    const mainColor = ShapeUtil.color(theme, params.color, theme.secondary), flip = ShapeUtil.directionOf(params.facing);
-    const wh = (posX: any) => `<circle cx="${posX}" cy="-17" r="16" fill="none" stroke="${theme.ink}" stroke-width="3.5"/>`
+    const mainColor = ShapeUtil.color(theme, params.color, theme.secondary);
+    const flip = ShapeUtil.directionOf(params.facing);
+    const wh = (posX: number): string => `<circle cx="${posX}" cy="-17" r="16" fill="none" stroke="${theme.ink}" stroke-width="3.5"/>`
       + ShapeUtil.circle(posX, -17, 2.5, theme.metal);
     return `<g transform="scale(${flip} 1)">` + ShapeUtil.shadow(theme, 40, 3) + wh(-24) + wh(24)
       + `<path d="M-24 -17 L-6 -17 L10 -38 L-12 -38 Z M-6 -17 L-14 -42 M24 -17 L14 -46" stroke="${mainColor}" stroke-width="3.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`

@@ -1,3 +1,4 @@
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import type { Camera, CompilationContext, Placement } from "@/Protocols/CompilationProtocol.ts";
 
 export class FramingCheckService {
@@ -9,9 +10,13 @@ export class FramingCheckService {
 
   private static readonly PERCENT = 100;
 
-  static check(list: Placement[], context: CompilationContext, camera: Camera, heldBy: Record<string, string>): void {
+  private static readonly BLOCKING_KINDS = ["ground", "any"] as const;
+
+  static check(
+    list: Placement[], context: CompilationContext, camera: Camera, heldToHolder: Record<string, string>,
+  ): void {
     FramingCheckService.checkFrame(list, context, camera);
-    FramingCheckService.checkOverlaps(list, context, heldBy);
+    FramingCheckService.checkOverlaps(list, context, heldToHolder);
   }
 
   private static percent(fraction: number): number {
@@ -19,20 +24,21 @@ export class FramingCheckService {
   }
 
   private static checkFrame(list: Placement[], context: CompilationContext, camera: Camera): void {
-    const { library, objects, warnings, width, height, canvas } = context;
+    const { objects, warnings, width, height, canvas } = context;
     for (const placement of list) {
       if (placement.isBackdrop) {
         continue;
       }
-      const allowCrop = Boolean(objects[placement.id]?.allow_crop);
+      const isCropAllowed = Boolean(objects[placement.id]?.allow_crop);
       if (camera.zoom > 1) {
-        FramingCheckService.checkZoomedPlacement(placement, { allowCrop, shot: canvas.shot ?? "wide", warnings, width, height });
+        const shot = canvas.shot ?? "wide";
+        FramingCheckService.checkZoomedPlacement(placement, { isCropAllowed, shot, warnings, width, height });
         continue;
       }
       const outsideX = Math.max(0, -placement.boxLeft, placement.boxRight - width) / placement.width;
       const outsideY = Math.max(0, -placement.boxTop) / placement.height;
       const worst = Math.max(outsideX, outsideY);
-      if (worst > FramingCheckService.OUTSIDE_TOLERANCE && !allowCrop) {
+      if (worst > FramingCheckService.OUTSIDE_TOLERANCE && !isCropAllowed) {
         warnings.push(`'${placement.id}' is ${FramingCheckService.percent(worst)}% outside the frame`);
       }
     }
@@ -40,19 +46,24 @@ export class FramingCheckService {
 
   private static checkZoomedPlacement(
     placement: Placement,
-    frame: { allowCrop: boolean; shot: string; warnings: string[]; width: number; height: number },
+    frame: { isCropAllowed: boolean; shot: string; warnings: string[]; width: number; height: number },
   ): void {
-    const { allowCrop, shot, warnings, width, height } = frame;
+    const { isCropAllowed, shot, warnings, width, height } = frame;
     if (placement.isFocus && placement.isOffView) {
-      warnings.push(`'${placement.id}' is the focus but fell outside the framing (shot: ${shot}); change frame or focus`);
+      warnings.push(
+        `'${placement.id}' is the focus but fell outside the framing (shot: ${shot}); change frame or focus`,
+      );
     }
     // Why: an object cut by the edge that shows very little becomes visual noise.
     const visibleWidth = Math.max(0, Math.min(width, placement.boxRight) - Math.max(0, placement.boxLeft));
     const visibleHeight = Math.max(0, Math.min(height, placement.boxBottom) - Math.max(0, placement.boxTop));
     const visible = (visibleWidth * visibleHeight) / Math.max(1, placement.width * placement.height);
     const isSliver = visible > 0 && visible < FramingCheckService.SLIVER_THRESHOLD;
-    if (!placement.isOffView && isSliver && !allowCrop) {
-      warnings.push(`'${placement.id}' shows only a sliver (${FramingCheckService.percent(visible)}%) at the edge of the framing; remove it, move it or show more of it`);
+    if (!placement.isOffView && isSliver && !isCropAllowed) {
+      const shown = FramingCheckService.percent(visible);
+      warnings.push(
+        `'${placement.id}' shows only a sliver (${shown}%) at the edge of the framing; remove it, move it or show more of it`,
+      );
     }
   }
 
@@ -63,7 +74,7 @@ export class FramingCheckService {
   }
 
   private static isOverlapIgnored(first: Placement, second: Placement, context: CompilationContext): boolean {
-    const { library, objects } = context;
+    const { objects } = context;
     if (first.related.includes(second.id) || second.related.includes(first.id)) {
       return true;
     }
@@ -75,18 +86,30 @@ export class FramingCheckService {
     return (objects[first.id]?.layer ?? "") !== (objects[second.id]?.layer ?? "");
   }
 
-  private static checkOverlaps(list: Placement[], context: CompilationContext, heldBy: Record<string, string>): void {
-    const blocking = list.filter((placement) => ["ground", "any"].includes(placement.kind) && !context.objects[placement.id]?.on && !heldBy[placement.id]);
+  private static checkOverlaps(
+    list: Placement[], context: CompilationContext, heldToHolder: Record<string, string>,
+  ): void {
+    const blocking = list.filter((placement) => (
+      IdUtil.isOneOf(FramingCheckService.BLOCKING_KINDS, placement.kind)
+      && !context.objects[placement.id]?.on
+      && !heldToHolder[placement.id]
+    ));
     for (let first = 0; first < blocking.length; first++) {
       for (let second = first + 1; second < blocking.length; second++) {
         const left = blocking[first];
         const right = blocking[second];
-        if (!left || !right || left.depth !== right.depth || FramingCheckService.isOverlapIgnored(left, right, context)) {
+        if (!left || !right) {
+          continue;
+        }
+        if (left.depth !== right.depth || FramingCheckService.isOverlapIgnored(left, right, context)) {
           continue;
         }
         const fraction = FramingCheckService.overlapFraction(left, right);
         if (fraction > FramingCheckService.OVERLAP_THRESHOLD) {
-          context.warnings.push(`'${left.id}' overlaps '${right.id}' by ${FramingCheckService.percent(fraction)}%; use left_of/right_of or a different depth`);
+          const overlap = FramingCheckService.percent(fraction);
+          context.warnings.push(
+            `'${left.id}' overlaps '${right.id}' by ${overlap}%; use left_of/right_of or a different depth`,
+          );
         }
       }
     }

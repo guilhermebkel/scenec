@@ -6,6 +6,8 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import { localRules } from "./scripts/eslint-local-rules.mjs";
 
+const SCENE_FLAG_KEYS = "^(shadow|trim|glasses|beard|cane|handle|steam|mic|stand|off)$";
+
 const TEST_FILES = ["src/**/*.test.ts", "test/**/*.ts", "scripts/**/*.test.mjs"];
 
 // Why: the legacy files were ported byte-for-byte from the JavaScript prototype to keep the 108 baselines identical (ADR 0010); they are cleaned up one folder at a time.
@@ -73,6 +75,8 @@ export default tseslint.config(
         { selector: "variable", modifiers: ["const", "global"], format: ["UPPER_CASE", "camelCase"] },
         { selector: "variable", modifiers: ["const", "global"], types: ["boolean", "number", "string", "array"], format: ["UPPER_CASE"] },
         { selector: ["variable", "parameter"], types: ["boolean"], format: ["PascalCase"], prefix: BOOLEAN_PREFIXES },
+        // Why: these flags are fields that scene authors write in YAML (`glasses: true`), so their spelling is fixed.
+        { selector: "typeProperty", types: ["boolean"], format: null, filter: { regex: SCENE_FLAG_KEYS, match: true } },
         { selector: ["typeProperty", "classProperty", "parameterProperty", "accessor"], types: ["boolean"], format: ["PascalCase"], prefix: BOOLEAN_PREFIXES },
         { selector: "classProperty", modifiers: ["static", "readonly"], format: ["UPPER_CASE", "camelCase"] },
         // Why: keys of external formats (YAML fields, SVG attributes, CLI flags) keep their spelling.
