@@ -2,10 +2,11 @@ import { MapModule } from "@/Modules/MapModule.ts";
 import { ParsingModule } from "@/Modules/ParsingModule.ts";
 import { PlaneModule } from "@/Modules/PlaneModule.ts";
 import type { Background, Camera, CompilationContext, CompilationOutput, CritiqueInput, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
+import type { CritiqueName } from "@/Protocols/CritiqueProtocol.ts";
+import type { KitSceneName } from "@/Protocols/KitProtocol.ts";
 import type { CompileOptions } from "@/Protocols/OptionsProtocol.ts";
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
-import type { Scene } from "@/Protocols/SceneProtocol.ts";
-import { AssetService } from "@/Services/AssetService.ts";
+import type { ModeName, Scene } from "@/Protocols/SceneProtocol.ts";
 import { BackgroundService } from "@/Services/BackgroundService.ts";
 import { CameraService } from "@/Services/CameraService.ts";
 import { ContextService } from "@/Services/ContextService.ts";
@@ -19,11 +20,26 @@ import { LightingService } from "@/Services/LightingService.ts";
 import { PieceService } from "@/Services/PieceService.ts";
 import { PlacementService } from "@/Services/PlacementService.ts";
 import { TextService } from "@/Services/TextService.ts";
-import { ColorUtil } from "@/Utils/ColorUtil.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { SvgUtil } from "@/Utils/SvgUtil.ts";
+
+type ModeCompiler = (scene: Scene, context: CompilationContext) => CompilationOutput;
 
 export class CompilationModule {
   private static readonly PLANE_HEIGHT = 900;
+
+  private static readonly ZOOM_DIGITS = 4;
+
+  private static readonly SCENE_TO_SKIPPED_CRITIQUES: Partial<Record<KitSceneName, CritiqueName[]>> = {
+    sketch: ["silhouette"],
+  };
+
+  private static readonly MODE_TO_COMPILER: Record<ModeName, ModeCompiler> = {
+    "classic": (scene, context) => CompilationModule.compileClassic(scene, context),
+    "2.5d": (scene, context) => CompilationModule.compilePlane(scene, context),
+    "board": (scene, context) => CompilationModule.compilePlane(scene, context),
+    "map": (scene, context) => CompilationModule.compileMap(scene, context),
+  };
 
   static compile(input: unknown, options: CompileOptions = {}): CompileResult {
     const { scene, warnings } = ParsingModule.parseScene(input);
@@ -34,19 +50,21 @@ export class CompilationModule {
   static compileInternal(scene: Scene, options: CompileOptions = {}): CompilationOutput {
     const warnings: string[] = [];
     const context = ContextService.create(scene, options, warnings);
-    const { canvas, theme, width } = context;
-    const fullHeight = canvas.height ?? CompilationModule.PLANE_HEIGHT;
-    if (canvas.mode === "map") {
-      const map = MapModule.compileMap(scene, { theme, warnings, width, height: fullHeight });
-      return { result: KitService.applyWholeKit(map, context), critique: null };
-    }
-    if (canvas.mode === "2.5d" || canvas.mode === "board") {
-      const plane = PlaneModule.compilePlane(scene, {
-        LIB: context.library, theme, warnings, W: width, H: fullHeight, resolveAsset: AssetService.resolveAsset, contrast: ColorUtil.contrast,
-      });
-      return { result: KitService.applyWholeKit(plane, context), critique: null };
-    }
-    return CompilationModule.compileClassic(scene, context);
+    return CompilationModule.MODE_TO_COMPILER[context.canvas.mode ?? "classic"](scene, context);
+  }
+
+  private static compileMap(scene: Scene, context: CompilationContext): CompilationOutput {
+    const { theme, warnings, width, canvas } = context;
+    const height = canvas.height ?? CompilationModule.PLANE_HEIGHT;
+    const map = MapModule.compileMap(scene, { theme, warnings, width, height });
+    return { result: KitService.applyWholeKit(map, context), critique: null };
+  }
+
+  private static compilePlane(scene: Scene, context: CompilationContext): CompilationOutput {
+    const { theme, warnings, width, canvas, library } = context;
+    const height = canvas.height ?? CompilationModule.PLANE_HEIGHT;
+    const plane = PlaneModule.compilePlane(scene, { library, theme, warnings, width, height });
+    return { result: KitService.applyWholeKit(plane, context), critique: null };
   }
 
   private static compileClassic(scene: Scene, base: CompilationContext): CompilationOutput {
@@ -66,11 +84,14 @@ export class CompilationModule {
     const ordered = [...list].sort((first, second) => first.z - second.z);
     const pieces = PieceService.assemble(ordered, { context, light, haze: background.haze, heldBy: resolution.heldBy });
     const castLayer = PieceService.castLayer(pieces.casts, light, context);
-    const vignette = light && !light.isHatch ? `<rect width="${context.width}" height="${context.height}" fill="url(#vignette)"/>` : "";
-    const head = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${context.width}" height="${context.height}" viewBox="0 0 ${context.width} ${context.height}">`;
+    const { width, height } = context;
+    const vignette = light && !light.isHatch ? `<rect width="${width}" height="${height}" fill="url(#vignette)"/>` : "";
+    const head = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" `
+      + `width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
     const artwork = `${backgroundSvg}\n${castLayer}\n${pieces.body}\n${vignette}`;
     // Why: the scene filter wraps background and objects; the texture goes on top, below the text.
-    const sceneArt = context.kit.scene ? `<defs>${KitService.sceneFilter(context.kit.scene, context.theme)}</defs><g filter="url(#kitScene)">${artwork}</g>` : artwork;
+    const sceneFilter = context.kit.scene ? KitService.sceneFilter(context.kit.scene, context.theme) : "";
+    const sceneArt = context.kit.scene ? `<defs>${sceneFilter}</defs><g filter="url(#kitScene)">${artwork}</g>` : artwork;
     const grain = CompilationModule.grain(context);
     const texture = KitService.texture(context.kit.texture, context.width, context.height);
     const svg = SvgUtil.flattenOpacity(`${head}\n${sceneArt}\n${texture}\n${grain}\n${text.svg}\n</svg>`);
@@ -80,18 +101,20 @@ export class CompilationModule {
       description: DescriptionService.describe(ordered, context),
       layout: DescriptionService.layout(ordered, context),
     };
-    const critique = context.canvas.critique === false
-      ? null
-      : CompilationModule.critiqueInput({ context, head, background: backgroundSvg, sceneArt, textRects: text.rects, ordered });
+    const parts = { context, head, background: backgroundSvg, sceneArt, textRects: text.rects, ordered };
+    const critique = context.canvas.critique === false ? null : CompilationModule.critiqueInput(parts);
     return { result, critique };
   }
 
-  private static finishBackground(background: Background, light: LightState | null, context: CompilationContext, camera: Camera): string {
+  private static finishBackground(
+    background: Background, light: LightState | null, context: CompilationContext, camera: Camera,
+  ): string {
     const lit = light ? LightingService.applyToBackground(background.svg, light, context, camera) : background.svg;
     if (camera.zoom === 1) {
       return lit;
     }
-    return `<g transform="translate(${camera.translateX.toFixed(1)} ${camera.translateY.toFixed(1)}) scale(${camera.zoom.toFixed(4)})">${lit}</g>`;
+    const move = `translate(${camera.translateX.toFixed(1)} ${camera.translateY.toFixed(1)})`;
+    return `<g transform="${move} scale(${camera.zoom.toFixed(CompilationModule.ZOOM_DIGITS)})">${lit}</g>`;
   }
 
   private static grain(context: CompilationContext): string {
@@ -101,7 +124,6 @@ export class CompilationModule {
     return `<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/></filter><rect width="${context.width}" height="${context.height}" filter="url(#grain)" opacity="0.10"/>`;
   }
 
-  // Why: the art-director critique runs in the render entry, which has resvg; the compiler only hands it the inputs.
   private static critiqueInput(parts: {
     context: CompilationContext;
     head: string;
@@ -111,6 +133,7 @@ export class CompilationModule {
     ordered: Placement[];
   }): CritiqueInput {
     const { context, head, background, sceneArt, textRects, ordered } = parts;
+    // Why: the art-director critique runs in the render entry, which has resvg; the compiler only hands it the inputs.
     return {
       width: context.width,
       height: context.height,
@@ -120,7 +143,7 @@ export class CompilationModule {
       theme: context.theme,
       scale: context.canvas.scale ?? 1,
       textRects,
-      skip: context.kit.scene === "sketch" ? ["silhouette"] : [],
+      skip: IdUtil.lookup(CompilationModule.SCENE_TO_SKIPPED_CRITIQUES, context.kit.scene) ?? [],
       objects: ordered.filter((placement) => !placement.isOffView).map((placement) => ({
         id: placement.id,
         asset: placement.asset,
@@ -128,7 +151,7 @@ export class CompilationModule {
         z: placement.z,
         body: SvgUtil.flattenOpacity(placement.bodySvg),
         related: placement.related,
-        ignore: Boolean(placement.isBackdrop || context.objects[placement.id]?.critique === false),
+        ignore: placement.isBackdrop || context.objects[placement.id]?.critique === false,
       })),
     };
   }

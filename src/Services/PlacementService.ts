@@ -31,11 +31,11 @@ interface PlacementRequest {
 }
 
 export class PlacementService {
-  private static readonly SLOT_TO_FRACTION: Record<SlotName, number> = {
+  static readonly SLOT_TO_FRACTION: Record<SlotName, number> = {
     "far-left": 0.08, "left": 0.2, "center-left": 0.35, "center": 0.5, "center-right": 0.65, "right": 0.8, "far-right": 0.92,
   };
 
-  private static readonly SIZE_NAME_TO_FACTOR: Record<SizeName, number> = {
+  static readonly SIZE_NAME_TO_FACTOR: Record<SizeName, number> = {
     tiny: 0.5, small: 0.75, medium: 1, large: 1.3, huge: 1.7,
   };
 

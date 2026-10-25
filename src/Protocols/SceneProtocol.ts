@@ -21,6 +21,22 @@ const MAX_SCALE = 4;
 const pixels = z.number().int().min(MIN_CANVAS_PX).max(MAX_CANVAS_PX);
 const fraction = z.number().min(0).max(1);
 
+export const CAMERA_PRESETS = ["board", "room"] as const;
+
+export const cameraSchema = z.union([
+  z.enum(CAMERA_PRESETS),
+  z.looseObject({
+    preset: z.enum(CAMERA_PRESETS).optional(),
+    horizon: z.number().optional(),
+    near_y: z.number().optional(),
+    depth: z.number().optional(),
+    vanish_x: z.number().optional(),
+    cx: z.number().optional(),
+    x_span: z.number().optional(),
+    unit: z.number().optional(),
+  }),
+]).describe("2.5d camera: board (high and far, default) or room (real perspective, for interiors), with optional overrides.");
+
 export const canvasSchema = z.looseObject({
   width: pixels.optional().describe("Frame width in px. Default 1200."),
   height: pixels.optional().describe("Frame height in px. Default 630 (classic) or 900 (2.5d, map)."),
@@ -46,7 +62,7 @@ export const canvasSchema = z.looseObject({
   focus: z.union([z.string(), z.array(z.string())]).optional().describe("Object or group ids the shot frames."),
   frame: z.union([z.number(), z.enum(["left", "center", "right"])]).optional().describe("Where the focus sits horizontally."),
   headroom: fraction.optional().describe("Space above the focus as a fraction of the height."),
-  camera: z.unknown().optional(),
+  camera: cameraSchema.optional(),
   depth: z.number().optional(),
   far_y: z.number().optional(),
   near_y: z.number().optional(),
@@ -74,6 +90,12 @@ export const objectSchema = z.looseObject({
   align: z.union([z.number(), z.string()]).optional(),
   layer: z.enum(["back", "front"]).optional(),
   altitude: z.number().optional(),
+  along: z.number().optional().describe("2.5d: position along the path, 0..1."),
+  side: z.enum(["left", "right"]).optional().describe("2.5d: which side of the path an `along` object stands on."),
+  dist: z.number().optional().describe("2.5d: distance from the path for an `along` object."),
+  near: z.string().optional().describe("2.5d: id of an object or path point to place this one next to."),
+  on_spot: z.boolean().optional().describe("2.5d: stand exactly on the `near` point."),
+  on_path: z.boolean().optional().describe("2.5d: true when standing on the path is intended."),
   elevation: z.number().optional(),
   lift: z.number().optional(),
   hang: z.number().optional(),
@@ -120,18 +142,103 @@ export const routeItemSchema = z.looseObject({
   by: z.string().optional().describe("A route item with only `by` sets the transport of the next leg: plane, train, car, bus or boat."),
 });
 
+const point = z.tuple([z.number(), z.number()]);
+
+export const LABEL_SIDES = ["left", "right", "below"] as const;
+export const BOX_FRONTS = ["drawers", "doors", "open"] as const;
+export const BOX_FACES = ["front", "left", "right"] as const;
+
+export const pathPointSchema = z.looseObject({
+  id: z.string().optional().describe("Name other objects can use in `near`."),
+  at: point.optional().describe("[x, z] on the ground: x 0..1 left to right, z 0..1 near to far."),
+  label: z.string().optional(),
+  zone: z.string().optional().describe("A zone name; its scenery is placed around this point."),
+  finish: z.boolean().optional(),
+  color: z.string().optional(),
+  label_side: z.enum(LABEL_SIDES).optional(),
+  decor: z.boolean().optional().describe("false skips the zone scenery for this point."),
+});
+
+export const pathSchema = z.looseObject({
+  points: z.array(pathPointSchema).optional(),
+  width: z.number().optional().describe("Road width in world units. Default 0.075."),
+  checkpoint_size: z.number().optional().describe("Checkpoint radius in world units. Default 0.042."),
+  color: z.string().optional(),
+  tiles: z.boolean().optional().describe("false removes the tiles on the road."),
+  tile_length: z.number().optional(),
+});
+
+export const zoneDecorSchema = z.looseObject({
+  asset: z.string(),
+  size: z.number().optional(),
+});
+
+export const zoneSchema = z.looseObject({
+  tint: z.string().optional().describe("A theme color name or a color."),
+  radius: z.number().optional(),
+  decor: z.array(zoneDecorSchema).optional(),
+});
+
+export const boxDetailsSchema = z.looseObject({
+  type: z.enum(BOX_FRONTS).optional(),
+  count: z.number().optional(),
+  face: z.enum(BOX_FACES).optional(),
+  plinth: z.number().optional(),
+  handle: z.string().optional(),
+  shelves: z.array(z.number()).optional(),
+});
+
+export const boxSchema = z.looseObject({
+  from: point.optional(),
+  to: point.optional(),
+  height: z.number().optional().describe("Top of the box above the floor. Default 40."),
+  elevation: z.number().optional().describe("Bottom of the box above the floor."),
+  thickness: z.number().optional(),
+  color: z.string().optional(),
+  top_color: z.string().optional(),
+  opacity: z.number().optional(),
+  shadow: z.boolean().optional(),
+  details: boxDetailsSchema.optional(),
+  front: z.enum(BOX_FRONTS).optional(),
+  count: z.number().optional(),
+});
+
+export const scatterSchema = z.looseObject({
+  seed: z.number().optional(),
+  assets: z.array(z.string()).optional(),
+  area: z.tuple([z.number(), z.number(), z.number(), z.number()]).optional().describe("[x0, z0, x1, z1]."),
+  count: z.number().optional(),
+  size: z.number().optional(),
+});
+
+const wallSideSchema = z.looseObject({ x: z.number().optional(), color: z.string().optional() });
+
+export const wallsSchema = z.looseObject({
+  back: z.looseObject({ z: z.number().optional(), color: z.string().optional() }).optional(),
+  right: z.union([z.literal(false), wallSideSchema]).optional(),
+  left: wallSideSchema.optional(),
+  height: z.number().optional(),
+});
+
+export const floorSchema = z.looseObject({
+  color: z.string().optional(),
+  planks: z.boolean().optional(),
+  plank_width: z.number().optional(),
+  from_z: z.number().optional(),
+});
+
 export const sceneSchema = z.looseObject({
   version: z.literal(1).optional(),
   canvas: canvasSchema.optional(),
   objects: z.record(z.string(), objectSchema).optional(),
   text: z.array(textSchema).optional(),
   assets: z.record(z.string(), z.looseObject({})).optional().describe("Custom assets: svg (inline or a file) or image."),
-  path: z.looseObject({}).optional(),
-  scatter: z.unknown().optional(),
-  zones: z.record(z.string(), z.unknown()).optional(),
-  walls: z.looseObject({}).optional(),
-  floor: z.looseObject({}).optional(),
-  boxes: z.record(z.string(), z.unknown()).optional(),
+  path: pathSchema.optional(),
+  scatter: z.array(scatterSchema).optional(),
+  zones: z.record(z.string(), zoneSchema).optional(),
+  walls: wallsSchema.optional(),
+  floor: floorSchema.optional(),
+  boxes: z.record(z.string(), boxSchema).optional(),
   map: mapSchema.optional(),
   route: z.array(routeItemSchema).optional(),
 });
@@ -156,14 +263,34 @@ export type MapOptions = z.infer<typeof mapSchema>;
 
 export type RouteItem = z.infer<typeof routeItemSchema>;
 
+export type Camera25 = z.infer<typeof cameraSchema>;
+
+export type PathPoint = z.infer<typeof pathPointSchema>;
+
+export type PathOptions = z.infer<typeof pathSchema>;
+
+export type ZoneDecor = z.infer<typeof zoneDecorSchema>;
+
+export type ZoneOptions = z.infer<typeof zoneSchema>;
+
+export type BoxDetails = z.infer<typeof boxDetailsSchema>;
+
+export type BoxOptions = z.infer<typeof boxSchema>;
+
+export type ScatterOptions = z.infer<typeof scatterSchema>;
+
+export type WallsOptions = z.infer<typeof wallsSchema>;
+
+export type FloorOptions = z.infer<typeof floorSchema>;
+
 export type TextRole = NonNullable<SceneText["role"]>;
 
 export type ObjectLayer = NonNullable<SceneObject["layer"]>;
 
 export const OBJECT_PARAM_KEYS = [
-  "age", "along", "art", "backpack", "beard", "bg", "bottom", "build", "cane", "color", "count", "details", "dist", "doors",
+  "age", "art", "backpack", "beard", "bg", "bottom", "build", "cane", "color", "count", "details", "doors",
   "draped", "drawers", "drop", "ends", "expr", "floors", "food", "frame", "gaze", "glasses", "gown", "hair", "hair_color",
-  "handle", "hat", "hat_color", "height", "jacket", "label", "logo", "mic", "near", "off", "on_path", "on_spot", "outfit",
-  "pants", "people", "person", "pot", "role", "screen", "seed", "shirt", "shoes", "side", "skin", "sleeve", "stand", "steam",
+  "handle", "hat", "hat_color", "height", "jacket", "label", "logo", "mic", "off", "outfit",
+  "pants", "people", "person", "pot", "role", "screen", "seed", "shirt", "shoes", "skin", "sleeve", "stand", "steam",
   "stole", "style", "thickness", "view", "width",
 ] as const;

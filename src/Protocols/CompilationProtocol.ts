@@ -1,3 +1,4 @@
+import type { CritiqueName } from "@/Protocols/CritiqueProtocol.ts";
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import type { KitStyle } from "@/Protocols/KitProtocol.ts";
 import type { AssetId, AssetKind, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
@@ -115,7 +116,7 @@ export interface CritiqueInput {
   theme: Theme;
   scale: number;
   textRects: TextRect[];
-  skip: string[];
+  skip: CritiqueName[];
   objects: CritiqueObject[];
 }
 

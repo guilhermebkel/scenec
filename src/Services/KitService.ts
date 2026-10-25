@@ -4,7 +4,7 @@ import { HatchKit } from "@/Resources/Kits/HatchKit.ts";
 import { RisoKit } from "@/Resources/Kits/RisoKit.ts";
 import { PaperKit } from "@/Resources/Kits/PaperKit.ts";
 import { SketchKit } from "@/Resources/Kits/SketchKit.ts";
-import type { KitId } from "@/Protocols/KitProtocol.ts";
+import type { KitId, KitSceneName } from "@/Protocols/KitProtocol.ts";
 import { RegistryUtil } from "@/Utils/RegistryUtil.ts";
 import { BaseKit } from "@/Resources/Kits/BaseKit.ts";
 import type { CompilationContext } from "@/Protocols/CompilationProtocol.ts";
@@ -47,7 +47,7 @@ export class KitService {
   }
 
   // filtros de cena inteira
-  static sceneFilter(kind: any, t: any) {
+  static sceneFilter(kind: KitSceneName, t: any) {
     if (kind === "riso") {
       // posteriza (tinta chapada) -> cópia deslocada em rosa multiplicada (registro) -> poros de papel claros
       return `<filter id="kitScene" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">`

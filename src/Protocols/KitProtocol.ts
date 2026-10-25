@@ -1,4 +1,8 @@
 import type { ThemeColorName } from "@/Protocols/ThemeProtocol.ts";
+export const KIT_SCENE_NAMES = ["riso", "sketch"] as const;
+
+export type KitSceneName = (typeof KIT_SCENE_NAMES)[number];
+
 export interface KitOutline {
   w: number;
   inner: number;
@@ -15,7 +19,7 @@ export interface KitStyle {
   readonly light?: KitLight;
   readonly texture?: string;
   readonly colors?: Partial<Record<ThemeColorName, string>>;
-  readonly scene?: string;
+  readonly scene?: KitSceneName;
   readonly hasDrop?: boolean;
 }
 

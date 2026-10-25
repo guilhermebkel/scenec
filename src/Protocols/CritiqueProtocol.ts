@@ -1,5 +1,9 @@
 import type { AssetKind } from "@/Protocols/AssetProtocol.ts";
 
+export const CRITIQUE_NAMES = ["coverage", "balance", "silhouette", "contact"] as const;
+
+export type CritiqueName = (typeof CRITIQUE_NAMES)[number];
+
 export interface PixelBox {
   left: number;
   top: number;
