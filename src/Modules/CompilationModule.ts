@@ -37,7 +37,7 @@ export class CompilationModule {
     const { canvas, theme, width } = context;
     const fullHeight = canvas.height ?? CompilationModule.PLANE_HEIGHT;
     if (canvas.mode === "map") {
-      const map = MapModule.compileMap(scene, { theme, warnings, W: width, H: fullHeight, contrast: ColorUtil.contrast });
+      const map = MapModule.compileMap(scene, { theme, warnings, width, height: fullHeight });
       return { result: KitService.applyWholeKit(map, context), critique: null };
     }
     if (canvas.mode === "2.5d" || canvas.mode === "board") {

@@ -102,6 +102,24 @@ export const textSchema = z.looseObject({
   weight: z.number().optional(),
 });
 
+export const mapSchema = z.looseObject({
+  panel: z.boolean().optional().describe("false hides the route panel."),
+  center: z.tuple([z.number(), z.number()]).optional().describe("[lon, lat] of the projection center. Default: the mean of the stops."),
+  padding: z.number().optional().describe("Degrees of margin around the stops. Default 3.5."),
+  bounds: z.tuple([z.number(), z.number(), z.number(), z.number()]).optional().describe("[lonMin, lonMax, latMin, latMax] to show."),
+  highlight: z.array(z.string()).optional().describe("Extra countries to color, by name."),
+  palette: z.array(z.string()).optional().describe("Colors for the highlighted countries, in order."),
+});
+
+export const routeItemSchema = z.looseObject({
+  city: z.string().optional().describe("A city from the dictionary (see `scenec catalog`), or any name together with `at`."),
+  at: z.tuple([z.number(), z.number()]).optional().describe("[lon, lat] for a city that is not in the dictionary."),
+  country: z.string().optional().describe("Country to color on the map."),
+  label: z.string().optional().describe("Name shown instead of the city name."),
+  note: z.string().optional(),
+  by: z.string().optional().describe("A route item with only `by` sets the transport of the next leg: plane, train, car, bus or boat."),
+});
+
 export const sceneSchema = z.looseObject({
   version: z.literal(1).optional(),
   canvas: canvasSchema.optional(),
@@ -114,8 +132,8 @@ export const sceneSchema = z.looseObject({
   walls: z.looseObject({}).optional(),
   floor: z.looseObject({}).optional(),
   boxes: z.record(z.string(), z.unknown()).optional(),
-  map: z.looseObject({}).optional(),
-  route: z.array(z.unknown()).optional(),
+  map: mapSchema.optional(),
+  route: z.array(routeItemSchema).optional(),
 });
 
 export type SettingName = (typeof SETTING_NAMES)[number];
@@ -133,6 +151,10 @@ export type SceneObject = z.infer<typeof objectSchema>;
 export type Canvas = z.infer<typeof canvasSchema>;
 
 export type SceneText = z.infer<typeof textSchema>;
+
+export type MapOptions = z.infer<typeof mapSchema>;
+
+export type RouteItem = z.infer<typeof routeItemSchema>;
 
 export type TextRole = NonNullable<SceneText["role"]>;
 
