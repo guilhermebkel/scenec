@@ -1,0 +1,15 @@
+# Busca e IA: liberado
+User-agent: *
+Allow: /
+
+# Opcional: recusar uso para treino (não afeta busca). Descomente se quiser.
+# User-agent: GPTBot
+# Disallow: /
+# User-agent: ClaudeBot
+# Disallow: /
+# User-agent: Google-Extended
+# Disallow: /
+# User-agent: CCBot
+# Disallow: /
+
+Sitemap: https://scenec.guilherr.me/sitemap.xml
