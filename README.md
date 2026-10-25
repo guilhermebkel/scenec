@@ -1,4 +1,9 @@
-<h1 align="center">scenec</h1>
+<h1 align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="design/svg/horizontal-dark.svg" />
+    <img src="design/svg/horizontal-light.svg" alt="scenec" width="360" />
+  </picture>
+</h1>
 
 <p align="center">
   <strong>Illustrate with text: a YAML scene in, an SVG out, and written feedback on what is wrong with it.</strong>
