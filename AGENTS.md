@@ -19,6 +19,7 @@ An AI writes a YAML scene; the compiler returns an SVG plus warnings, art-direct
 | `src/cli.ts` | The CLI entry: parses the arguments and runs a command from `src/Commands/`. |
 | `fonts/` | Poppins (OFL-1.1). |
 | `skills/draw-scene/` | The agent skill shipped in the package. |
+| `design/` | The logo, its variants, web icons, guidelines and presentation. Not in the npm package. |
 | `test/visual/` | 108 base generations with baselines. |
 | `test/smoke/` | Every asset in every kit. |
 

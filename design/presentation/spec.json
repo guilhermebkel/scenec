@@ -1,0 +1,34 @@
+{
+  "brand": "scenec",
+  "tagline": "Scenes in SVG, written in YAML",
+  "brief": "A CLI that compiles a YAML scene into an SVG, with warnings, art-director critiques and a text description, so an AI that cannot see images can still illustrate. It runs on the CPU only, with no models.",
+  "adjectives": ["precise", "light", "handmade", "warm"],
+  "criteria": "Success: recognisable at 16 px, works in one colour, speaks of scenes and paths, distinct from generic AI marks.",
+  "industry": "software",
+  "mockups": ["readme", "app-icon", "website", "terminal", "sticker", "social"],
+  "nav": ["How it works", "Catalog", "GitHub"],
+  "brand_color": "#D9643A",
+  "tile_color": "#3A2418",
+  "greyscale": false,
+  "final": true,
+  "designer": "scenec",
+  "concepts": [{
+    "name": "Path",
+    "symbol": "../svg/symbol-light.svg",
+    "lockup": "../svg/horizontal-light.svg",
+    "stacked": "../svg/stacked-light.svg",
+    "symbol_on_tile": "../svg/symbol-dark.svg",
+    "symbol_on_dark": "../svg/symbol-dark.svg",
+    "lockup_on_dark": "../svg/horizontal-dark.svg",
+    "stacked_on_tile": "../svg/stacked-dark.svg",
+    "stacked_on_dark": "../svg/stacked-dark.svg",
+    "idea": "An S drawn as a path with a checkpoint at each end: a scene is a journey.",
+    "rationale": [
+      "Reads as the letter S and as a route, with no explanation needed",
+      "The ringed discs are the checkpoints of scenec's 2.5D mode",
+      "Colours come from the flat-autumn theme: ink brown, terracotta and amber"
+    ]
+  }],
+  "recommendation": "Path: the only mark that carries the idea of the project and is still a letter.",
+  "next_steps": ["Apply it to the README and the site", "Use the favicon and app icon from the kit"]
+}
