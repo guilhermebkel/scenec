@@ -3,7 +3,7 @@
 <p align="center">
   <strong>Illustrate with text: a YAML scene in, an SVG out, and written feedback on what is wrong with it.</strong>
   <br />
-  <em>Built for AIs that cannot see images: they still draw, check and fix an illustration without looking at it. CPU only, no image model. Works with Claude Code, Codex and Cursor.</em>
+  <em>Drawing an image costs a fast CPU script, not an image model: cheap, repeatable and checked before you see it. Works with any AI that can run a command, such as Claude Code, Codex or Cursor.</em>
 </p>
 
 <p align="center">
@@ -15,16 +15,16 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/banner.png" alt="An illustration made by scenec from a 40-line YAML scene" width="520" />
+  <img src="docs/assets/origin.png" alt="A path with five checkpoints in 2.5D, from an idea to the scenec repository" width="720" />
   <br />
-  <sub>This image was drawn by scenec from <a href="skills/draw-scene/recipes/illustrated-story.yaml">a short YAML scene</a>.</sub>
+  <sub>How scenec was born, from an idea to this repo. Drawn by scenec itself from <a href="docs/assets/origin.yaml">a short YAML scene</a>.</sub>
 </p>
 
 ---
 
-**An AI that cannot see its own drawing has no way to know if it is good.** Image models need a picture-capable model and are not repeatable. Hand-written SVG has no feedback loop.
+**Image generation should be cheap, repeatable and checked.** An image model is slow and costly per picture, and two runs never give the same result. Hand-written SVG is cheap but has no feedback loop.
 
-`scenec` gives the AI a closed vocabulary (86 assets, ready-made groups, a map of Europe, 6 styles) and a compiler that **measures what it drew**: it returns the SVG plus warnings, an art director's critiques and a text description of where everything landed. The AI fixes the scene and runs it again until the report is clean.
+`scenec` gives any AI a closed vocabulary (86 assets, ready-made groups, a map of Europe, 6 styles) and a compiler, a fast script that runs on the CPU in a blink. It **measures what it drew** and returns the SVG plus warnings, an art director's critiques and a text description of where everything landed. The AI fixes the scene and runs it again until the report is clean, and it never needs to look at the picture to do so.
 
 > **Fix the scene, not the SVG.** The skill tells the agent to never edit the SVG by hand: every correction goes back through the scene, so the result stays repeatable.
 
@@ -75,7 +75,7 @@ The same scene gives the same SVG on any machine. A bundled font makes the PNG l
 npx skills add guilhermebkel/scenec -g
 ```
 
-The [`skills`](https://github.com/vercel-labs/skills) CLI asks which of your agents (Claude Code, Codex, Cursor) should get the skill. Name them to skip the question (`-a claude-code -a codex -a cursor`), or drop `-g` to install only in the current project. Running scenec needs Node.js 20+; `npx` fetches it on first use.
+The [`skills`](https://github.com/vercel-labs/skills) CLI asks which of your agents should get the skill. Drop `-g` to install only in the current project. Running scenec needs Node.js 20+.
 
 ### 2. Ask for an illustration
 
@@ -88,8 +88,8 @@ The agent picks one of 8 recipes (reel, carousel, "wrapped" card, e-learning, il
 ### 3. Or use the CLI yourself
 
 ```bash
-npx @guilhermebkel/scenec@1 check scene.yaml                  # warnings and critiques; exit code 1 if there are any
-npx @guilhermebkel/scenec@1 render scene.yaml -o out --png    # out.svg and out.png, plus a JSON report
+npx @guilhermebkel/scenec check scene.yaml                  # warnings and critiques; exit code 1 if there are any
+npx @guilhermebkel/scenec render scene.yaml -o out --png    # out.svg and out.png, plus a JSON report
 ```
 
 ## Example
@@ -106,7 +106,7 @@ objects:
 ```
 
 ```text
-$ npx @guilhermebkel/scenec@1 check scene.yaml
+$ npx @guilhermebkel/scenec check scene.yaml
 warnings:
   'banco' is 10% outside the frame
   'rex' overlaps 'banco' by 36%; use left_of/right_of or a different depth
@@ -130,7 +130,7 @@ The agent moves the bench in, gives the dog another color, runs `check` again, a
 | `paper` | Paper cut-out: each piece with its own shadow and fiber texture |
 | `sketch` | Hand-drawn pencil look |
 
-`npx @guilhermebkel/scenec@1 catalog assets` lists everything; the full language is in [`skills/draw-scene/references/dsl.md`](skills/draw-scene/references/dsl.md).
+`npx @guilhermebkel/scenec catalog assets` lists everything; the full language is in [`skills/draw-scene/references/dsl.md`](skills/draw-scene/references/dsl.md).
 
 ## How it works
 

@@ -47,6 +47,7 @@ pnpm check:licenses  # runtime dependency licenses
 - A change that moves any baseline is deliberate: run `pnpm test:visual --update`, look at `test/visual/report/`, and say in the PR why each case changed.
 - Anything that goes into an SVG from outside passes `sanitizeSvg`. Never loosen its allowlist without a test for the new element.
 - When the DSL changes, regenerate the skill references (`pnpm skill:refs`) in the same PR.
+- The README quotes counts (assets, kits, recipes, baselines). When one of them changes, update `README.md` in the same PR.
 - No comments by default. A comment starts with `Why:` and sits above the line whose hidden rule it explains.
 - When behavior or vocabulary changes, update `GLOSSARY.md`, the docs or an ADR in the same PR.
 - Every rule in `docs/code-standards.md` is enforced on all of `src`; there is no relaxed-rules list.
