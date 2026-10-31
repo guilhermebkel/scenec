@@ -30,7 +30,7 @@ describe("CheckModule.check()", () => {
     const result = CheckModule.check({ canvas: FRAME, objects: { a: { asset: "tree", at: 0.4 }, b: { asset: "house", at: 0.62 } } });
 
     expect(result.art).toStrictEqual([
-      "art: 'a' and 'b' almost touch (tangency); move them apart a little or overlap them on purpose",
+      "art: 'a' just touches 'b' (tangent); overlap them clearly or leave a gap of at least 8 px",
     ]);
   });
 

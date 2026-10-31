@@ -75,7 +75,8 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'lousa' and 'aluno' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'lousa' and 'aluna' almost touch (tangency); move them apart a little or overlap them on purpose"
+    "art: 'lousa' just touches 'aluno' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'lousa' just touches 'aluna' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
   ]
 }

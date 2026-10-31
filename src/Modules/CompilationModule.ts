@@ -1,7 +1,7 @@
 import { MapModule } from "@/Modules/MapModule.ts";
 import { ParsingModule } from "@/Modules/ParsingModule.ts";
 import { PlaneModule } from "@/Modules/PlaneModule.ts";
-import type { Background, Camera, CompilationContext, CompilationOutput, CritiqueInput, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
+import type { Background, Camera, CompilationContext, CompilationOutput, CritiqueInput, CritiqueTitle, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
 import type { CritiqueName } from "@/Protocols/CritiqueProtocol.ts";
 import type { KitSceneName } from "@/Protocols/KitProtocol.ts";
 import type { CompileOptions } from "@/Protocols/OptionsProtocol.ts";
@@ -118,7 +118,7 @@ export class CompilationModule {
       layout: DescriptionService.layout(ordered, context),
     };
     const parts = {
-      context, head, background: backgroundSvg, sceneArt, textRects: text.rects, ordered, framing: framing.svg,
+      context, head, background: backgroundSvg, sceneArt, textRects: text.rects, ordered, framing: framing.svg, scene,
     };
     const critique = context.canvas.critique === false ? null : CompilationModule.critiqueInput(parts);
     return { result, critique };
@@ -152,6 +152,9 @@ export class CompilationModule {
 
   private static readonly FRAMING_CRITIQUE_Z = 999;
 
+  // Why: 0.075 is the standard title height ratio used when no explicit size is set.
+  private static readonly DEFAULT_TITLE_SIZE = 0.075;
+
   private static critiqueInput(parts: {
     context: CompilationContext;
     head: string;
@@ -160,8 +163,9 @@ export class CompilationModule {
     textRects: CritiqueInput["textRects"];
     ordered: Placement[];
     framing?: string;
+    scene?: Scene;
   }): CritiqueInput {
-    const { context, head, background, sceneArt, textRects, ordered, framing } = parts;
+    const { context, head, background, sceneArt, textRects, ordered, framing, scene } = parts;
     const objects = ordered.filter((placement) => !placement.isOffView).map((placement) => ({
       id: placement.id,
       asset: placement.asset,
@@ -170,6 +174,9 @@ export class CompilationModule {
       body: SvgUtil.flattenOpacity(placement.bodySvg),
       related: placement.related,
       isIgnored: placement.isBackdrop || context.idToObject[placement.id]?.critique === false,
+      isFocus: placement.isFocus,
+      height: placement.height,
+      depth: placement.depth,
     }));
     if (framing) {
       objects.push({
@@ -180,7 +187,31 @@ export class CompilationModule {
         body: SvgUtil.flattenOpacity(framing),
         related: [],
         isIgnored: false,
+        isFocus: false,
+        height: 0,
+        depth: null,
       });
+    }
+    const titles = (scene?.text ?? []).filter((item) => (item.role ?? "title") === "title");
+    const titleItem = titles.toSorted((first, second) => {
+      const firstRatio = typeof first.size === "number" ? first.size : CompilationModule.DEFAULT_TITLE_SIZE;
+      const secondRatio = typeof second.size === "number" ? second.size : CompilationModule.DEFAULT_TITLE_SIZE;
+      return secondRatio - firstRatio;
+    })[0];
+    let title: CritiqueTitle | undefined;
+    if (titleItem) {
+      const sizeRatio = typeof titleItem.size === "number" ? titleItem.size : CompilationModule.DEFAULT_TITLE_SIZE;
+      title = {
+        content: String(titleItem.content),
+        fontSize: sizeRatio * context.height,
+      };
+    }
+    const focus = context.canvas.focus;
+    let focusId: string | undefined;
+    if (Array.isArray(focus)) {
+      focusId = focus[0];
+    } else {
+      focusId = focus;
     }
     // Why: the art-director critique runs in the render entry, which has resvg; the compiler only hands it the inputs.
     return {
@@ -194,6 +225,10 @@ export class CompilationModule {
       textRects,
       skip: IdUtil.lookup(CompilationModule.SCENE_TO_SKIPPED_CRITIQUES, context.kit.scene) ?? [],
       objects,
+      horizon: context.lines.horizon,
+      setting: context.setting,
+      focusId,
+      title,
     };
   }
 }

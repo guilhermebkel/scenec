@@ -26,5 +26,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: objects have similar sizes; make the focus larger or add a small object for scale"
+  ]
 }

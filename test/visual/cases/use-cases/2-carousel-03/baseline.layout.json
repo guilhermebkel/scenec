@@ -58,5 +58,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'canto_cadeira' touches the horizon; move it above or below"
+  ]
 }

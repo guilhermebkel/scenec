@@ -243,15 +243,15 @@
     "art: 'retorno' blends into the background in the top part (99% of this outline has no contrast): the color #E5DCCA is too close; change the color of one of the two",
     "art: 'quadro_rosa' blends into the background in the top part (81% of this outline has no contrast): the color #F6E5E2 is too close; change the color of one of the two",
     "art: 'sacola' blends into the background in the top part (74% of this outline has no contrast): the color #E2E2DE is too close; change the color of one of the two",
-    "art: 'armario' and 'bancada' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'armario2' and 'retorno' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'bancada' and 'retorno' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'bancada' and 'monitor' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'quadro_op' and 'quadro_rosa' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'quadro_op' and 'boneco4' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'quadro_rosa' and 'foto' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'foto' and 'quadro_txt' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'foto' and 'bone' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'interruptor' touches the edge (right); move it away from the edge or let it crop on purpose"
+    "art: 'armario' just touches 'bancada' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'armario2' just touches 'retorno' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'bancada' just touches 'retorno' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'bancada' just touches 'monitor' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'quadro_op' just touches 'boneco4' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'quadro_rosa' just touches 'foto' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'foto' just touches 'quadro_txt' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'foto' just touches 'bone' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'interruptor' touches the edge (right); move it away from the edge or let it crop on purpose",
+    "art: '#3A6FD8' on 'quadro_op' clashes with the palette; try a hue near 45° or lower its saturation"
   ]
 }

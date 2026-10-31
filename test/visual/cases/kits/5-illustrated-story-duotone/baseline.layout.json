@@ -51,6 +51,8 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'rex' blends into the background in the middle part (40% of this outline has no contrast): the color #9CA8B5 is too close; change the color of one of the two"
+    "art: 'rex' blends into the background in the middle part (40% of this outline has no contrast): the color #9CA8B5 is too close; change the color of one of the two",
+    "art: 'sol' just touches 'arv' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'sol' draws more attention than the focus 'lia' (contrast 0.39 vs 0.19); make 'sol' less saturated or the focus brighter"
   ]
 }

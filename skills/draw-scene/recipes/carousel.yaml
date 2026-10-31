@@ -15,7 +15,7 @@ objects:
   sol:
     asset: sun
     at: top-right
-    altitude: 0.36
+    altitude: 0.26
     size: small
   arv:
     asset: tree

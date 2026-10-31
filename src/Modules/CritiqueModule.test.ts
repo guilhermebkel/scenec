@@ -87,14 +87,14 @@ describe("CritiqueModule.critique()", () => {
     const objects = [box("first", { left: 40, top: 100, side: 100, color: INK }), box("second", { left: 141, top: 100, side: 100, color: INK })];
 
     expect(CritiqueModule.critique(input(objects))).toContain(
-      "art: 'first' and 'second' almost touch (tangency); move them apart a little or overlap them on purpose",
+      "art: 'first' just touches 'second' (tangent); overlap them clearly or leave a gap of at least 8 px",
     );
   });
 
   it("lets related objects touch", () => {
     const objects = [box("first", { left: 40, top: 100, side: 100, color: INK }, { related: ["second"] }), box("second", { left: 141, top: 100, side: 100, color: INK })];
 
-    expect(CritiqueModule.critique(input(objects)).some((message) => message.includes("almost touch"))).toBe(false);
+    expect(CritiqueModule.critique(input(objects)).some((message) => message.includes("just touches"))).toBe(false);
   });
 
   it("warns about an object that stops one pixel short of the edge", () => {

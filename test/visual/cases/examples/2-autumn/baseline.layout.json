@@ -115,8 +115,7 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'sol' and 'monte' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'arvore' and 'cerca' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'pinho' and 'joao' almost touch (tangency); move them apart a little or overlap them on purpose"
+    "art: 'sol' just touches 'monte' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
   ]
 }

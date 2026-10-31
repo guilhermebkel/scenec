@@ -93,7 +93,7 @@
   "art": [
     "art: 'arvore' blends into the background in the top part (48% of this outline has no contrast): the color #2F5260 is too close; change the color of one of the two",
     "art: 'pinho' blends into the background in the bottom part (80% of this outline has no contrast): the color #213642 is too close; change the color of one of the two",
-    "art: 'arvore' and 'cerca' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'pinho' and 'joao' almost touch (tangency); move them apart a little or overlap them on purpose"
+    "art: 'cerca' draws more attention than the focus 'joao' (contrast 0.50 vs 0.22); make 'cerca' less saturated or the focus brighter",
+    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
   ]
 }

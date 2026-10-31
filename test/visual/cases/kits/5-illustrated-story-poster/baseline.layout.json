@@ -50,5 +50,8 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'sol' just touches 'arv' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: '#FF5C81' on 'lia' clashes with the palette; try a hue near 105° or lower its saturation"
+  ]
 }

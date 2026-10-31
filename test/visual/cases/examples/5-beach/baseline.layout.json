@@ -98,5 +98,9 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'nuvem' just touches 'coqueiro' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: the picture has no darks; darken 'guarda' or the ground",
+    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
+  ]
 }

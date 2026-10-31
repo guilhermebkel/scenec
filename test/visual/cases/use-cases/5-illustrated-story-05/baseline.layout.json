@@ -42,5 +42,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'jan' draws more attention than the focus 'lia' (contrast 0.49 vs 0.05); make 'jan' less saturated or the focus brighter"
+  ]
 }

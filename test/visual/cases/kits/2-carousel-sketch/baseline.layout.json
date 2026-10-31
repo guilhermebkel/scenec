@@ -58,5 +58,8 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'canto_cadeira' touches the horizon; move it above or below",
+    "art: 'canto_pessoa' is lost at thumbnail size; increase its contrast against the background"
+  ]
 }

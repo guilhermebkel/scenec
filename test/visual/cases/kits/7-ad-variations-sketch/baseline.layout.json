@@ -26,5 +26,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'eu' is lost at thumbnail size; increase its contrast against the background"
+  ]
 }

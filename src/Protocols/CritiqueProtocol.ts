@@ -1,8 +1,21 @@
 import type { AssetKind } from "@/Protocols/AssetProtocol.ts";
+import type { SettingName } from "@/Protocols/SceneProtocol.ts";
 
-export const CRITIQUE_NAMES = ["coverage", "balance", "silhouette", "contact"] as const;
+export const CRITIQUE_NAMES = [
+  "coverage",
+  "balance",
+  "silhouette",
+  "contact",
+  "tangent",
+  "focus",
+  "color",
+  "scale",
+  "thumbnail",
+] as const;
 
 export type CritiqueName = (typeof CRITIQUE_NAMES)[number];
+
+export type CritiqueDepth = "far" | "mid" | "near";
 
 export interface PixelBox {
   left: number;
@@ -13,11 +26,15 @@ export interface PixelBox {
 
 export interface RasterObject {
   id: string;
+  asset: string;
   kind: AssetKind;
   related: readonly string[];
   alpha: Uint8Array;
   area: number;
   box: PixelBox;
+  isFocus: boolean;
+  height: number;
+  depth: CritiqueDepth | null;
 }
 
 export interface Raster {
@@ -30,13 +47,20 @@ export interface Raster {
   backLab: Float32Array;
   objects: RasterObject[];
   owner: Int16Array;
+  horizonRatio?: number;
+  setting?: SettingName;
+  focusId?: string;
 }
 
 export interface RasterLayer {
   id: string;
+  asset: string;
   kind: AssetKind;
   related: readonly string[];
   pixels: Uint8Array;
+  isFocus: boolean;
+  height: number;
+  depth: CritiqueDepth | null;
 }
 
 export interface RasterSource {
@@ -46,4 +70,7 @@ export interface RasterSource {
   fullPixels: Uint8Array;
   backPixels: Uint8Array;
   layers: RasterLayer[];
+  horizonRatio?: number;
+  setting?: SettingName;
+  focusId?: string;
 }

@@ -26,5 +26,8 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'prato' touches the horizon; move it above or below",
+    "art: title is too small to read at thumbnail size (cap height 2.5 px); increase title size"
+  ]
 }

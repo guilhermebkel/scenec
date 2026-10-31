@@ -34,5 +34,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'rui' draws more attention than the focus 'ana' (contrast 0.34 vs 0.18); make 'rui' less saturated or the focus brighter"
+  ]
 }

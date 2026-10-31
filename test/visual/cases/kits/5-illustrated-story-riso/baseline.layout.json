@@ -50,5 +50,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'sol' just touches 'arv' (tangent); overlap them clearly or leave a gap of at least 8 px"
+  ]
 }

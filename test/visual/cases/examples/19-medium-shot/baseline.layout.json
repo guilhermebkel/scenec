@@ -148,6 +148,6 @@
   "warnings": [],
   "art": [
     "art: 'jantar_copo1' blends into the background in the middle part (55% of this outline has no contrast): the color #BBBFC4 is too close; change the color of one of the two",
-    "art: 'jantar_pessoa1' and 'jantar_copo1' almost touch (tangency); move them apart a little or overlap them on purpose"
+    "art: 'jantar_prato' touches the horizon; move it above or below"
   ]
 }
