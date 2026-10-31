@@ -87,6 +87,20 @@ import { PlasticBagAsset } from "@/Resources/Assets/PlasticBagAsset.ts";
 import { CablesAsset } from "@/Resources/Assets/CablesAsset.ts";
 import { LightSwitchAsset } from "@/Resources/Assets/LightSwitchAsset.ts";
 import { GlassShelfAsset } from "@/Resources/Assets/GlassShelfAsset.ts";
+import { RefrigeratorAsset } from "@/Resources/Assets/RefrigeratorAsset.ts";
+import { StoveAsset } from "@/Resources/Assets/StoveAsset.ts";
+import { SinkAsset } from "@/Resources/Assets/SinkAsset.ts";
+import { WhiteboardAsset } from "@/Resources/Assets/WhiteboardAsset.ts";
+import { WaterCoolerAsset } from "@/Resources/Assets/WaterCoolerAsset.ts";
+import { FirstAidKitAsset } from "@/Resources/Assets/FirstAidKitAsset.ts";
+import { StethoscopeAsset } from "@/Resources/Assets/StethoscopeAsset.ts";
+import { BlackboardAsset } from "@/Resources/Assets/BlackboardAsset.ts";
+import { GlobeAsset } from "@/Resources/Assets/GlobeAsset.ts";
+import { PodiumAsset } from "@/Resources/Assets/PodiumAsset.ts";
+import { ConfettiAsset } from "@/Resources/Assets/ConfettiAsset.ts";
+import { CursorAsset } from "@/Resources/Assets/CursorAsset.ts";
+import { ToggleAsset } from "@/Resources/Assets/ToggleAsset.ts";
+import { ChatBubbleAsset } from "@/Resources/Assets/ChatBubbleAsset.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 
 export interface AssetResolution {
@@ -117,6 +131,9 @@ export class AssetService {
       new CabinetAsset(), new RollingCartAsset(), new TrashCanAsset(), new OfficeChairAsset(), new LaptopOpenAsset(),
       new HeadphonesAsset(), new CapAsset(), new PhotoFrameAsset(), new FigurineAsset(), new TumblerAsset(),
       new PaperCupAsset(), new PlasticBagAsset(), new CablesAsset(), new LightSwitchAsset(), new GlassShelfAsset(),
+      new RefrigeratorAsset(), new StoveAsset(), new SinkAsset(), new WhiteboardAsset(), new WaterCoolerAsset(),
+      new FirstAidKitAsset(), new StethoscopeAsset(), new BlackboardAsset(), new GlobeAsset(), new PodiumAsset(),
+      new ConfettiAsset(), new CursorAsset(), new ToggleAsset(), new ChatBubbleAsset(),
     ],
   );
 

@@ -1,0 +1,43 @@
+canvas:
+  width: 1000
+  height: 1000
+  theme: flat-cool
+  setting: indoor
+  horizon: 0.6
+  base: 0.85
+objects:
+  festa:
+    asset: confetti
+    at: 0.85
+    depth: far
+    altitude: 0.45
+  pulpito:
+    asset: podium
+    at: 0.65
+  palestrante:
+    asset: person
+    pose: presenting
+    left_of: pulpito
+    gap: 0.04
+    hair: short
+    hair_color: black
+    shirt: primary
+    pants: secondary
+text:
+  - content: "KEYNOTE 2026"
+    at: top-center
+    role: label
+    size: 0.024
+    color: secondary
+    'y': 0.15
+  - content: "O Futuro da Criacao"
+    at: top-center
+    role: title
+    size: 0.052
+    'y': 0.22
+  - content: "Conheca as novidades e lancamentos para agentes autonomos."
+    at: top-center
+    role: body
+    size: 0.026
+    'y': 0.31
+    color: secondary

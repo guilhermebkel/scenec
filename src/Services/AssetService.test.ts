@@ -11,6 +11,14 @@ describe("AssetService.resolveAsset()", () => {
     expect(AssetService.resolveAsset("man").id).toBe("person");
   });
 
+  it("resolves synonyms for new asset families", () => {
+    expect(AssetService.resolveAsset("fridge").id).toBe("refrigerator");
+    expect(AssetService.resolveAsset("fogao").id).toBe("stove");
+    expect(AssetService.resolveAsset("faucet").id).toBe("sink");
+    expect(AssetService.resolveAsset("chalk").id).toBe("blackboard");
+    expect(AssetService.resolveAsset("pointer").id).toBe("cursor");
+  });
+
   it("suggests close names for an unknown asset", () => {
     expect(AssetService.resolveAsset("perzon").suggest).toContain("person");
   });

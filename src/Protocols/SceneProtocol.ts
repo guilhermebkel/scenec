@@ -143,6 +143,7 @@ export const objectSchema = z.looseObject({
   lift: z.number().optional(),
   hang: z.number().optional(),
   facing: z.enum(["left", "right"]).optional(),
+  variant: z.union([z.number(), z.string()]).optional().describe("Asset variant: number or name for an alternate visual style."),
   pose: z.string().optional().describe("Person pose. See `scenec catalog poses`."),
   expr: z.string().optional().describe("Person expression."),
   look: z.string().optional().describe("Where a person looks: another object id, or left, right, up, down, camera."),

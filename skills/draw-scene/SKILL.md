@@ -38,6 +38,6 @@ You write a YAML scene. `scenec` compiles it to SVG and tells you, in text, what
 
 ## Files
 
-- `recipes/*.yaml`: 8 scenes that compile with zero warnings and zero critiques.
+- `recipes/*.yaml`: 10 scenes that compile with zero warnings and zero critiques.
 - `references/dsl.md`: the scene language (generated).
 - `references/catalog.md`: assets, groups, kits, themes, poses (generated).

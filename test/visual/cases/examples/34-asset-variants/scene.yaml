@@ -1,0 +1,38 @@
+canvas:
+  width: 1200
+  height: 800
+  theme: flat-autumn
+  setting: outdoor
+  horizon: 0.6
+  base: 0.88
+objects:
+  arvore1:
+    asset: tree
+    at: 0.2
+    depth: far
+  arvore2:
+    asset: tree
+    variant: 2
+    at: 0.5
+    depth: far
+  arvore3:
+    asset: tree
+    variant: 3
+    at: 0.8
+    depth: far
+  sofa:
+    asset: sofa
+    variant: 2
+    at: 0.35
+    color: primary
+  cadeira:
+    asset: chair
+    variant: 2
+    at: 0.68
+text:
+  - content: Variantes de Assets
+    at: top-center
+    role: title
+    size: 0.045
+    'y': 0.15
+    color: secondary
