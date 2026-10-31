@@ -2,7 +2,10 @@ import type { AssetParams, Theme } from "@/Protocols/AssetProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import { BaseAsset } from "@/Resources/Assets/BaseAsset.ts";
 import { DetailUtil } from "@/Utils/DetailUtil.ts";
+import { IdUtil } from "@/Utils/IdUtil.ts";
 import { ShapeUtil } from "@/Utils/ShapeUtil.ts";
+
+type SofaVariantKey = "2" | "curved" | "3" | "minimal";
 
 export class SofaAsset extends BaseAsset {
   readonly id = "sofa";
@@ -17,7 +20,23 @@ export class SofaAsset extends BaseAsset {
 
   readonly tags = ["sofá", "sofa", "couch"];
 
+  private static readonly VARIANT_TO_DRAWER: Record<
+    SofaVariantKey,
+    (asset: SofaAsset, params: AssetParams, theme: Theme) => string
+  > = {
+    2: (asset, params, theme) => asset.drawCurved(params, theme),
+    curved: (asset, params, theme) => asset.drawCurved(params, theme),
+    3: (asset, params, theme) => asset.drawMinimal(params, theme),
+    minimal: (asset, params, theme) => asset.drawMinimal(params, theme),
+  };
+
   draw(params: AssetParams, theme: Theme) {
+    const variantKey = String(params.variant ?? "");
+    const drawer = IdUtil.lookup(SofaAsset.VARIANT_TO_DRAWER, variantKey);
+    return drawer ? drawer(this, params, theme) : this.drawDefault(params, theme);
+  }
+
+  private drawDefault(params: AssetParams, theme: Theme): string {
     const mainColor = ShapeUtil.color(theme, params.color, theme.secondary), darker = ColorUtil.sh(mainColor, -0.15);
     const rank = DetailUtil.rankOf(params.detail);
     const hasParts = rank >= 1;
@@ -44,5 +63,29 @@ export class SofaAsset extends BaseAsset {
       + ShapeUtil.rect(-50, -40, 100, 2, ColorUtil.sh(mainColor, -0.3))
       : "")
     + texture;
+  }
+
+  private drawCurved(params: AssetParams, theme: Theme): string {
+    const mainColor = ShapeUtil.color(theme, params.color, theme.secondary);
+    const darker = ColorUtil.sh(mainColor, -0.18);
+    return ShapeUtil.shadow(theme, 84, 4.5)
+      + ShapeUtil.rect(-65, -8, 8, 8, theme.metal, { rx: 2 })
+      + ShapeUtil.rect(57, -8, 8, 8, theme.metal, { rx: 2 })
+      + ShapeUtil.rect(-75, -70, 150, 45, darker, { rx: 22 })
+      + ShapeUtil.rect(-68, -64, 136, 36, mainColor, { rx: 18 })
+      + ShapeUtil.rect(-80, -38, 160, 32, mainColor, { rx: 16 })
+      + ShapeUtil.rect(-85, -48, 18, 42, darker, { rx: 9 })
+      + ShapeUtil.rect(67, -48, 18, 42, darker, { rx: 9 });
+  }
+
+  private drawMinimal(params: AssetParams, theme: Theme): string {
+    const mainColor = ShapeUtil.color(theme, params.color, theme.secondary);
+    const darker = ColorUtil.sh(mainColor, -0.15);
+    return ShapeUtil.shadow(theme, 80, 4)
+      + ShapeUtil.rect(-60, -14, 4, 14, theme.metal)
+      + ShapeUtil.rect(56, -14, 4, 14, theme.metal)
+      + ShapeUtil.rect(-75, -60, 150, 35, darker, { rx: 4 })
+      + ShapeUtil.rect(-70, -56, 140, 28, mainColor, { rx: 3 })
+      + ShapeUtil.rect(-75, -28, 150, 16, mainColor, { rx: 4 });
   }
 }

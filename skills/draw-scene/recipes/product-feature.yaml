@@ -1,0 +1,41 @@
+canvas:
+  width: 864
+  height: 1080
+  theme: flat-cool
+  setting: indoor
+  horizon: 0.55
+  base: 0.78
+objects:
+  quadro:
+    asset: whiteboard
+    at: 0.25
+    depth: far
+  mesa:
+    asset: desk
+    at: 0.65
+  computador:
+    asset: laptop_open
+    on: mesa
+    at: 0.6
+  mensagem:
+    asset: chat_bubble
+    at: 0.78
+    elevation: 80
+text:
+  - content: "NOVO RECURSO"
+    at: bottom-left
+    role: label
+    size: 0.022
+    color: secondary
+    'y': 0.82
+  - content: "Automacao Inteligente"
+    at: bottom-left
+    role: title
+    size: 0.048
+    'y': 0.88
+  - content: "Ative fluxos inteligentes diretamente no painel de controle."
+    at: bottom-left
+    role: body
+    size: 0.026
+    'y': 0.94
+    color: secondary

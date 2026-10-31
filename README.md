@@ -29,7 +29,7 @@
 
 **Image generation should be cheap, repeatable and checked.** An image model is slow and costly per picture, and two runs never give the same result. Hand-written SVG is cheap but has no feedback loop.
 
-`scenec` gives any AI a closed vocabulary (86 assets, ready-made groups, a map of Europe, 6 styles) and a compiler, a fast script that runs on the CPU in a blink. It **measures what it drew** and returns the SVG plus warnings, an art director's critiques and a text description of where everything landed. The AI fixes the scene and runs it again until the report is clean, and it never needs to look at the picture to do so.
+`scenec` gives any AI a closed vocabulary (100 assets, ready-made groups, a map of Europe, 10 styles) and a compiler, a fast script that runs on the CPU in a blink. It **measures what it drew** and returns the SVG plus warnings, an art director's critiques and a text description of where everything landed. The AI fixes the scene and runs it again until the report is clean, and it never needs to look at the picture to do so.
 
 > **Fix the scene, not the SVG.** The skill tells the agent to never edit the SVG by hand: every correction goes back through the scene, so the result stays repeatable.
 
@@ -88,7 +88,7 @@ The [`skills`](https://github.com/vercel-labs/skills) CLI asks which of your age
 Draw a vertical cover for a reel explaining compound interest, flat blue style.
 ```
 
-The agent picks one of 8 recipes (reel, carousel, "wrapped" card, e-learning, illustrated story, route map, ad variations, product), changes the content, checks, fixes up to 5 times and renders.
+The agent picks one of 10 recipes (reel, carousel, "wrapped" card, e-learning, illustrated story, route map, ad variations, product, keynote, feature), changes the content, checks, fixes up to 5 times and renders.
 
 ### 3. Or use the CLI yourself
 
@@ -125,7 +125,7 @@ The agent moves the bench in, gives the dog another color, runs `check` again, a
 
 ## What it draws
 
-86 assets (people with poses and expressions, furniture, plants, food, vehicles, buildings), ready-made groups, a map of Europe with routes, and 10 kits:
+100 assets (people with poses and expressions, furniture, plants, food, vehicles, buildings), ready-made groups, a map of Europe with routes, and 10 kits:
 
 | Kit | Look |
 | --- | --- |
@@ -214,8 +214,8 @@ Yes. Under `assets:` a scene can bring an SVG (inline or a file next to the scen
 
 ## Roadmap
 
-- [x] **Core:** 86 assets, groups, map mode, 10 kits, warnings, critiques, CLI, skill, 152 visual baselines.
-- [ ] **More recipes and assets** driven by real use of the skill.
+- [x] **Core:** 100 assets, groups, map mode, 10 kits, warnings, critiques, CLI, skill, 154 visual baselines.
+- [x] **More recipes and assets** driven by real use of the skill.
 
 ## Contributing
 

@@ -2,7 +2,7 @@
 
 > scenec is a command-line tool and agent skill that turns a YAML scene into an SVG and tells an AI, in text, what it drew and what is wrong with it.
 
-It runs on the CPU with no image model, works with Claude Code, Codex and Cursor, and gives the same SVG from the same scene on any machine. Its vocabulary is closed on purpose: 86 assets, ready-made groups, a map of Europe and 6 style kits. MIT license, requires Node.js 20 or newer.
+It runs on the CPU with no image model, works with Claude Code, Codex and Cursor, and gives the same SVG from the same scene on any machine. Its vocabulary is closed on purpose: 100 assets, ready-made groups, a map of Europe and 10 style kits. MIT license, requires Node.js 20 or newer.
 
 ## Docs
 

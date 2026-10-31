@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | scene | The YAML an AI writes: canvas, mode, objects, texts. | image, template |
 | canvas | Width, height and theme of the scene. | page |
-| asset | One of the 86 drawn things (`tree`, `desk`, `person`...). | sprite, icon |
+| asset | One of the 100 drawn things (`tree`, `desk`, `person`...). | sprite, icon |
 | group | A named set of assets placed together (`group:`). | cluster |
 | part | A piece of an asset that can be recolored. | layer |
 | shot | A named camera framing (`wide`, `medium`, ...). | zoom preset |

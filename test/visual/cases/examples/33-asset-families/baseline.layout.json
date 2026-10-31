@@ -1,0 +1,62 @@
+{
+  "layout": [
+    {
+      "id": "festa",
+      "asset": "confetti",
+      "x": 85,
+      "base": 47.2,
+      "w": 16.3,
+      "h": 24.5
+    },
+    {
+      "id": "lousa",
+      "asset": "blackboard",
+      "x": 18,
+      "base": 42.7,
+      "w": 27,
+      "h": 27.5
+    },
+    {
+      "id": "pia",
+      "asset": "sink",
+      "x": 35,
+      "base": 88,
+      "w": 15.9,
+      "h": 30.6
+    },
+    {
+      "id": "fogao",
+      "asset": "stove",
+      "x": 48,
+      "base": 88,
+      "w": 13.6,
+      "h": 30.6
+    },
+    {
+      "id": "geladeira",
+      "asset": "refrigerator",
+      "x": 66,
+      "base": 88,
+      "w": 14.5,
+      "h": 51
+    },
+    {
+      "id": "bebedouro",
+      "asset": "water_cooler",
+      "x": 79,
+      "base": 88,
+      "w": 8.2,
+      "h": 39.1
+    },
+    {
+      "id": "pulpito",
+      "asset": "podium",
+      "x": 90,
+      "base": 88,
+      "w": 11.3,
+      "h": 32.3
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

@@ -1,0 +1,38 @@
+canvas:
+  width: 1200
+  height: 800
+  theme: flat-cool
+  setting: indoor
+  horizon: 0.6
+  base: 0.88
+objects:
+  lousa:
+    asset: blackboard
+    at: 0.18
+  pia:
+    asset: sink
+    at: 0.35
+  fogao:
+    asset: stove
+    at: 0.48
+  geladeira:
+    asset: refrigerator
+    at: 0.66
+  bebedouro:
+    asset: water_cooler
+    at: 0.79
+    color: primary
+  pulpito:
+    asset: podium
+    at: 0.9
+  festa:
+    asset: confetti
+    at: 0.85
+    altitude: 0.35
+text:
+  - content: Novos Assets do Catalogo
+    at: top-center
+    role: title
+    size: 0.045
+    'y': 0.15
+    color: secondary

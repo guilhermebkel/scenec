@@ -1,0 +1,46 @@
+{
+  "layout": [
+    {
+      "id": "arvore1",
+      "asset": "tree",
+      "x": 20,
+      "base": 67.8,
+      "w": 15.6,
+      "h": 41.8
+    },
+    {
+      "id": "arvore2",
+      "asset": "tree",
+      "x": 50,
+      "base": 67.8,
+      "w": 15.6,
+      "h": 41.8
+    },
+    {
+      "id": "arvore3",
+      "asset": "tree",
+      "x": 80,
+      "base": 67.8,
+      "w": 15.6,
+      "h": 41.8
+    },
+    {
+      "id": "sofa",
+      "asset": "sofa",
+      "x": 35,
+      "base": 88,
+      "w": 38.5,
+      "h": 24.5
+    },
+    {
+      "id": "cadeira",
+      "asset": "chair",
+      "x": 68,
+      "base": 88,
+      "w": 10,
+      "h": 29.9
+    }
+  ],
+  "warnings": [],
+  "art": []
+}
