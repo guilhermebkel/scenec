@@ -9,7 +9,7 @@ describe("public API surface", () => {
   });
 
   it("exports from scenec/render the functions that need the native renderer", () => {
-    expect(Object.keys(render).toSorted()).toStrictEqual(["check", "createFileReader", "measureSvg", "renderPng"]);
+    expect(Object.keys(render).toSorted()).toStrictEqual(["best", "check", "createFileReader", "measureSvg", "renderPng"]);
   });
 
   it("exports from scenec/schema the schema and the vocabulary", () => {
