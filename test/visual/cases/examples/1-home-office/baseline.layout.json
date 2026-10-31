@@ -116,6 +116,8 @@
   "warnings": [],
   "art": [
     "art: 'janela' blends into the background in the top part (88% of this outline has no contrast): the color #F9F9FA is too close; change the color of one of the two",
-    "art: 'cadeira' and 'note' almost touch (tangency); move them apart a little or overlap them on purpose"
+    "art: 'cadeira' just touches 'note' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'note' touches the horizon; move it above or below",
+    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
   ]
 }

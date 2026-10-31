@@ -124,9 +124,13 @@
   "warnings": [],
   "art": [
     "art: 'balcao' blends into the background in the bottom part (65% of this outline has no contrast): the color #7B5036 is too close; change the color of one of the two",
-    "art: 'quadro' and 'luz1' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'cadeira1' and 'cafe1' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'cadeira2' and 'cafe2' almost touch (tangency); move them apart a little or overlap them on purpose",
-    "art: 'cafe1' and 'bolo' almost touch (tangency); move them apart a little or overlap them on purpose"
+    "art: 'quadro' just touches 'luz1' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'cadeira1' just touches 'cafe1' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'cadeira2' just touches 'cafe2' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'cafe1' just touches 'bolo' (tangent); overlap them clearly or leave a gap of at least 8 px",
+    "art: 'bolo' touches the horizon; move it above or below",
+    "art: 'prat' draws more attention than the focus 'lia' (contrast 0.31 vs 0.13); make 'prat' less saturated or the focus brighter",
+    "art: 'maquina' draws more attention than the focus 'lia' (contrast 0.36 vs 0.13); make 'maquina' less saturated or the focus brighter",
+    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
   ]
 }

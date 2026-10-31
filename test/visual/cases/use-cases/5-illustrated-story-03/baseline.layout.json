@@ -58,5 +58,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: the picture has no darks; darken 'cast' or the ground"
+  ]
 }

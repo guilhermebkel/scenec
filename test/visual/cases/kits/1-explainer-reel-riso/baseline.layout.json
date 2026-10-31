@@ -50,5 +50,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: '#D0565D' on 'rex' clashes with the palette; try a hue near 105° or lower its saturation"
+  ]
 }

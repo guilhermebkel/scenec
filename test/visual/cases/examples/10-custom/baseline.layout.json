@@ -69,5 +69,11 @@
     "custom asset 'vaso_raro': file 'custom/nao-existe.svg' not found (path is relative to the scene file)",
     "'extra' was ignored because custom asset 'vaso_raro' failed to load"
   ],
-  "art": []
+  "art": [
+    "art: 'robo' touches the horizon; move it above or below",
+    "art: 'xicara' touches the horizon; move it above or below",
+    "art: 'logo' draws more attention than the focus 'barista' (contrast 0.45 vs 0.11); make 'logo' less saturated or the focus brighter",
+    "art: 'maquina' draws more attention than the focus 'barista' (contrast 0.33 vs 0.11); make 'maquina' less saturated or the focus brighter",
+    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
+  ]
 }

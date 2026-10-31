@@ -59,6 +59,12 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'canto_caneca' blends into the background in the top part (100% of this outline has no contrast): the color #D8D8DB is too close; change the color of one of the two"
+    "art: 'canto_caneca' blends into the background in the top part (100% of this outline has no contrast): the color #D8D8DB is too close; change the color of one of the two",
+    "art: 'canto_cadeira' touches the horizon; move it above or below",
+    "art: the picture has no darks; darken 'canto_planta' or the ground",
+    "art: '#D0565D' on 'canto_mesa' clashes with the palette; try a hue near 135° or lower its saturation",
+    "art: '#FF9960' on 'canto_cadeira' clashes with the palette; try a hue near 135° or lower its saturation",
+    "art: '#D0565D' on 'canto_planta' clashes with the palette; try a hue near 285° or lower its saturation",
+    "art: '#FF9960' on 'canto_pessoa' clashes with the palette; try a hue near 135° or lower its saturation"
   ]
 }

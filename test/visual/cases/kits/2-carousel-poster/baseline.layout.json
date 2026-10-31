@@ -59,6 +59,8 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'canto_caneca' blends into the background in the top part (100% of this outline has no contrast): the color #E1D1B7 is too close; change the color of one of the two"
+    "art: 'canto_caneca' blends into the background in the top part (100% of this outline has no contrast): the color #E1D1B7 is too close; change the color of one of the two",
+    "art: 'canto_cadeira' touches the horizon; move it above or below",
+    "art: the picture has no darks; darken 'canto_planta' or the ground"
   ]
 }

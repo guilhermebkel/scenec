@@ -43,6 +43,7 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'rex' blends into the background in the bottom part (44% of this outline has no contrast): the color #382E42 is too close; change the color of one of the two"
+    "art: 'rex' blends into the background in the bottom part (44% of this outline has no contrast): the color #382E42 is too close; change the color of one of the two",
+    "art: '#D94F70' on 'lia' clashes with the palette; try a hue near 285° or lower its saturation"
   ]
 }

@@ -36,6 +36,10 @@
   "warnings": [],
   "art": [
     "art: 'canto_prateleira' blends into the background in the bottom part (70% of this outline has no contrast): the color #3C324F is too close; change the color of one of the two",
-    "art: 'canto_abajur' blends into the background in the bottom part (44% of this outline has no contrast): the color #0D1129 is too close; change the color of one of the two"
+    "art: 'canto_abajur' blends into the background in the bottom part (44% of this outline has no contrast): the color #0D1129 is too close; change the color of one of the two",
+    "art: '#FF7A59' on 'canto_prateleira' clashes with the palette; try a hue near 285° or lower its saturation",
+    "art: '#FF7A59' on 'canto_sofa' clashes with the palette; try a hue near 285° or lower its saturation",
+    "art: '#FF7A59' on 'canto_abajur' clashes with the palette; try a hue near 285° or lower its saturation",
+    "art: '#E75953' on 'canto_pessoa' clashes with the palette; try a hue near 285° or lower its saturation"
   ]
 }

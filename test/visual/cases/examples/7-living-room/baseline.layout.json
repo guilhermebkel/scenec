@@ -102,6 +102,13 @@
     "art: 'janela' blends into the background in the bottom part (42% of this outline has no contrast): the color #DDD2C9 is too close; change the color of one of the two",
     "art: 'rack' blends into the background in the top part (94% of this outline has no contrast): the color #8A5E43 is too close; change the color of one of the two",
     "art: 'planta' blends into the background in the bottom part (62% of this outline has no contrast): the color #934D39 is too close; change the color of one of the two",
-    "art: 'ana' blends into 'sofa' in the bottom part (50% of this outline has no contrast): the color #2E3D32 is too close; change the color of one of the two"
+    "art: 'ana' blends into 'sofa' in the bottom part (50% of this outline has no contrast): the color #2E3D32 is too close; change the color of one of the two",
+    "art: 'sofa' touches the horizon; move it above or below",
+    "art: 'janela' draws more attention than the focus 'ana' (contrast 0.39 vs 0.02); make 'janela' less saturated or the focus brighter",
+    "art: 'quadro' draws more attention than the focus 'ana' (contrast 0.22 vs 0.02); make 'quadro' less saturated or the focus brighter",
+    "art: 'prat' draws more attention than the focus 'ana' (contrast 0.33 vs 0.02); make 'prat' less saturated or the focus brighter",
+    "art: 'gato' draws more attention than the focus 'ana' (contrast 0.26 vs 0.02); make 'gato' less saturated or the focus brighter",
+    "art: 'ana' is lost at thumbnail size; increase its contrast against the background",
+    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
   ]
 }

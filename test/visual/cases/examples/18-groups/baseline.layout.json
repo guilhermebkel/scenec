@@ -147,6 +147,8 @@
   ],
   "warnings": [],
   "art": [
-    "art: empty band of 48% of the height (from y=0% to y=48%); raise the main group, increase the scale or fill the band (text, wall object, sky element)"
+    "art: empty band of 48% of the height (from y=0% to y=48%); raise the main group, increase the scale or fill the band (text, wall object, sky element)",
+    "art: 'canto_planta' touches the horizon; move it above or below",
+    "art: 'leitura_sofa' draws more attention than the focus 'canto_pessoa' (chroma 0.18 vs 0.09); make 'leitura_sofa' less saturated or the focus brighter"
   ]
 }

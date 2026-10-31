@@ -33,7 +33,8 @@ objects:
 text:
   - content: Sem conexão
     at: bottom-center
-    role: title
+    role: subtitle
+    weight: 700
     size: 0.05
     'y': 0.86
   - content: Verifique sua internet e tente de novo.

@@ -33,6 +33,9 @@ export class RasterService {
       backLab: RasterService.labOf(source.backPixels, pixelCount),
       objects,
       owner,
+      horizonRatio: source.horizonRatio,
+      setting: source.setting,
+      focusId: source.focusId,
     };
   }
 
@@ -54,7 +57,18 @@ export class RasterService {
         box.bottom = Math.max(box.bottom, row);
       }
     }
-    return { id: layer.id, kind: layer.kind, related: layer.related, alpha, area, box };
+    return {
+      id: layer.id,
+      asset: layer.asset,
+      kind: layer.kind,
+      related: layer.related,
+      alpha,
+      area,
+      box,
+      isFocus: layer.isFocus,
+      height: layer.height,
+      depth: layer.depth,
+    };
   }
 
   private static labOf(pixels: Uint8Array, pixelCount: number): Float32Array {

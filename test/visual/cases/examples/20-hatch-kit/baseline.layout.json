@@ -58,5 +58,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: title is too small to read at thumbnail size (cap height 3.1 px); increase title size"
+  ]
 }

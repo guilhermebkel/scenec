@@ -120,6 +120,14 @@ export interface CritiqueObject {
   body: string;
   related: string[];
   isIgnored: boolean;
+  isFocus?: boolean;
+  depth?: Depth | null;
+  height?: number;
+}
+
+export interface CritiqueTitle {
+  content: string;
+  fontSize: number;
 }
 
 export interface CritiqueInput {
@@ -133,6 +141,10 @@ export interface CritiqueInput {
   textRects: TextRect[];
   skip: CritiqueName[];
   objects: CritiqueObject[];
+  horizon?: number;
+  setting?: SettingName;
+  focusId?: string;
+  title?: CritiqueTitle;
 }
 
 export interface CompilationOutput {
