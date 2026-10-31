@@ -26,5 +26,6 @@
 | warning | A problem the compiler found in the scene. | error (an error stops compile) |
 | critique | An art-director remark produced by `check` (`art` in the report). | lint |
 | baseline | The SVG and layout stored for one regression case. | snapshot |
+| best-of-N | Renders N variants of free parameters and keeps the one with the best critique score (`best`). | search, genetic |
 | plane mode | The 2.5D layout with slots and depth. | scene mode |
 | map mode | The layout that draws a route over the map of Europe. | geo |

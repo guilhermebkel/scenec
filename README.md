@@ -94,6 +94,7 @@ The agent picks one of 8 recipes (reel, carousel, "wrapped" card, e-learning, il
 
 ```bash
 npx @guilhermebkel/scenec check scene.yaml                  # warnings and critiques; exit code 1 if there are any
+npx @guilhermebkel/scenec best scene.yaml -n 8 -o out --png # picks the best-scoring variant and writes it
 npx @guilhermebkel/scenec render scene.yaml -o out --png    # out.svg and out.png, plus a JSON report
 ```
 
@@ -157,7 +158,7 @@ The work is split on purpose:
 
 ```ts
 import { compile } from "@guilhermebkel/scenec";                  // pure: no native code, no file system
-import { check, renderPng } from "@guilhermebkel/scenec/render";  // needs the native renderer
+import { best, check, renderPng } from "@guilhermebkel/scenec/render";  // needs the native renderer
 import { sceneJsonSchema, catalog } from "@guilhermebkel/scenec/schema";
 ```
 
@@ -168,6 +169,7 @@ import { sceneJsonSchema, catalog } from "@guilhermebkel/scenec/schema";
 | --- | --- |
 | `scenec render <scene.yaml> [-o name] [--png] [--width 1200]` | Writes the SVG (and PNG) and prints the JSON report. |
 | `scenec check <scene.yaml>` | Compiles and critiques without writing files. Exit code 1 on a warning or critique, 2 when the scene is invalid. |
+| `scenec best <scene.yaml> [-n 8] [-o name] [--png] [--width 1200]` | Renders N variants of free parameters and writes the one with the best critique score. |
 | `scenec catalog [assets\|groups\|kits\|themes\|poses\|layout]` | Lists the vocabulary a scene can use. |
 | `scenec schema` | Prints the JSON Schema of the scene. |
 

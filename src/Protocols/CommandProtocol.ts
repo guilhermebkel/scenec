@@ -3,4 +3,6 @@ export interface CommandArguments {
   output: string | undefined;
   shouldWritePng: boolean;
   width: number;
+  count: number;
+  isBest?: boolean;
 }

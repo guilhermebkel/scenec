@@ -66,7 +66,10 @@ export class RasterService {
         PixelUtil.read(pixels, offset + 1),
         PixelUtil.read(pixels, offset + 2),
       );
-      lab.set([lightness, greenRed, blueYellow], index * RasterService.LAB_COMPONENTS);
+      const targetIndex = index * RasterService.LAB_COMPONENTS;
+      lab[targetIndex] = lightness;
+      lab[targetIndex + 1] = greenRed;
+      lab[targetIndex + 2] = blueYellow;
     }
     return lab;
   }

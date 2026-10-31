@@ -25,6 +25,7 @@ You write a YAML scene. `scenec` compiles it to SVG and tells you, in text, what
 3. Check: `npx @guilhermebkel/scenec check scene.yaml`. Read `warnings` and `art`. Exit code 1 means there is something to fix.
 4. Fix and check again. Stop after 5 cycles; if something still fails, say what is left instead of looping.
 5. Render: `npx @guilhermebkel/scenec render scene.yaml -o out --png`. Deliver `out.svg` and `out.png`.
+   Optionally polish with Best-of-N: once the report is clean, run `npx @guilhermebkel/scenec best scene.yaml -n 8 -o out --png` (or `render scene.yaml --best 8 -o out --png`). It builds variations of free parameters (seed, lighting side, camera frame, palette harmonies) and keeps the one with the best critique score, saving the winning parameters into `scene.yaml` so the result stays reproducible.
 
 ## Rules
 
