@@ -39,6 +39,10 @@ export class CompilationModule {
     sketch: ["silhouette"],
   };
 
+  private static readonly DEFAULT_GRAIN_OPACITY = 0.1;
+
+  private static readonly GRAIN_DIGITS = 2;
+
   private static readonly MODE_TO_COMPILER: Record<ModeName, ModeCompiler> = {
     "classic": (scene, context) => CompilationModule.compileClassic(scene, context),
     "2.5d": (scene, context) => CompilationModule.compilePlane(scene, context),
@@ -132,10 +136,18 @@ export class CompilationModule {
   }
 
   private static grain(context: CompilationContext): string {
-    if (!context.canvas.grain) {
+    const { grain } = context.canvas;
+    if (!grain) {
       return "";
     }
-    return `<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/></filter><rect width="${context.width}" height="${context.height}" filter="url(#grain)" opacity="0.10"/>`;
+    const opacity = grain === true
+      ? CompilationModule.DEFAULT_GRAIN_OPACITY
+      : Number(grain.toFixed(CompilationModule.GRAIN_DIGITS));
+    if (opacity <= 0) {
+      return "";
+    }
+    // Why: soft-light blend mode scales grain with luminance (stronger in shadows, weaker in highlights).
+    return `<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/></filter><rect width="${context.width}" height="${context.height}" filter="url(#grain)" style="mix-blend-mode: soft-light;" opacity="${opacity.toFixed(CompilationModule.GRAIN_DIGITS)}"/>`;
   }
 
   private static readonly FRAMING_CRITIQUE_Z = 999;

@@ -10,6 +10,10 @@ describe("CatalogService.catalog()", () => {
       { id: "riso", description: "risograph: few vivid inks, print grain and slightly misaligned registration" },
       { id: "paper", description: "paper cut-out: each piece with its own shadow and fiber texture" },
       { id: "sketch", description: "sketch: watercolor-washed colors and pencil lines on the edges" },
+      { id: "clay", description: "clay: soft 3D rounded shapes, rim light and ambient occlusion" },
+      { id: "duotone", description: "duotone: two inks mapped across luminance with halftone" },
+      { id: "poster", description: "vintage poster: limited 4–5 colors, coarse halftone shadows, sun-faded grade" },
+      { id: "isometric", description: "isometric: 30° axonometric projection with crisp outline and directional light" },
     ]);
   });
 

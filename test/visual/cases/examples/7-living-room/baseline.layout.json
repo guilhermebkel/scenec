@@ -99,7 +99,7 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'janela' blends into the background in the bottom part (43% of this outline has no contrast): the color #DDD3CA is too close; change the color of one of the two",
+    "art: 'janela' blends into the background in the bottom part (42% of this outline has no contrast): the color #DDD2C9 is too close; change the color of one of the two",
     "art: 'rack' blends into the background in the top part (94% of this outline has no contrast): the color #8A5E43 is too close; change the color of one of the two",
     "art: 'planta' blends into the background in the bottom part (62% of this outline has no contrast): the color #934D39 is too close; change the color of one of the two",
     "art: 'ana' blends into 'sofa' in the bottom part (50% of this outline has no contrast): the color #2E3D32 is too close; change the color of one of the two"

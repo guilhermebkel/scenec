@@ -76,6 +76,7 @@ export class PlaneBackgroundService {
     const [red = 0, green = 0, blue = 0, alpha = 0.15] = shadowChannels.map(Number);
     const shadow = `rgb(${red},${green},${blue})`;
     let defs = `<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">${SkyDetailService.skyGradientStops(theme)}</linearGradient>`
+      + `<filter id="dither"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" stitchTiles="stitch" result="nz"/><feColorMatrix in="nz" type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.012 0" result="d"/><feBlend in="SourceGraphic" in2="d" mode="soft-light"/></filter>`
       + `<linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ColorUtil.sh(theme.ground, 0.18)}"/><stop offset="1" stop-color="${theme.ground}"/></linearGradient>`;
     defs += `<radialGradient id="cshadow"><stop offset="0" stop-color="${shadow}" stop-opacity="${alpha * 1.5}"/><stop offset="0.55" stop-color="${shadow}" stop-opacity="${alpha * 1.1}"/><stop offset="1" stop-color="${shadow}" stop-opacity="0"/></radialGradient>`;
     const [airRed = 0, airGreen = 0, airBlue = 0] = [1, 3, 5].map((start) => {
@@ -115,7 +116,7 @@ export class PlaneBackgroundService {
       theme,
       isPathBlocked: (posX, posY) => PlaneBackgroundService.isNearPath(world, posX, posY),
     });
-    return `<rect width="${width}" height="${height}" fill="url(#sky)"/>`
+    return `<rect width="${width}" height="${height}" fill="url(#sky)" filter="url(#dither)"/>`
       + ridges
       + `<path d="M0 ${num(horizonY + 2)} Q${width * 0.25} ${num(horizonY - height * 0.035)} ${width * 0.5} ${num(horizonY)} T${width} ${num(horizonY - height * 0.02)} L${width} ${height} L0 ${height} Z" fill="url(#ground)"/>`
       + groundDetail;

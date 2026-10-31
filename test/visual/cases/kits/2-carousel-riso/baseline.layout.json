@@ -58,5 +58,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'canto_caneca' blends into the background in the top part (100% of this outline has no contrast): the color #D8D8DB is too close; change the color of one of the two"
+  ]
 }

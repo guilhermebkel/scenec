@@ -1,0 +1,63 @@
+canvas:
+  width: 720
+  height: 1280
+  theme: warm-cafe
+  setting: indoor
+  scale: 0.8
+  horizon: 0.72
+  base: 0.92
+  kit: clay
+objects:
+  canto:
+    group: reading_corner
+    at: 0.44
+    size: 0.85
+    color: secondary
+    person:
+      pose: drinking
+      hair: curly
+      hair_color: black
+      skin: dark
+      outfit: dress
+      shirt: primary
+text:
+  - content: SEU 2026 EM LEITURA
+    at: top-left
+    role: label
+    size: 0.02
+    'y': 0.07
+    color: secondary
+    weight: 700
+  - content: Carla, que ano!
+    at: top-left
+    role: title
+    size: 0.045
+    'y': 0.13
+    color: text
+  - content: '8'
+    at: top-left
+    role: title
+    size: 0.16
+    'y': 0.3
+    color: secondary
+    weight: 800
+  - content: livros lidos
+    at: top-left
+    role: subtitle
+    size: 0.03
+    'y': 0.355
+    color: text
+  - content: 'Gênero favorito: Biografias'
+    at: top-left
+    role: body
+    size: 0.024
+    'y': 0.42
+    color: text
+  - content: 'Seu mês favorito: julho'
+    at: top-left
+    role: subtitle
+    size: 0.022
+    'y': 0.48
+    color: paper
+    box: secondary
+    pad: 0.7

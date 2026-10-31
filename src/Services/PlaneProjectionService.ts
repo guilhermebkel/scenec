@@ -49,14 +49,34 @@ export class PlaneProjectionService {
 
   private static readonly FRAME_FILL = 0.98;
 
+  private static readonly ISO_UNIT = 0.0035;
+
+  private static shrinkOf(isIso: boolean, depth: number): (groundZ: number) => number {
+    if (isIso) {
+      return (): number => 1;
+    }
+    return (groundZ: number): number => 1 / (1 + depth * Math.max(groundZ, -0.85 / depth));
+  }
+
+  private static lensOf(isIso: boolean, room: RoomCamera | null, canvas: Canvas, frame: Frame, depth: number): Lens {
+    if (isIso) {
+      return PlaneProjectionService.isometricLens(frame);
+    }
+    if (room) {
+      return PlaneProjectionService.roomLens(room, frame);
+    }
+    return PlaneProjectionService.boardLens(canvas, frame, depth);
+  }
+
   static create(canvas: Canvas, width: number, height: number): PlaneCamera {
-    const room = PlaneProjectionService.roomOf(canvas.camera);
-    const depth = room?.depth ?? canvas.depth ?? PlaneProjectionService.BOARD_DEPTH;
-    const shrink = (groundZ: number): number => 1 / (1 + depth * Math.max(groundZ, -0.85 / depth));
+    const camera = canvas.camera;
+    const options: CameraOverrides = typeof camera === "string" ? { preset: camera } : (camera ?? {});
+    const isIso = options.preset === "isometric" || canvas.kit === "isometric";
+    const room = isIso ? null : PlaneProjectionService.roomOf(canvas.camera);
+    const depth = isIso ? 0 : (room?.depth ?? canvas.depth ?? PlaneProjectionService.BOARD_DEPTH);
+    const shrink = PlaneProjectionService.shrinkOf(isIso, depth);
     const frame: Frame = { width, height, zoom: canvas.scale ?? 1, shrink };
-    const lens = room
-      ? PlaneProjectionService.roomLens(room, frame)
-      : PlaneProjectionService.boardLens(canvas, frame, depth);
+    const lens = PlaneProjectionService.lensOf(isIso, room, canvas, frame, depth);
     const { unit, spread, screenX, screenY } = lens;
     const fill = PlaneProjectionService.FRAME_FILL;
     const pxPerUnit = (groundZ: number, factor = 1): number => unit * shrink(groundZ) * factor;
@@ -102,6 +122,17 @@ export class PlaneProjectionService {
       screenX: (groundX, groundZ) =>
         width * room.vanishX + (groundX - room.centerX) * width * room.xSpan * shrink(groundZ),
       screenY: (groundZ) => horizonY + (nearY - horizonY) * shrink(groundZ),
+    };
+  }
+
+  private static isometricLens(frame: Frame): Lens {
+    const { width, height, zoom } = frame;
+    return {
+      eyeX: 0.5,
+      unit: height * PlaneProjectionService.ISO_UNIT * zoom,
+      spread: () => 1,
+      screenX: (groundX) => width / 2 + (groundX - 0.5) * width * PlaneProjectionService.FRAME_FILL,
+      screenY: (groundZ) => height * 0.55 + groundZ * height * 0.38,
     };
   }
 

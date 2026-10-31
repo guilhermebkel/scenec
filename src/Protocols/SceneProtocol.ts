@@ -49,7 +49,7 @@ const MAX_SCALE = 4;
 const pixels = z.number().int().min(MIN_CANVAS_PX).max(MAX_CANVAS_PX);
 const fraction = z.number().min(0).max(1);
 
-export const CAMERA_PRESETS = ["board", "room"] as const;
+export const CAMERA_PRESETS = ["board", "room", "isometric"] as const;
 
 export const cameraSchema = z.union([
   z.enum(CAMERA_PRESETS),
@@ -82,7 +82,7 @@ export const canvasSchema = z.looseObject({
   floor: z.string().optional().describe("Indoor floor style, for example planks."),
   vanish: fraction.optional().describe("Vanishing point x for planks."),
   haze: z.boolean().optional().describe("false turns atmospheric perspective off."),
-  grain: z.boolean().optional(),
+  grain: z.union([z.boolean(), z.number().min(0).max(1)]).optional().describe("true (0.10), false, or a strength between 0 and 1."),
   light: z.union([
     z.literal(false),
     z.looseObject({

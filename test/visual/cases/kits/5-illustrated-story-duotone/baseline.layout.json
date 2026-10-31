@@ -1,0 +1,56 @@
+{
+  "layout": [
+    {
+      "id": "sol",
+      "asset": "sun",
+      "x": 80,
+      "base": 28.8,
+      "w": 27.5,
+      "h": 27.5
+    },
+    {
+      "id": "nuvem",
+      "asset": "cloud",
+      "x": 20,
+      "base": 22.7,
+      "w": 33.7,
+      "h": 15.3
+    },
+    {
+      "id": "casa",
+      "asset": "house",
+      "x": 30,
+      "base": 75.2,
+      "w": 43.5,
+      "h": 47.6
+    },
+    {
+      "id": "arv",
+      "asset": "tree",
+      "x": 85,
+      "base": 75.2,
+      "w": 31.3,
+      "h": 55.8
+    },
+    {
+      "id": "lia",
+      "asset": "person",
+      "x": 58,
+      "base": 84,
+      "w": 12.5,
+      "h": 28.2
+    },
+    {
+      "id": "rex",
+      "asset": "dog",
+      "x": 72.8,
+      "base": 84,
+      "w": 17,
+      "h": 12.2
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "art: 'rex' blends into the background in the middle part (40% of this outline has no contrast): the color #9CA8B5 is too close; change the color of one of the two"
+  ]
+}

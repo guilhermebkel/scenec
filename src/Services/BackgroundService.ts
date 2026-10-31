@@ -118,7 +118,11 @@ export class BackgroundService {
     const hazeFar = BackgroundService.hazeFilter("hazeFar", haze.far, air);
     const hazeMid = BackgroundService.hazeFilter("hazeMid", haze.mid, air);
     const groundDef = GroundDetailService.groundGradientDef(theme);
+    const ditherDef = `<filter id="dither"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" stitchTiles="stitch" result="nz"/>`
+      + `<feColorMatrix in="nz" type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.012 0" result="d"/>`
+      + `<feBlend in="SourceGraphic" in2="d" mode="soft-light"/></filter>`;
     return `<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">${SkyDetailService.skyGradientStops(theme)}</linearGradient>`
+      + ditherDef
       + groundDef
       + `<radialGradient id="cshadow"><stop offset="0" stop-color="${shadowColor}" stop-opacity="${alpha * 1.5}"/>`
       + `<stop offset="0.55" stop-color="${shadowColor}" stop-opacity="${alpha * 1.1}"/>`
@@ -129,7 +133,7 @@ export class BackgroundService {
   private static indoor(context: CompilationContext): string {
     const { theme, width, height, lines, canvas } = context;
     const horizonY = height * lines.horizon;
-    const base = `<rect width="${width}" height="${horizonY}" fill="${theme.wall}"/>`
+    const base = `<rect width="${width}" height="${horizonY}" fill="${theme.wall}" filter="url(#dither)"/>`
       + `<rect y="${horizonY}" width="${width}" height="${height - horizonY}" fill="${theme.floor}"/>`
       + `<rect y="${horizonY - 8}" width="${width}" height="10" fill="${theme.woodDark}" opacity="0.35"/>`;
     const drawFloor = IdUtil.lookup(BackgroundService.FLOOR_TO_DRAWER, canvas.floor);
@@ -176,7 +180,7 @@ export class BackgroundService {
     const { theme, width, height, lines } = context;
     const horizonY = height * lines.horizon;
     const seaY = height * (lines.sea ?? lines.horizon);
-    let svg = `<rect width="${width}" height="${height}" fill="url(#sky)"/>`
+    let svg = `<rect width="${width}" height="${height}" fill="url(#sky)" filter="url(#dither)"/>`
       + `<rect y="${horizonY}" width="${width}" height="${seaY - horizonY}" fill="${theme.sea}"/>`
       + `<path d="M0 ${seaY} Q${width * 0.25} ${seaY - 14} ${width * 0.5} ${seaY} T${width} ${seaY} `
       + `L${width} ${height} L0 ${height} Z" fill="${theme.ground}"/>`;
@@ -227,7 +231,7 @@ export class BackgroundService {
       theme,
       placements: options?.placements,
     });
-    const svg = `<rect width="${width}" height="${height}" fill="url(#sky)"/>`
+    const svg = `<rect width="${width}" height="${height}" fill="url(#sky)" filter="url(#dither)"/>`
       + clouds
       + (drawHills ? drawHills(context, options) : "")
       + `<path d="M0 ${horizonY + 12} Q${width * 0.3} ${horizonY - 6} ${width * 0.6} ${horizonY + 10} `
