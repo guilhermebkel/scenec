@@ -1,0 +1,28 @@
+canvas:
+  width: 1200
+  height: 700
+  setting: outdoor
+  theme: warm
+  critique: false
+objects:
+  casa_low:
+    asset: house
+    at: 0.16
+    detail: low
+  casa_mid:
+    asset: house
+    at: 0.5
+    detail: mid
+  casa_high:
+    asset: house
+    at: 0.84
+    detail: high
+  arvore_low:
+    asset: tree
+    at: 0.3
+    depth: far
+    detail: low
+  arvore_high:
+    asset: tree
+    at: 0.68
+    detail: high

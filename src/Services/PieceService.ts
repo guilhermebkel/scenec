@@ -59,6 +59,10 @@ export class PieceService {
 
   private static readonly DIGITS = 3;
 
+  private static readonly OUTLINE_SIDE_WEIGHT = 0.8;
+
+  private static readonly REFERENCE_WIDTH = 1000;
+
   private static readonly MASK_PADDING = 0.2;
 
   private static readonly HATCH_INSET = 0.08;
@@ -116,8 +120,15 @@ export class PieceService {
     let defs = "";
     if (PieceService.isDecorated(placement, object)) {
       if (kit.outline) {
-        artwork = kit.outline.inner ? KitService.innerStroke(art, kit.outline.inner / placement.scale, theme.ink) : art;
-        defs += KitService.outlineFilter(`ol_${placement.id}`, kit.outline.w / placement.scale, theme.ink);
+        const { inner, w, wobble = 0, weight = 0, detailRatio } = kit.outline;
+        artwork = inner ? KitService.innerStroke(art, inner / placement.scale, theme.ink, detailRatio) : art;
+        const radius = w / placement.scale;
+        const direction = pieceContext.light?.direction ?? 0;
+        defs += KitService.outlineFilter(`ol_${placement.id}`, radius, theme.ink, {
+          shadeX: direction * radius * weight * PieceService.OUTLINE_SIDE_WEIGHT,
+          shadeY: radius * weight,
+          wobble: (wobble * context.width) / PieceService.REFERENCE_WIDTH / placement.scale,
+        });
         filterId = `ol_${placement.id}`;
       }
       if (kit.hasDrop) {

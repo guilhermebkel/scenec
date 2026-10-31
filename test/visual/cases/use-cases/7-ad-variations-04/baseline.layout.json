@@ -52,7 +52,7 @@
   "warnings": [],
   "art": [
     "art: 'mesa' blends into the background in the middle part (86% of this outline has no contrast): the color #433A4F is too close; change the color of one of the two",
-    "art: 'cad' blends into the background in the bottom part (63% of this outline has no contrast): the color #383E60 is too close; change the color of one of the two",
+    "art: 'cad' blends into the background in the bottom part (64% of this outline has no contrast): the color #383E60 is too close; change the color of one of the two",
     "art: 'cafe' blends into the background in the middle part (44% of this outline has no contrast): the color #3F3549 is too close; change the color of one of the two"
   ]
 }

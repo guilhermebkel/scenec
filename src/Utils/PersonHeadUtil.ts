@@ -2,6 +2,7 @@ import type { AgeName, ExpressionName, HairColorName, HairStyleName, PersonParam
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import { FallbackUtil } from "@/Utils/FallbackUtil.ts";
+import { DetailUtil } from "@/Utils/DetailUtil.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
 import { PersonArmUtil } from "@/Utils/PersonArmUtil.ts";
 
@@ -143,7 +144,11 @@ export class PersonHeadUtil {
     const style = FallbackUtil.nonEmpty(params.hair, "short");
     const builder = IdUtil.lookup(PersonHeadUtil.STYLE_TO_HAIR, style);
     const { backHair, front } = builder?.(hair, side) ?? { backHair: "", front: "" };
-    const neck = `<rect x="-3" y="-85" width="6" height="7" fill="${ColorUtil.sh(skin, -0.12)}"/>`;
+    const neckSkin = ColorUtil.sh(skin, -0.12);
+    const neck = `<path d="M-3 -85 L3 -85 L3.8 -77.5 L-3.8 -77.5 Z" fill="${neckSkin}"/>`
+      + (DetailUtil.rankOf(params.detail) >= 1
+        ? `<ellipse cx="0" cy="-79.4" rx="4.6" ry="1.8" fill="${ColorUtil.sh(skin, -0.28)}"/>`
+        : "");
     if (isBack) {
       return neck + backHair + PersonHeadUtil.backOfHead(style, skin, hair);
     }

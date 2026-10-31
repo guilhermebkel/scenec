@@ -12,6 +12,12 @@ import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
 import { SvgUtil } from "@/Utils/SvgUtil.ts";
 
+export interface OutlineFilterOptions {
+  shadeX?: number;
+  shadeY?: number;
+  wobble?: number;
+}
+
 export class KitService {
   static readonly KIT_ID_TO_KIT: Record<KitId, BaseKit> = RegistryUtil.indexById(
     [new FlatKit(), new OutlineKit(), new HatchKit(), new RisoKit(), new PaperKit(), new SketchKit()],
@@ -22,6 +28,12 @@ export class KitService {
   private static readonly LIGHT_MODE_TO_IS_HATCHED: Record<KitLightMode, boolean> = { none: false, hatch: true };
 
   private static readonly DIGITS = 3;
+
+  private static readonly WOBBLE_FREQUENCY = 0.035;
+
+  private static readonly WOBBLE_SEED = 9;
+
+  private static readonly SMALL_SHAPE = 5;
 
   private static readonly DROP_BLUR = 2.2;
 
@@ -85,10 +97,24 @@ export class KitService {
     return value.toFixed(KitService.DIGITS);
   }
 
-  static outlineFilter(id: string, radius: number, ink: string): string {
+  static outlineFilter(id: string, radius: number, ink: string, options: OutlineFilterOptions = {}): string {
+    const { shadeX = 0, shadeY = 0, wobble = 0 } = options;
+    const isWeighted = shadeX !== 0 || shadeY !== 0;
+    const weighted = isWeighted
+      ? `<feOffset in="d" dx="${KitService.fixed(shadeX)}" dy="${KitService.fixed(shadeY)}" result="d2"/>`
+      + `<feMerge result="dm"><feMergeNode in="d"/><feMergeNode in="d2"/></feMerge>`
+      : `<feOffset in="d" dx="0" dy="0" result="dm"/>`;
+    // Why: the fixed seed keeps the hand-inked wobble identical on every render.
+    const wobbled = wobble > 0
+      ? `<feTurbulence type="fractalNoise" baseFrequency="${KitService.WOBBLE_FREQUENCY}" numOctaves="2" `
+      + `seed="${KitService.WOBBLE_SEED}" result="n"/>`
+      + `<feDisplacementMap in="dm" in2="n" scale="${KitService.fixed(wobble)}" xChannelSelector="R" `
+      + `yChannelSelector="G" result="dw"/>`
+      : `<feOffset in="dm" dx="0" dy="0" result="dw"/>`;
     return `<filter id="${id}" x="-15%" y="-15%" width="130%" height="130%">`
       + `<feMorphology in="SourceAlpha" operator="dilate" radius="${KitService.fixed(radius)}" result="d"/>`
-      + `<feFlood flood-color="${ink}"/><feComposite in2="d" operator="in" result="o"/>`
+      + weighted + wobbled
+      + `<feFlood flood-color="${ink}"/><feComposite in2="dw" operator="in" result="o"/>`
       + `<feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
   }
 
@@ -103,14 +129,25 @@ export class KitService {
       + `<feMerge><feMergeNode in="sh"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
   }
 
-  static innerStroke(art: string, width: number, ink: string): string {
+  static innerStroke(art: string, width: number, ink: string, detailRatio = 1): string {
     const shapes = art.replace(/<(rect|path|circle|ellipse|polygon)\b([^>]*?)\/>/g, (match: string, tag: string, attrs: string) => {
       const hasStroke = /\bstroke=/.test(attrs);
       // Why: shapes with opacity or no fill (glints, transparencies) stay without a stroke; the rest get a thin inner line.
       const isUnpainted = /\bopacity=|fill-opacity=|fill="none"|fill="url\(/.test(attrs);
-      return isUnpainted && !hasStroke ? `<${tag}${attrs} stroke="none"/>` : match;
+      if (isUnpainted && !hasStroke) {
+        return `<${tag}${attrs} stroke="none"/>`;
+      }
+      // Why: small parts (buttons, glints, fingertips) take the thinner detail line; big shapes keep the contour line.
+      const isDetail = !hasStroke && KitService.isSmallShape(attrs);
+      return isDetail ? `<${tag}${attrs} stroke-width="${KitService.fixed(width * detailRatio)}"/>` : match;
     });
     return `<g stroke="${ink}" stroke-width="${KitService.fixed(width)}" stroke-linejoin="round">${shapes}</g>`;
+  }
+
+  private static isSmallShape(attrs: string): boolean {
+    const sizes = [...attrs.matchAll(/\b(?:r|rx|ry)="([\d.]+)"/g)].map((match) => Number(match[1]) * 2)
+      .concat([...attrs.matchAll(/\b(?:width|height)="([\d.]+)"/g)].map((match) => Number(match[1])));
+    return sizes.length > 0 && Math.min(...sizes) <= KitService.SMALL_SHAPE;
   }
 
   static hatchDefs(ink: string): string {

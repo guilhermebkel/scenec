@@ -6,6 +6,9 @@ export type KitSceneName = (typeof KIT_SCENE_NAMES)[number];
 export interface KitOutline {
   w: number;
   inner: number;
+  wobble?: number;
+  weight?: number;
+  detailRatio?: number;
 }
 
 export const KIT_TEXTURE_NAMES = ["paper", "fiber"] as const;

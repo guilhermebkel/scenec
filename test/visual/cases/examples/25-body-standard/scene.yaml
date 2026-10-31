@@ -1,0 +1,25 @@
+canvas:
+  width: 1000
+  height: 700
+  setting: indoor
+  theme: flat-cool
+  focus: ana
+  critique: false
+objects:
+  mesa:
+    asset: desk
+    at: 0.6
+  ana:
+    asset: person
+    at: 0.3
+    body: standard
+    pose: presenting
+    hair: long
+    skin: medium
+    outfit: sweater
+    shirt: accent
+    pants: secondary
+  pc:
+    asset: laptop
+    'on': mesa
+    align: 0.4

@@ -90,6 +90,10 @@ export const ASSET_IDS = [
   "window",
 ] as const;
 
+export const DETAIL_NAMES = ["low", "mid", "high"] as const;
+
+export type DetailName = (typeof DETAIL_NAMES)[number];
+
 export type AssetId = (typeof ASSET_IDS)[number];
 
 export type Facing = "left" | "right";
@@ -105,6 +109,7 @@ export interface AssetParams extends PersonParams {
   drawers?: number;
   thickness?: number;
   seed?: number;
+  detail?: DetailName;
   drop?: number;
   style?: string;
   frame?: string;

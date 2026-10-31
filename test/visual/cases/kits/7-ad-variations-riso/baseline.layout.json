@@ -27,6 +27,6 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'cafe' blends into the background in the bottom part (100% of this outline has no contrast): the color #FFFEFB is too close; change the color of one of the two"
+    "art: 'cafe' blends into the background in the bottom part (99% of this outline has no contrast): the color #FFFEFB is too close; change the color of one of the two"
   ]
 }

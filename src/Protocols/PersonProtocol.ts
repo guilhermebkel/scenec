@@ -3,6 +3,8 @@ export type Point = [number, number];
 export interface PersonParams {
   age?: string;
   build?: string;
+  body?: string;
+  detail?: string;
   height?: number | string;
   skin?: string;
   hair?: string;
@@ -42,6 +44,7 @@ export interface Arm {
 
 export const AGE_NAMES = ["child", "teen", "adult", "elder"] as const;
 export const BUILD_NAMES = ["slim", "average", "broad", "heavy"] as const;
+export const BODY_NAMES = ["chibi", "standard", "long"] as const;
 export const SKIN_NAMES = ["light", "medium", "tan", "dark", "deep"] as const;
 export const HAIR_COLOR_NAMES = ["black", "brown", "blonde", "red", "gray"] as const;
 export const HAIR_STYLE_NAMES = ["long", "bun", "curly", "ponytail", "short", "bald"] as const;
@@ -58,6 +61,7 @@ export const BOTTOM_NAMES = ["pants", "shorts", "skirt", "dress"] as const;
 
 export type AgeName = (typeof AGE_NAMES)[number];
 export type BuildName = (typeof BUILD_NAMES)[number];
+export type BodyName = (typeof BODY_NAMES)[number];
 export type SkinName = (typeof SKIN_NAMES)[number];
 export type HairColorName = (typeof HAIR_COLOR_NAMES)[number];
 export type HairStyleName = (typeof HAIR_STYLE_NAMES)[number];

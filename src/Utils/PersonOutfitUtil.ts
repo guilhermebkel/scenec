@@ -1,9 +1,11 @@
 import { BOTTOM_NAMES, OUTFIT_NAMES } from "@/Protocols/PersonProtocol.ts";
-import type { BottomName, HatName, OutfitName, PersonParams } from "@/Protocols/PersonProtocol.ts";
+import type { BottomName, BuildName, HatName, OutfitName, PersonParams } from "@/Protocols/PersonProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import { FallbackUtil } from "@/Utils/FallbackUtil.ts";
+import { DetailUtil } from "@/Utils/DetailUtil.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
+import { PersonArmUtil } from "@/Utils/PersonArmUtil.ts";
 import { PersonHeadUtil } from "@/Utils/PersonHeadUtil.ts";
 
 export interface PersonLook {
@@ -18,6 +20,7 @@ export interface PersonLook {
   gown: string | null;
   sleeve: string;
   isShortSleeve: boolean;
+  detail: number;
 }
 
 interface OutfitTraits {
@@ -36,10 +39,51 @@ interface LegShape {
   isCovered: boolean;
 }
 
+type HemKind = "gown" | "labcoat" | "none" | "heavy" | "standard";
+
 type LegsOverlay = (look: PersonLook, facing: number) => string;
 
 export class PersonOutfitUtil {
   private static readonly LAB_COAT = "#FBFBF8";
+
+  private static readonly FOLD_DETAIL = 2;
+
+  private static readonly OUTFIT_TO_HEM_KIND: Partial<Record<OutfitName, HemKind>> = { labcoat: "labcoat", dress: "none" };
+
+  private static readonly BUILD_TO_HEM_KIND: Partial<Record<BuildName, HemKind>> = { heavy: "heavy" };
+
+  private static readonly LONG_HEMS = new Set<HemKind>(["gown", "labcoat", "none"]);
+
+  private static readonly HEM_KIND_TO_PATH: Record<HemKind, string> = {
+    gown: "M-18 -16.2 L18 -16.2 L18 -14 L-18 -14 Z",
+    labcoat: "M-15 -29.2 L15 -29.2 L15 -27 L-15 -27 Z",
+    none: "",
+    heavy: "M-13 -46.4 L13 -46.4 L13 -44 L-13 -44 Z",
+    standard: "M-12 -46.4 L12 -46.4 L12 -44 L-12 -44 Z",
+  };
+
+  private static readonly OUTFIT_TO_COLLAR: Partial<Record<OutfitName, LookLayer>> = {
+    labcoat: () => {
+      const lapel = ColorUtil.sh(PersonOutfitUtil.LAB_COAT, -0.06);
+      return `<path d="M-6 -82 L0 -73 L-8.5 -66 Z M6 -82 L0 -73 L8.5 -66 Z" fill="${lapel}"/>`;
+    },
+    sweater: (look) => (
+      `<path d="M-6.2 -81.4 Q0 -75.8 6.2 -81.4" stroke="${ColorUtil.sh(look.top, -0.28)}" stroke-width="2.2" fill="none" `
+      + `stroke-linecap="round"/>`
+    ),
+    tshirt: (look) => (
+      `<path d="M-6.2 -81.4 Q0 -75.8 6.2 -81.4" stroke="${ColorUtil.sh(look.top, -0.28)}" stroke-width="1.1" fill="none" `
+      + `stroke-linecap="round"/><path d="M-4.6 -81 Q0 -77.4 4.6 -81" fill="${ColorUtil.sh(look.skin, -0.12)}"/>`
+    ),
+  };
+
+  private static readonly HEM_SHADE = 0.2;
+
+  private static readonly SOLE_LIGHTEN = 0.3;
+
+  private static readonly LEG_TAPER = 0.4;
+
+  private static readonly WALKING_LEG_WIDTHS = [8.8, 6.4];
 
   private static readonly HAT_NAME_TO_BUILDER: Record<HatName, HatBuilder> = {
     grad_cap: (look) => PersonOutfitUtil.graduationCap(look),
@@ -85,10 +129,12 @@ export class PersonOutfitUtil {
     ),
     skirt: (look) => (
       `<path d="M-12 -48 L12 -48 L17 -27 L-17 -27 Z" fill="${look.bottomColor}"/>`
+      + PersonOutfitUtil.hem(look, "M-17.2 -29.2 L17.2 -29.2 L17 -27 L-17 -27 Z", look.bottomColor)
       + `<path d="M4 -48 L12 -48 L17 -27 L7 -27 Z" fill="${ColorUtil.sh(look.bottomColor, -0.12)}"/>`
     ),
     dress: (look) => (
       `<path d="M-12 -48 L12 -48 L18 -24 L-18 -24 Z" fill="${look.top}"/>`
+      + PersonOutfitUtil.hem(look, "M-18.2 -26.2 L18.2 -26.2 L18 -24 L-18 -24 Z", look.top)
       + `<path d="M4 -48 L12 -48 L18 -24 L7 -24 Z" fill="${ColorUtil.sh(look.top, -0.12)}"/>`
     ),
   };
@@ -126,6 +172,7 @@ export class PersonOutfitUtil {
       gown,
       sleeve: traits?.isLabCoat ? PersonOutfitUtil.LAB_COAT : gown ?? jacket ?? top,
       isShortSleeve: !jacket && traits?.isTshirt === true,
+      detail: DetailUtil.rankOf(params.detail),
     };
   }
 
@@ -137,15 +184,31 @@ export class PersonOutfitUtil {
     return PersonOutfitUtil.legShapeOf(look).isCovered ? look.bottomColor : look.skin;
   }
 
+  static shoe(look: PersonLook, centerX: number, direction: number): string {
+    const { shoes, detail } = look;
+    const round = (value: number): number => PersonArmUtil.round(value);
+    const heel = round(centerX - direction * 5);
+    const toe = round(centerX + direction * 6);
+    const tip = round(toe + direction * 1.2);
+    const base = `<path d="M${heel} -5.4 L${heel} -0.8 L${round(toe - direction * 0.5)} -0.8 Q${tip} -0.8 ${tip} -2.8 `
+      + `Q${round(toe - direction)} -5.6 ${round(centerX)} -5.6 Z" fill="${shoes}"/>`;
+    // Why: a lighter sole makes the toe and the heel read as a shoe instead of a blob.
+    const sole = `<path d="M${heel} -1.8 L${tip} -1.8 L${round(toe + direction * 0.7)} -0.5 L${heel} -0.5 Z" `
+      + `fill="${ColorUtil.sh(shoes, PersonOutfitUtil.SOLE_LIGHTEN)}"/>`;
+    return base + (detail >= 1 ? sole : "");
+  }
+
+  private static hem(look: PersonLook, path: string, color: string): string {
+    return look.detail >= 1 ? `<path d="${path}" fill="${ColorUtil.sh(color, -PersonOutfitUtil.HEM_SHADE)}"/>` : "";
+  }
+
   static seatedLegs(look: PersonLook, facing: number): string {
-    const { shoes } = look;
     const legColor = PersonOutfitUtil.legColorOf(look);
-    const legs = `<path d="M0 -45 L${facing * 24} -45 L${facing * 24} -4" stroke="${legColor}" stroke-width="11" `
-      + `fill="none" stroke-linejoin="round"/>`
+    const knee: [number, number] = [facing * 24, -45];
+    const legs = PersonArmUtil.taper([[0, -45], knee, [facing * 24, -4]], [11.5, 10.5, 8.5], legColor)
       + `<path d="M${facing * 2} -41 L${facing * 24} -41" stroke="${ColorUtil.sh(legColor, -0.12)}" `
       + `stroke-width="3" fill="none"/>`
-      + `<path d="M${facing * 21} -3 L${facing * 32} -3 Q${facing * 32} -8 ${facing * 25} -8 L${facing * 21} -8 Z" `
-      + `fill="${shoes}"/>`;
+      + `<g transform="translate(0 -2.2)">${PersonOutfitUtil.shoe(look, facing * 26, facing)}</g>`;
     return legs + (IdUtil.lookup(PersonOutfitUtil.BOTTOM_TO_SEATED_OVERLAY, look.bottom)?.(look, facing) ?? "");
   }
 
@@ -156,43 +219,97 @@ export class PersonOutfitUtil {
   static seatedTorso(look: PersonLook, facing: number): string {
     const { jacket, top } = look;
     const torsoColor = jacket ?? top;
+    const hem = PersonOutfitUtil.hem(look, "M-10 -43.4 L10 -43.4 L10 -41 L-10 -41 Z", torsoColor);
+    const fold = look.detail >= PersonOutfitUtil.FOLD_DETAIL
+      ? `<path d="M${-facing * 8} -52 Q${-facing * 2} -49.5 ${facing * 6} -52.5" stroke="${ColorUtil.sh(torsoColor, -0.22)}" `
+      + `stroke-width="0.9" fill="none" stroke-linecap="round"/>`
+      : "";
     return `<rect x="-10" y="-81" width="20" height="40" rx="7" fill="${torsoColor}"/>`
       + `<path d="M${-facing * 10} -74 Q${-facing * 10} -81 ${-facing * 4} -81 L${-facing * 3} -81 `
       + `L${-facing * 3} -41 L${-facing * 10} -41 Z" fill="${ColorUtil.sh(torsoColor, -0.13)}"/>`
-      + (jacket ? `<path d="M${facing * 5} -80 L${facing * 9} -76 L${facing * 9} -44 L${facing * 4} -44 Z" fill="${top}"/>` : "");
+      + (jacket ? `<path d="M${facing * 5} -80 L${facing * 9} -76 L${facing * 9} -44 L${facing * 4} -44 Z" fill="${top}"/>` : "")
+      + hem + fold;
   }
 
   static standingLegs(look: PersonLook, isWalking: boolean): string {
-    const { shoes } = look;
     const legColor = PersonOutfitUtil.legColorOf(look);
     const legWidth = PersonOutfitUtil.legShapeOf(look).width;
+    const isCovered = PersonOutfitUtil.legShapeOf(look).isCovered;
     const legs = isWalking
-      ? PersonOutfitUtil.walkingLegs(legColor, shoes)
-      : PersonOutfitUtil.restingLegs(legColor, shoes, legWidth);
+      ? PersonOutfitUtil.walkingLegs(look, legColor)
+      : PersonOutfitUtil.restingLegs(look, { legColor, legWidth, isCovered });
     return legs + (IdUtil.lookup(PersonOutfitUtil.BOTTOM_TO_STANDING_OVERLAY, look.bottom)?.(look) ?? "");
   }
 
-  private static walkingLegs(legColor: string, shoes: string): string {
-    return `<path d="M-3 -45 L-12 -3" stroke="${legColor}" stroke-width="8" stroke-linecap="round"/>`
-      + `<path d="M3 -45 L11 -3" stroke="${ColorUtil.sh(legColor, -0.12)}" stroke-width="8" stroke-linecap="round"/>`
-      + `<ellipse cx="-14" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/>`
-      + `<ellipse cx="14" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/>`;
+  private static walkingLegs(look: PersonLook, legColor: string): string {
+    return PersonArmUtil.taper([[-3, -45], [-12, -3]], PersonOutfitUtil.WALKING_LEG_WIDTHS, legColor)
+      + PersonArmUtil.taper([[3, -45], [11, -3]], PersonOutfitUtil.WALKING_LEG_WIDTHS, ColorUtil.sh(legColor, -0.12))
+      + PersonOutfitUtil.shoe(look, -14, -1) + PersonOutfitUtil.shoe(look, 14, 1);
   }
 
-  private static restingLegs(legColor: string, shoes: string, legWidth: number): string {
-    return `<rect x="${-1 - legWidth}" y="-47" width="${legWidth}" height="45" rx="3" fill="${legColor}"/>`
-      + `<rect x="1" y="-47" width="${legWidth}" height="45" rx="3" fill="${legColor}"/>`
-      + `<rect x="${1 + legWidth * 0.45}" y="-47" width="${legWidth * 0.55}" height="45" rx="2" `
-      + `fill="${ColorUtil.sh(legColor, -0.12)}"/>`
-      + `<ellipse cx="-5.5" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/>`
-      + `<ellipse cx="5.5" cy="-2.5" rx="5.5" ry="2.8" fill="${shoes}"/>`;
+  private static restingLegs(
+    look: PersonLook, leg: { legColor: string; legWidth: number; isCovered: boolean },
+  ): string {
+    const { legColor, legWidth, isCovered } = leg;
+    const round = (value: number): number => PersonArmUtil.round(value);
+    const bottomInset = legWidth * PersonOutfitUtil.LEG_TAPER;
+    const left = -1 - legWidth / 2;
+    const right = 1 + legWidth / 2;
+    const tapered = (center: number, color: string): string => (
+      `<path d="M${round(center - legWidth / 2)} -47 L${round(center + legWidth / 2)} -47 `
+      + `L${round(center + bottomInset)} -2 L${round(center - bottomInset)} -2 Z" fill="${color}"/>`
+    );
+    const shade = `<path d="M${round(1 + legWidth * 0.45)} -47 L${round(1 + legWidth)} -47 `
+      + `L${round(right + bottomInset)} -2 L${round(right - legWidth * 0.04)} -2 Z" fill="${ColorUtil.sh(legColor, -0.12)}"/>`;
+    const cuff = isCovered
+      ? PersonOutfitUtil.hem(look, `M${round(left - bottomInset - 0.4)} -9.6 L${round(left + bottomInset + 0.4)} -9.6 `
+      + `L${round(left + bottomInset)} -7.2 L${round(left - bottomInset)} -7.2 Z`, legColor)
+    + PersonOutfitUtil.hem(look, `M${round(right - bottomInset - 0.4)} -9.6 L${round(right + bottomInset + 0.4)} -9.6 `
+    + `L${round(right + bottomInset)} -7.2 L${round(right - bottomInset)} -7.2 Z`, legColor)
+      : "";
+    return tapered(left, legColor) + tapered(right, legColor) + shade + cuff
+      + PersonOutfitUtil.shoe(look, -5.5, -1) + PersonOutfitUtil.shoe(look, 5.5, 1);
   }
 
   static standingTorso(look: PersonLook, params: PersonParams, isBack: boolean): string {
     return PersonOutfitUtil.baseTorso(look, params.build === "heavy")
       + PersonOutfitUtil.upperLayers(look, isBack)
       + PersonOutfitUtil.gownLayer(look, params, isBack)
-      + PersonOutfitUtil.labCoatLayer(look, isBack);
+      + PersonOutfitUtil.labCoatLayer(look, isBack)
+      + PersonOutfitUtil.torsoDetails(look, params, isBack);
+  }
+
+  private static hemKindOf(look: PersonLook, params: PersonParams): HemKind {
+    if (look.gown) {
+      return "gown";
+    }
+    const named = IdUtil.lookup(PersonOutfitUtil.OUTFIT_TO_HEM_KIND, look.outfit);
+    if (named) {
+      return named;
+    }
+    return IdUtil.lookup(PersonOutfitUtil.BUILD_TO_HEM_KIND, params.build) ?? "standard";
+  }
+
+  private static torsoDetails(look: PersonLook, params: PersonParams, isBack: boolean): string {
+    const torsoColor = look.jacket ?? look.top;
+    const kind = PersonOutfitUtil.hemKindOf(look, params);
+    const kindToColor = { gown: look.gown ?? torsoColor, labcoat: PersonOutfitUtil.LAB_COAT };
+    const hemColor = IdUtil.lookup(kindToColor, kind) ?? torsoColor;
+    const hem = PersonOutfitUtil.hem(look, PersonOutfitUtil.HEM_KIND_TO_PATH[kind], hemColor);
+    const hasFold = look.detail >= PersonOutfitUtil.FOLD_DETAIL && !PersonOutfitUtil.LONG_HEMS.has(kind);
+    const fold = hasFold
+      ? `<path d="M-9 -54 Q-2 -51.5 6 -54.5" stroke="${ColorUtil.sh(torsoColor, -0.22)}" stroke-width="0.9" fill="none" `
+      + `stroke-linecap="round"/>`
+      : "";
+    const hasCollar = !isBack && look.detail >= 1;
+    return hem + fold + (hasCollar ? PersonOutfitUtil.collar(look) : "");
+  }
+
+  private static collar(look: PersonLook): string {
+    if (look.jacket) {
+      return `<path d="M-6 -82 L-1 -76 L-7.5 -71 Z M6 -82 L1 -76 L7.5 -71 Z" fill="${ColorUtil.sh(look.jacket, -0.1)}"/>`;
+    }
+    return IdUtil.lookup(PersonOutfitUtil.OUTFIT_TO_COLLAR, look.outfit)?.(look) ?? "";
   }
 
   private static baseTorso(look: PersonLook, isHeavy: boolean): string {
