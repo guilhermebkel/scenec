@@ -13,7 +13,7 @@ describe("CheckModule.check()", () => {
     const result = CheckModule.check({ canvas: FRAME, objects: { a: { asset: "tree", at: "far-left" } } });
 
     expect(result.art).toStrictEqual([
-      "art: visual weight leans left (center of mass at 15% of the width); move 'a' toward the center or put something on the right side",
+      "art: visual weight leans left (center of mass at 14% of the width); move 'a' toward the center or put something on the right side",
     ]);
   });
 

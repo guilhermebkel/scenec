@@ -123,7 +123,7 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'balcao' blends into the background in the bottom part (66% of this outline has no contrast): the color #7C5036 is too close; change the color of one of the two",
+    "art: 'balcao' blends into the background in the bottom part (65% of this outline has no contrast): the color #7B5036 is too close; change the color of one of the two",
     "art: 'quadro' and 'luz1' almost touch (tangency); move them apart a little or overlap them on purpose",
     "art: 'cadeira1' and 'cafe1' almost touch (tangency); move them apart a little or overlap them on purpose",
     "art: 'cadeira2' and 'cafe2' almost touch (tangency); move them apart a little or overlap them on purpose",

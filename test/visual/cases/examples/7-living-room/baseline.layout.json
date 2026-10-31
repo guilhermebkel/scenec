@@ -99,9 +99,9 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'janela' blends into the background in the bottom part (42% of this outline has no contrast): the color #DDD5CC is too close; change the color of one of the two",
-    "art: 'rack' blends into the background in the top part (93% of this outline has no contrast): the color #8B6249 is too close; change the color of one of the two",
-    "art: 'planta' blends into the background in the bottom part (78% of this outline has no contrast): the color #92553B is too close; change the color of one of the two",
-    "art: 'ana' blends into 'sofa' in the bottom part (52% of this outline has no contrast): the color #2E4135 is too close; change the color of one of the two"
+    "art: 'janela' blends into the background in the bottom part (42% of this outline has no contrast): the color #DCD2C8 is too close; change the color of one of the two",
+    "art: 'rack' blends into the background in the top part (94% of this outline has no contrast): the color #8A5E43 is too close; change the color of one of the two",
+    "art: 'planta' blends into the background in the bottom part (62% of this outline has no contrast): the color #934D39 is too close; change the color of one of the two",
+    "art: 'ana' blends into 'sofa' in the bottom part (51% of this outline has no contrast): the color #2E4035 is too close; change the color of one of the two"
   ]
 }

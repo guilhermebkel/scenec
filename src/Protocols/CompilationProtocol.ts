@@ -2,7 +2,7 @@ import type { CritiqueName } from "@/Protocols/CritiqueProtocol.ts";
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
 import type { KitStyle } from "@/Protocols/KitProtocol.ts";
 import type { AssetKind, LibraryAsset } from "@/Protocols/AssetProtocol.ts";
-import type { Canvas, SceneObject, SettingName } from "@/Protocols/SceneProtocol.ts";
+import type { Canvas, SceneObject, SettingName, TimeName } from "@/Protocols/SceneProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 
 export type Depth = "far" | "mid" | "near";
@@ -79,6 +79,7 @@ export interface LightState {
   shadowRgb: [number, number, number];
   isNight: boolean;
   isHatch: boolean;
+  time?: TimeName;
 }
 
 export interface HazeLevels {

@@ -2,6 +2,8 @@ export type Lab = readonly [number, number, number];
 
 export type Rgb = readonly [number, number, number];
 
+export type Lch = readonly [number, number, number];
+
 export class OklabUtil {
   private static readonly CHANNEL_MAX = 255;
 
@@ -14,6 +16,20 @@ export class OklabUtil {
   private static readonly GAMMA_DIVISOR = 1.055;
 
   private static readonly GAMMA_EXPONENT = 2.4;
+
+  private static readonly DELINEAR_KNEE = 0.0031308;
+
+  private static readonly DELINEAR_EXPONENT = 1 / 2.4;
+
+  private static readonly CUBE = 3;
+
+  private static readonly FULL_TURN = Math.PI * 2;
+
+  private static readonly GAMUT_STEPS = 12;
+
+  private static readonly CHANNEL_MIN_LIMIT = -0.5;
+
+  private static readonly CHANNEL_MAX_LIMIT = 255.5;
 
   private static readonly HEX_RADIX = 16;
 
@@ -33,6 +49,18 @@ export class OklabUtil {
     [0.0259040371, 0.7827717662, -0.808675766],
   ];
 
+  private static readonly LAB_TO_CONE: readonly Lab[] = [
+    [1, 0.3963377774, 0.2158037573],
+    [1, -0.1055613458, -0.0638541728],
+    [1, -0.0894841775, -1.2914855480],
+  ];
+
+  private static readonly CONE_TO_RGB: readonly Lab[] = [
+    [4.0767416621, -3.3077115913, 0.2309699292],
+    [-1.2684380046, 2.6097574011, -0.3413193965],
+    [-0.0041960863, -0.7034186147, 1.7076147010],
+  ];
+
   private static readonly CHANNEL_TO_LINEAR = Float32Array.from(
     { length: OklabUtil.CHANNEL_MAX + 1 },
     (_, channel) => OklabUtil.linearOf(channel),
@@ -46,6 +74,78 @@ export class OklabUtil {
     const cones: Lab = [longCone, mediumCone, shortCone];
     const [lightness = 0, greenRed = 0, blueYellow = 0] = OklabUtil.CONE_TO_LAB.map((row) => OklabUtil.dot(row, cones));
     return [lightness, greenRed, blueYellow];
+  }
+
+  static toRgb(lightness: number, greenRed: number, blueYellow: number): Rgb {
+    const lab: Lab = [lightness, greenRed, blueYellow];
+    const [longCone = 0, mediumCone = 0, shortCone = 0] = OklabUtil.LAB_TO_CONE.map(
+      (row) => OklabUtil.dot(row, lab) ** OklabUtil.CUBE,
+    );
+    const cones: Lab = [longCone, mediumCone, shortCone];
+    const [linearRed = 0, linearGreen = 0, linearBlue = 0] = OklabUtil.CONE_TO_RGB.map(
+      (row) => OklabUtil.dot(row, cones),
+    );
+    return [
+      OklabUtil.delinear(linearRed),
+      OklabUtil.delinear(linearGreen),
+      OklabUtil.delinear(linearBlue),
+    ];
+  }
+
+  static labToLch(lab: Lab): Lch {
+    const [lightness, greenRed, blueYellow] = lab;
+    const chroma = Math.hypot(greenRed, blueYellow);
+    const rawHue = Math.atan2(blueYellow, greenRed);
+    const hue = (rawHue + OklabUtil.FULL_TURN) % OklabUtil.FULL_TURN;
+    return [lightness, chroma, hue];
+  }
+
+  static lchToLab(lch: Lch): Lab {
+    const [lightness, chroma, hue] = lch;
+    return [lightness, chroma * Math.cos(hue), chroma * Math.sin(hue)];
+  }
+
+  static lchToRgb(lch: Lch): Rgb {
+    const [lightness, greenRed, blueYellow] = OklabUtil.lchToLab(lch);
+    return OklabUtil.toRgb(lightness, greenRed, blueYellow);
+  }
+
+  static lchToHex(lch: Lch): string {
+    const [clampedRed, clampedGreen, clampedBlue] = OklabUtil.clampGamut(lch);
+    return OklabUtil.toHex(clampedRed, clampedGreen, clampedBlue);
+  }
+
+  static clampGamut(lch: Lch): Rgb {
+    const [lightness, initialChroma, hue] = lch;
+    let low = 0;
+    let high = initialChroma;
+    let currentChroma = initialChroma;
+    if (!OklabUtil.isInGamut(OklabUtil.lchToRgb([lightness, currentChroma, hue]))) {
+      for (let step = 0; step < OklabUtil.GAMUT_STEPS; step++) {
+        const mid = (low + high) / 2;
+        if (OklabUtil.isInGamut(OklabUtil.lchToRgb([lightness, mid, hue]))) {
+          low = mid;
+        } else {
+          high = mid;
+        }
+      }
+      currentChroma = low;
+    }
+    const [red, green, blue] = OklabUtil.lchToRgb([lightness, currentChroma, hue]);
+    const roundedRed = Math.round(red);
+    const roundedGreen = Math.round(green);
+    const roundedBlue = Math.round(blue);
+    return [
+      Math.max(0, Math.min(OklabUtil.CHANNEL_MAX, roundedRed)),
+      Math.max(0, Math.min(OklabUtil.CHANNEL_MAX, roundedGreen)),
+      Math.max(0, Math.min(OklabUtil.CHANNEL_MAX, roundedBlue)),
+    ];
+  }
+
+  private static isInGamut(rgb: Rgb): boolean {
+    return rgb.every(
+      (channel) => channel >= OklabUtil.CHANNEL_MIN_LIMIT && channel <= OklabUtil.CHANNEL_MAX_LIMIT,
+    );
   }
 
   static distance(first: Lab, second: Lab): number {
@@ -79,5 +179,13 @@ export class OklabUtil {
     return unit <= OklabUtil.GAMMA_KNEE
       ? unit / OklabUtil.GAMMA_LINEAR_DIVISOR
       : ((unit + OklabUtil.GAMMA_OFFSET) / OklabUtil.GAMMA_DIVISOR) ** OklabUtil.GAMMA_EXPONENT;
+  }
+
+  private static delinear(linear: number): number {
+    if (linear <= OklabUtil.DELINEAR_KNEE) {
+      return linear * OklabUtil.GAMMA_LINEAR_DIVISOR * OklabUtil.CHANNEL_MAX;
+    }
+    const scaled = (OklabUtil.GAMMA_DIVISOR * (linear ** OklabUtil.DELINEAR_EXPONENT)) - OklabUtil.GAMMA_OFFSET;
+    return scaled * OklabUtil.CHANNEL_MAX;
   }
 }

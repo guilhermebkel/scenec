@@ -58,7 +58,5 @@
     }
   ],
   "warnings": [],
-  "art": [
-    "art: 'canto_tela' blends into the background in the top part (36% of this outline has no contrast): the color #6D8097 is too close; change the color of one of the two"
-  ]
+  "art": []
 }

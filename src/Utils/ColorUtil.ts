@@ -1,3 +1,5 @@
+import { OklabUtil } from "@/Utils/OklabUtil.ts";
+
 export class ColorUtil {
   private static readonly HEX_RADIX = 16;
 
@@ -23,16 +25,66 @@ export class ColorUtil {
 
   private static readonly CONTRAST_FLARE = 0.05;
 
+  private static readonly SHADOW_L_FACTOR = 0.85;
+
+  private static readonly LIGHT_L_FACTOR = 0.85;
+
+  private static readonly SHADOW_HUE_TARGET = 4.6;
+
+  private static readonly LIGHT_HUE_TARGET = 1.4;
+
+  private static readonly SHADOW_HUE_PULL = 0.55;
+
+  private static readonly LIGHT_HUE_PULL = 0.35;
+
+  private static readonly SHADOW_CHROMA_FACTOR = 0.35;
+
+  private static readonly LIGHT_CHROMA_FACTOR = 0.6;
+
+  private static readonly CHROMA_SCALE_MAX = 0.04;
+
+  private static readonly FULL_TURN = Math.PI * 2;
+
+  private static readonly HALF_TURN = Math.PI;
+
   static sh(hex: string, amount: number): string {
-    // Why: amount < 0 darkens and amount > 0 lightens by mixing the color with black or white.
+    // Why: shades in OKLCH: amount < 0 shifts hue toward cool and raises chroma; amount > 0 shifts toward warm and lowers chroma.
     if (!hex.startsWith("#")) {
       return hex;
     }
-    const channels = ColorUtil.channelsOf(hex.slice(1));
-    const target = amount < 0 ? 0 : ColorUtil.CHANNEL_MAX;
-    const strength = Math.abs(amount);
-    const mixed = channels.map((value) => Math.round(value + (target - value) * strength));
-    return `#${mixed.map((value) => value.toString(ColorUtil.HEX_RADIX).padStart(2, "0")).join("")}`;
+    const full = ColorUtil.expand(hex.slice(1));
+    if (!/^[0-9a-f]{6}$/i.test(full)) {
+      return hex;
+    }
+    const [red = 0, green = 0, blue = 0] = ColorUtil.channelsOf(full);
+    const lab = OklabUtil.fromRgb(red, green, blue);
+    const [lightness, chroma, hue] = OklabUtil.labToLch(lab);
+    const strength = Math.min(1, Math.abs(amount));
+    const chromaScale = Math.min(1, chroma / ColorUtil.CHROMA_SCALE_MAX);
+    if (amount < 0) {
+      const targetL = Math.max(0, lightness * (1 - ColorUtil.SHADOW_L_FACTOR * strength));
+      const targetH = ColorUtil.rotateHue(
+        hue, ColorUtil.SHADOW_HUE_TARGET, ColorUtil.SHADOW_HUE_PULL * strength * chromaScale,
+      );
+      const targetC = chroma * (1 + ColorUtil.SHADOW_CHROMA_FACTOR * strength);
+      return OklabUtil.lchToHex([targetL, targetC, targetH]);
+    }
+    const targetL = Math.min(1, lightness + (1 - lightness) * (ColorUtil.LIGHT_L_FACTOR * strength));
+    const targetH = ColorUtil.rotateHue(
+      hue, ColorUtil.LIGHT_HUE_TARGET, ColorUtil.LIGHT_HUE_PULL * strength * chromaScale,
+    );
+    const targetC = chroma * (1 - ColorUtil.LIGHT_CHROMA_FACTOR * strength);
+    return OklabUtil.lchToHex([targetL, targetC, targetH]);
+  }
+
+  private static rotateHue(current: number, target: number, weight: number): number {
+    let diff = (target - current) % ColorUtil.FULL_TURN;
+    if (diff > ColorUtil.HALF_TURN) {
+      diff -= ColorUtil.FULL_TURN;
+    } else if (diff < -ColorUtil.HALF_TURN) {
+      diff += ColorUtil.FULL_TURN;
+    }
+    return (current + diff * weight + ColorUtil.FULL_TURN) % ColorUtil.FULL_TURN;
   }
 
   private static expand(digits: string): string {
