@@ -18,5 +18,5 @@
 <rect width="1200" height="630" fill="url(#vignette)" style="mix-blend-mode: multiply;"/>
 
 
-<text x="1128.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#3A2418" text-anchor="end"><tspan x="1128.0">Jantar em família</tspan></text><text x="1128.0" y="153.1" font-family="Poppins" font-size="22.7" font-weight="500" fill="#3A2418" text-anchor="end"><tspan x="1128.0">Receitas rápidas para a semana</tspan></text>
+<text x="1128.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#3A2418" text-anchor="end" letter-spacing="-0.015em"><tspan x="1128.0">Jantar em família</tspan></text><text x="1128.0" y="153.1" font-family="Poppins" font-size="22.7" font-weight="500" fill="#3A2418" text-anchor="end"><tspan x="1128.0">Receitas rápidas para a semana</tspan></text>
 </svg>

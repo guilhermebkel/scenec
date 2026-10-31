@@ -1,0 +1,8 @@
+{
+  "layout": [],
+  "warnings": [
+    "theme 'warm' does not exist; using 'flat-cool'. Available: flat-autumn, flat-cool, night, warm-cafe, beach",
+    "asset 'box' (in 'box') does not exist; did you mean: sun, dog, counter?"
+  ],
+  "art": []
+}

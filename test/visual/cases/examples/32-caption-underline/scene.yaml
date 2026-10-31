@@ -1,0 +1,18 @@
+canvas:
+  width: 1200
+  height: 630
+  setting: indoor
+  theme: warm
+  critique: false
+text:
+  - content: Learn quickly and build today
+    at: top-left
+    role: title
+    box_style: underline
+    emphasis:
+      - build
+    color: ink
+objects:
+  table:
+    asset: table
+    at: 0.5

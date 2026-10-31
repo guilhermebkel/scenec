@@ -23,6 +23,11 @@
 | body | Person proportions: `chibi` (head to body about 1:2), `standard`, `long` (about 1:6). | build (that is width) |
 | blob | A closed smooth seeded path with a varying radius, used for foliage and clouds instead of circles. | circle |
 | outline wobble | The slight seeded displacement and heavier shadow-side weight of the outline kit silhouette. | jitter |
+| font | Typeface family for text (`sans`, `serif`, `hand`). | typeface name |
+| box style | Visual container for a caption (`rect`, `highlight`, `pill`, `sticker`, `underline`). | banner, badge |
+| emphasis | Key words underlined in the `underline` caption style. | bold |
+| tracking | Letter-spacing adjustment in em (automatically tighter for large titles). | kerning |
+| balance | Balanced line break distribution across multi-line titles. | text-wrap |
 | warning | A problem the compiler found in the scene. | error (an error stops compile) |
 | critique | An art-director remark produced by `check` (`art` in the report). | lint |
 | baseline | The SVG and layout stored for one regression case. | snapshot |

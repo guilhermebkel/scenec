@@ -1,0 +1,34 @@
+{
+  "layout": [
+    {
+      "id": "chair",
+      "asset": "chair",
+      "x": 73.1,
+      "base": 84,
+      "w": 6.3,
+      "h": 23.9
+    },
+    {
+      "id": "desk",
+      "asset": "desk",
+      "x": 65,
+      "base": 93,
+      "w": 23.2,
+      "h": 15.6
+    },
+    {
+      "id": "lamp",
+      "asset": "lamp",
+      "x": 65,
+      "base": 77.4,
+      "w": 5.4,
+      "h": 14.3
+    }
+  ],
+  "warnings": [
+    "theme 'warm' does not exist; using 'flat-cool'. Available: flat-autumn, flat-cool, night, warm-cafe, beach",
+    "text \"Designing Great Products\" has contrast 4.0:1 (min. 4.5); change 'color' or use 'box'",
+    "text \"Sans and hand font pairings\" has contrast 1.2:1 (min. 4.5); change 'color' or use 'box'"
+  ],
+  "art": []
+}

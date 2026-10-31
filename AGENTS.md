@@ -17,11 +17,11 @@ An AI writes a YAML scene; the compiler returns an SVG plus warnings, art-direct
 | `src/Commands/` | One class per CLI command, all extending `BaseCommand`. |
 | `src/index.ts`, `src/render.ts`, `src/schema.ts` | The three public entries: thin facades over the classes. |
 | `src/cli.ts` | The CLI entry: parses the arguments and runs a command from `src/Commands/`. |
-| `fonts/` | Poppins (OFL-1.1). |
+| `fonts/` | Poppins, DM Serif Display, Patrick Hand (OFL-1.1). |
 | `skills/draw-scene/` | The agent skill shipped in the package. |
 | `design/` | The logo, its variants, web icons, guidelines and presentation. Not in the npm package. |
 | `site/` | The GitHub Pages landing page. `.github/workflows/pages.yml` publishes it on every push to `main` that touches it, and the release workflow sets its version and date. Served at `scenec.guilherr.me`. Not in the npm package. |
-| `test/visual/` | 115 base generations with baselines. |
+| `test/visual/` | 120 base generations with baselines. |
 | `test/smoke/` | Every asset in every kit. |
 
 Layers: Errors and Protocols < Utils < Resources < Services < Modules < Commands. A layer imports only the ones below it (lint enforces it); Adapters see only Protocols and Utils, and only the critique and check modules may use them. Files are classes in `PascalCase` (`ColorUtil.ts`) in `PascalCase` folders, imported with `@/` (`@/Utils/ColorUtil.ts`).
@@ -34,7 +34,7 @@ pnpm lint            # eslint (typescript-eslint runs on the TypeScript 6 alias)
 pnpm quality         # knip + jscpd + dpdm
 pnpm test            # unit, smoke and package tests
 pnpm build           # esbuild per file, tsc for declarations, then @/ rewritten to relative paths
-pnpm test:visual     # the 115 baselines; add --update to rewrite them
+pnpm test:visual     # the 120 baselines; add --update to rewrite them
 pnpm check           # everything above; what CI runs
 pnpm check:pack      # package size and contents
 pnpm check:licenses  # runtime dependency licenses

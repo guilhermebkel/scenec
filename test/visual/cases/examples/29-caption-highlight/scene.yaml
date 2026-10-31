@@ -1,0 +1,21 @@
+canvas:
+  width: 1200
+  height: 630
+  setting: indoor
+  theme: warm
+  critique: false
+text:
+  - content: |-
+      Important ideas
+      deserve marker highlight
+    at: top-left
+    role: title
+    box_style: highlight
+    color: ink
+objects:
+  sofa:
+    asset: sofa
+    at: 0.65
+  coffee:
+    asset: coffee
+    at: 0.35

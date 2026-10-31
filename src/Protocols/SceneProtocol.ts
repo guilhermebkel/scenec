@@ -1,3 +1,4 @@
+import { FONT_NAMES, type FontName } from "@/Protocols/KitProtocol.ts";
 import { z } from "zod";
 import { DETAIL_NAMES } from "@/Protocols/AssetProtocol.ts";
 import { BODY_NAMES } from "@/Protocols/PersonProtocol.ts";
@@ -24,6 +25,8 @@ export const GROUND_DETAILS = ["none", "low", "high"] as const;
 export type GroundDetail = (typeof GROUND_DETAILS)[number];
 export const FRAMING_ELEMENTS = ["foliage", "curtain", "plants", "none"] as const;
 export type FramingElement = (typeof FRAMING_ELEMENTS)[number];
+export const BOX_STYLES = ["rect", "highlight", "pill", "sticker", "underline"] as const;
+export type BoxStyle = (typeof BOX_STYLES)[number];
 export const MAX_OBJECTS = 200;
 export const MAX_CANVAS_PX = 4096;
 
@@ -70,6 +73,7 @@ export const canvasSchema = z.looseObject({
     .describe("Palette name or { from, harmony, mood }. See `scenec catalog themes`."),
   time: z.enum(TIME_NAMES).optional().describe("Time of day: golden, noon, overcast, dusk or night."),
   kit: z.string().optional().describe("Style kit name. See `scenec catalog kits`."),
+  font: z.enum(FONT_NAMES).optional().describe("Default font: sans, serif or hand."),
   colors: z.record(z.string(), z.string()).optional().describe("Overrides theme colors, for example wall or floor."),
   setting: z.enum(SETTING_NAMES).optional().describe("Where the scene happens. Default outdoor."),
   scale: z.number().positive().max(MAX_SCALE).optional().describe("Camera zoom. Default 1."),
@@ -161,7 +165,14 @@ export const textSchema = z.looseObject({
   y: z.number().optional(),
   x: z.number().optional(),
   color: z.string().optional(),
+  font: z.enum(FONT_NAMES).optional().describe("Font family: sans, serif or hand."),
   box: z.string().optional().describe("Background color behind the text."),
+  box_style: z.enum(BOX_STYLES).optional().describe("Caption container style: rect, highlight, pill, sticker or underline."),
+  emphasis: z.array(z.string()).optional().describe("Key words to underline in the underline style."),
+  tracking: z.number().optional().describe("Letter spacing in em."),
+  wrap: z.number().int().positive().optional().describe("Max line width in characters to wrap text."),
+  balance: z.boolean().optional().describe("Balance line lengths for multi-line titles."),
+  rotation: z.number().optional().describe("Rotation angle in degrees (for sticker style)."),
   pad: z.number().optional(),
   radius: z.number().optional(),
   weight: z.number().optional(),
@@ -321,6 +332,8 @@ export type ScatterOptions = z.infer<typeof scatterSchema>;
 export type WallsOptions = z.infer<typeof wallsSchema>;
 
 export type FloorOptions = z.infer<typeof floorSchema>;
+
+export type { FontName };
 
 export type TextRole = NonNullable<SceneText["role"]>;
 

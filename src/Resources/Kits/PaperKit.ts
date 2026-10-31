@@ -1,3 +1,4 @@
+import type { FontName } from "@/Protocols/KitProtocol.ts";
 import { BaseKit } from "@/Resources/Kits/BaseKit.ts";
 
 export class PaperKit extends BaseKit {
@@ -7,4 +8,5 @@ export class PaperKit extends BaseKit {
   readonly light = { strength: 0.18, hasCasts: false };
   readonly hasDrop = true;
   readonly texture = "fiber";
+  readonly font: FontName = "serif";
 }

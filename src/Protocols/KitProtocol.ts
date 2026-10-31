@@ -1,4 +1,9 @@
 import type { ThemeColorName } from "@/Protocols/ThemeProtocol.ts";
+
+export const FONT_NAMES = ["sans", "serif", "hand"] as const;
+
+export type FontName = (typeof FONT_NAMES)[number];
+
 export const KIT_SCENE_NAMES = ["riso", "sketch"] as const;
 
 export type KitSceneName = (typeof KIT_SCENE_NAMES)[number];
@@ -32,6 +37,7 @@ export interface KitStyle {
   readonly themeColorToColor?: Partial<Record<ThemeColorName, string>>;
   readonly scene?: KitSceneName;
   readonly hasDrop?: boolean;
+  readonly font?: FontName;
 }
 
 export const KIT_IDS = [

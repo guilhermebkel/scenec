@@ -8,5 +8,5 @@
 <rect width="1200" height="675" fill="url(#vignette)" style="mix-blend-mode: multiply;"/>
 
 
-<text x="72.0" y="90.2" font-family="Poppins" font-size="20.3" font-weight="700" fill="#25344F" text-anchor="start"><tspan x="72.0">MÓDULO 2</tspan></text><text x="72.0" y="168.8" font-family="Poppins" font-size="47.3" font-weight="700" fill="#1F2A3D" text-anchor="start"><tspan x="72.0">Lidando com um</tspan><tspan x="72.0" dy="56.7">cliente insatisfeito</tspan></text>
+<text x="72.0" y="90.2" font-family="Poppins" font-size="20.3" font-weight="700" fill="#25344F" text-anchor="start"><tspan x="72.0">MÓDULO 2</tspan></text><text x="72.0" y="168.8" font-family="Poppins" font-size="47.3" font-weight="700" fill="#1F2A3D" text-anchor="start" letter-spacing="-0.015em"><tspan x="72.0">Lidando com um</tspan><tspan x="72.0" dy="56.7">cliente insatisfeito</tspan></text>
 </svg>

@@ -1,0 +1,16 @@
+{
+  "layout": [
+    {
+      "id": "table",
+      "asset": "table",
+      "x": 50,
+      "base": 93,
+      "w": 14.3,
+      "h": 15.6
+    }
+  ],
+  "warnings": [
+    "theme 'warm' does not exist; using 'flat-cool'. Available: flat-autumn, flat-cool, night, warm-cafe, beach"
+  ],
+  "art": []
+}

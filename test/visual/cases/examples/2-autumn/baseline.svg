@@ -18,5 +18,5 @@
 <rect width="1200" height="630" fill="url(#vignette)" style="mix-blend-mode: multiply;"/>
 
 
-<text x="72.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#3A2418" text-anchor="start"><tspan x="72.0">Bem-vindo ao outono</tspan></text><text x="72.0" y="153.1" font-family="Poppins" font-size="22.7" font-weight="500" fill="#3A2418" text-anchor="start"><tspan x="72.0">5 ideias para aproveitar a estação</tspan></text>
+<text x="72.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#3A2418" text-anchor="start" letter-spacing="-0.015em"><tspan x="72.0">Bem-vindo ao outono</tspan></text><text x="72.0" y="153.1" font-family="Poppins" font-size="22.7" font-weight="500" fill="#3A2418" text-anchor="start"><tspan x="72.0">5 ideias para aproveitar a estação</tspan></text>
 </svg>
