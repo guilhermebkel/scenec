@@ -1,0 +1,34 @@
+canvas:
+  mode: map
+  width: 1400
+  height: 900
+  theme: flat-cool
+  kit: duotone
+map:
+  padding: 3.5
+route:
+  - city: Paris
+    country: França
+  - by: avião
+  - city: Roma
+    country: Itália
+  - by: avião
+  - city: Munique
+    country: Alemanha
+  - by: trem
+  - city: Salzburgo
+    country: Áustria
+  - by: trem
+  - city: Munique
+    country: Alemanha
+  - by: trem
+  - city: Luxemburgo
+    country: Luxemburgo
+  - by: avião
+  - city: Milão
+    country: Itália
+text:
+  - content: Minha viagem pela Europa
+    role: title
+  - content: 7 paradas · 5 países · avião e trem
+    role: subtitle

@@ -1,0 +1,44 @@
+canvas:
+  width: 864
+  height: 1080
+  theme: flat-cool
+  scale: 0.75
+  horizon: 0.7
+  base: 0.93
+  colors:
+    primary: '#5B4BDB'
+    accent: '#FFB547'
+    secondary: '#1F2A44'
+    wall: '#F1EEFC'
+  setting: indoor
+  kit: clay
+objects:
+  canto:
+    group: workspace
+    at: 0.58
+    person:
+      hair: curly
+      hair_color: black
+      skin: dark
+      shirt: accent
+      pants: secondary
+    parts:
+      cadeira:
+        color: primary
+text:
+  - content: |-
+      Home office
+      sem perder
+      o foco
+    at: top-left
+    role: title
+    size: 0.075
+    'y': 0.16
+  - content: 4 hábitos simples  →
+    at: top-left
+    role: subtitle
+    size: 0.03
+    'y': 0.47
+    color: paper
+    box: primary
+    pad: 0.7

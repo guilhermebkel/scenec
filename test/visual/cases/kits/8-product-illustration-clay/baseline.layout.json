@@ -1,0 +1,46 @@
+{
+  "layout": [
+    {
+      "id": "festa_mesa",
+      "asset": "table",
+      "x": 40,
+      "base": 77,
+      "w": 29.4,
+      "h": 22.5
+    },
+    {
+      "id": "festa_baloes",
+      "asset": "balloons",
+      "x": 63,
+      "base": 77,
+      "w": 14.7,
+      "h": 49
+    },
+    {
+      "id": "festa_pessoa1",
+      "asset": "person",
+      "x": 17,
+      "base": 77,
+      "w": 14.7,
+      "h": 52.9
+    },
+    {
+      "id": "festa_pessoa2",
+      "asset": "person",
+      "x": 77.7,
+      "base": 77,
+      "w": 14.7,
+      "h": 52.9
+    },
+    {
+      "id": "festa_trofeu",
+      "asset": "trophy",
+      "x": 40,
+      "base": 54.5,
+      "w": 12.3,
+      "h": 20.6
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

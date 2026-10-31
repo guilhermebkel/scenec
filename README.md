@@ -125,7 +125,7 @@ The agent moves the bench in, gives the dog another color, runs `check` again, a
 
 ## What it draws
 
-86 assets (people with poses and expressions, furniture, plants, food, vehicles, buildings), ready-made groups, a map of Europe with routes, and 6 kits:
+86 assets (people with poses and expressions, furniture, plants, food, vehicles, buildings), ready-made groups, a map of Europe with routes, and 10 kits:
 
 | Kit | Look |
 | --- | --- |
@@ -135,6 +135,10 @@ The agent moves the bench in, gives the dog another color, runs `check` again, a
 | `riso` | Risograph: few vivid inks, print grain, slight misregistration |
 | `paper` | Paper cut-out: each piece with its own shadow and fiber texture |
 | `sketch` | Hand-drawn pencil look |
+| `clay` | Clay / soft 3D: rounded shapes, rim light and ambient occlusion |
+| `duotone` | Duotone: two inks mapped across luminance with halftone |
+| `poster` | Vintage poster: limited 4–5 colors, coarse halftone shadows, sun-faded grade |
+| `isometric` | Isometric: 30° axonometric projection with crisp outline and directional light |
 
 `npx @guilhermebkel/scenec catalog assets` lists everything; the full language is in [`skills/draw-scene/references/dsl.md`](skills/draw-scene/references/dsl.md).
 
@@ -210,7 +214,7 @@ Yes. Under `assets:` a scene can bring an SVG (inline or a file next to the scen
 
 ## Roadmap
 
-- [x] **Core:** 86 assets, groups, map mode, 6 kits, warnings, critiques, CLI, skill, 120 visual baselines.
+- [x] **Core:** 86 assets, groups, map mode, 10 kits, warnings, critiques, CLI, skill, 152 visual baselines.
 - [ ] **More recipes and assets** driven by real use of the skill.
 
 ## Contributing

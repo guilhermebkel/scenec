@@ -1,0 +1,69 @@
+canvas:
+  width: 720
+  height: 1280
+  theme: flat-cool
+  scale: 0.82
+  horizon: 0.66
+  base: 0.88
+  colors:
+    primary: '#2E6BE6'
+    accent: '#FFB547'
+  setting: outdoor
+  kit: clay
+objects:
+  sol:
+    asset: sun
+    at: top-right
+    altitude: 0.25
+  nuvem:
+    asset: cloud
+    at: left
+    altitude: 0.25
+    size: small
+  casa:
+    asset: house
+    at: 0.72
+    depth: mid
+    size: 0.85
+  arv:
+    asset: tree
+    at: 0.16
+    depth: mid
+    size: small
+  eu:
+    asset: person
+    pose: celebrating
+    at: 0.42
+    expr: laughing
+    hair: bun
+    hair_color: black
+    skin: tan
+    shirt: primary
+    outfit: sweater
+    glasses: true
+  rex:
+    asset: dog
+    left_of: eu
+    gap: 0
+    facing: right
+text:
+  - content: 10 anos depois...
+    at: top-center
+    role: title
+    size: 0.05
+    'y': 0.12
+  - content: |-
+      R$ 24 mil investidos
+      viraram cerca de R$ 40 mil*
+    at: bottom-center
+    role: subtitle
+    size: 0.026
+    color: paper
+    box: secondary
+    pad: 0.8
+  - content: '*simulação com 10% ao ano'
+    at: bottom-center
+    role: label
+    size: 0.016
+    'y': 0.985
+    color: secondary

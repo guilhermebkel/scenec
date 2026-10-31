@@ -1,10 +1,9 @@
 import type { ThemeColorName } from "@/Protocols/ThemeProtocol.ts";
-
 export const FONT_NAMES = ["sans", "serif", "hand"] as const;
 
 export type FontName = (typeof FONT_NAMES)[number];
 
-export const KIT_SCENE_NAMES = ["riso", "sketch"] as const;
+export const KIT_SCENE_NAMES = ["riso", "sketch", "clay", "duotone", "poster"] as const;
 
 export type KitSceneName = (typeof KIT_SCENE_NAMES)[number];
 
@@ -47,6 +46,10 @@ export const KIT_IDS = [
   "paper",
   "riso",
   "sketch",
+  "clay",
+  "duotone",
+  "poster",
+  "isometric",
 ] as const;
 
 export type KitId = (typeof KIT_IDS)[number];

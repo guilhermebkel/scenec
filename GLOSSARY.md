@@ -9,7 +9,8 @@
 | part | A piece of an asset that can be recolored. | layer |
 | shot | A named camera framing (`wide`, `medium`, ...). | zoom preset |
 | focus | The object the composition leans toward. | center |
-| kit | A rendering style (`flat`, `hatch`, `outline`, `paper`, `riso`, `sketch`). | filter, skin |
+| kit | A rendering style (`flat`, `hatch`, `outline`, `paper`, `riso`, `sketch`, `clay`, `duotone`, `poster`, `isometric`). | filter, skin |
+| grain | Adjustable film grain overlay (true, false, or 0..1 strength), luminance-aware and stronger in shadows. | noise |
 | theme | The color palette and mood. | style |
 | harmony | The color harmony used to generate a palette from seed colors (analogous, complementary, split, triad, mono). | color scheme |
 | mood | Lightness and contrast bands for a generated theme (day, dusk, night). | brightness |
