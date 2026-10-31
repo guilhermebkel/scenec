@@ -19,6 +19,10 @@
 | ground detail | Procedural ground gradient, low-contrast blobs and scattered tufts (none, low, high). | grass |
 | shafts | Volumetric light shafts and floor projection from indoor windows. | sunbeams |
 | framing | Out-of-focus foreground repoussoir elements (foliage, curtain, plants, none). | border, vignette |
+| detail | How much an object draws: `low` drops small parts, `mid` is the base drawing, `high` adds highlights and texture. The focus gets `high`, `depth: far` gets `low`, an author can set it per object. | level of detail |
+| body | Person proportions: `chibi` (head to body about 1:2), `standard`, `long` (about 1:6). | build (that is width) |
+| blob | A closed smooth seeded path with a varying radius, used for foliage and clouds instead of circles. | circle |
+| outline wobble | The slight seeded displacement and heavier shadow-side weight of the outline kit silhouette. | jitter |
 | warning | A problem the compiler found in the scene. | error (an error stops compile) |
 | critique | An art-director remark produced by `check` (`art` in the report). | lint |
 | baseline | The SVG and layout stored for one regression case. | snapshot |

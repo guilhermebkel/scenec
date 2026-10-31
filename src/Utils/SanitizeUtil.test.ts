@@ -74,4 +74,10 @@ describe("SanitizeUtil.sanitizeSvg()", () => {
 
     expect(SanitizeUtil.sanitizeSvg(svg)).toBe("<svg><g style=\"mix-blend-mode: multiply; isolation: isolate\"><rect style=\"mix-blend-mode: screen\"/></g></svg>");
   });
+
+  it("keeps feDisplacementMap filter primitive", () => {
+    const svg = "<svg><filter id=\"w\"><feDisplacementMap in=\"SourceGraphic\" scale=\"2\"/></filter></svg>";
+
+    expect(SanitizeUtil.sanitizeSvg(svg)).toBe("<svg><filter id=\"w\"><feDisplacementMap in=\"SourceGraphic\" scale=\"2\"/></filter></svg>");
+  });
 });

@@ -18,7 +18,10 @@ export class BigPlantAsset extends BaseAsset {
     const [first, second, color] = theme.foliage;
     const pot = ShapeUtil.color(theme, params.pot, "#C9724E");
     const lf = (posX: number, posY: number, rot: number, colr: string): string => (
-      `<ellipse cx="${posX}" cy="${posY}" rx="11" ry="22" fill="${colr}" transform="rotate(${rot} ${posX} ${posY})"/>`
+      ShapeUtil.blob(posX, posY, 22, {
+        seed: Math.abs(posX * 3 + posY), lobes: 3, wobble: 0.07, squash: 0.5, fill: colr,
+        extra: `transform="rotate(${rot} ${posX} ${posY})"`,
+      })
       + `<path d="M${posX} ${posY + 20} L${posX} ${posY - 18}" stroke="${ColorUtil.sh(colr, -0.2)}" `
       + `stroke-width="1.4" transform="rotate(${rot} ${posX} ${posY})"/>`
     );

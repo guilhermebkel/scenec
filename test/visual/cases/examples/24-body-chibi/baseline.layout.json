@@ -1,0 +1,30 @@
+{
+  "layout": [
+    {
+      "id": "mesa",
+      "asset": "desk",
+      "x": 60,
+      "base": 93,
+      "w": 30.9,
+      "h": 15.6
+    },
+    {
+      "id": "ana",
+      "asset": "person",
+      "x": 30,
+      "base": 93,
+      "w": 10.7,
+      "h": 30.8
+    },
+    {
+      "id": "pc",
+      "asset": "laptop",
+      "x": 72.4,
+      "base": 77.4,
+      "w": 8.1,
+      "h": 8.2
+    }
+  ],
+  "warnings": [],
+  "art": []
+}

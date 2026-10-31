@@ -1,0 +1,50 @@
+{
+  "layout": [
+    {
+      "id": "arvore_low",
+      "asset": "tree",
+      "x": 30,
+      "base": 69,
+      "w": 13.7,
+      "h": 41.8
+    },
+    {
+      "id": "casa_low",
+      "asset": "house",
+      "x": 16,
+      "base": 92,
+      "w": 31.7,
+      "h": 59.5
+    },
+    {
+      "id": "casa_mid",
+      "asset": "house",
+      "x": 50,
+      "base": 92,
+      "w": 31.7,
+      "h": 59.5
+    },
+    {
+      "id": "casa_high",
+      "asset": "house",
+      "x": 84,
+      "base": 92,
+      "w": 31.7,
+      "h": 59.5
+    },
+    {
+      "id": "arvore_high",
+      "asset": "tree",
+      "x": 68,
+      "base": 92,
+      "w": 22.8,
+      "h": 69.7
+    }
+  ],
+  "warnings": [
+    "theme 'warm' does not exist; using 'flat-cool'. Available: flat-autumn, flat-cool, night, warm-cafe, beach",
+    "'casa_mid' overlaps 'arvore_high' by 35%; use left_of/right_of or a different depth",
+    "'casa_high' overlaps 'arvore_high' by 42%; use left_of/right_of or a different depth"
+  ],
+  "art": []
+}

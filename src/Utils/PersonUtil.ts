@@ -2,7 +2,8 @@ import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import type { AssetDrawing, Facing } from "@/Protocols/AssetProtocol.ts";
 import {
   EXPRESSION_NAMES, SEATED_POSE_NAMES, STANDING_POSE_NAMES,
-  type AgeName, type BendName, type BodyScale, type BuildName, type GazeName, type PersonParams, type Point,
+  type AgeName, type BendName, type BodyName, type BodyScale, type BuildName, type GazeName, type PersonParams,
+  type Point,
   type SeatedPoseName, type StandingPoseName,
 } from "@/Protocols/PersonProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
@@ -69,6 +70,13 @@ export class PersonUtil {
     elder: { bx: 1, by: 0.95, hs: 1 },
   };
 
+  // Why: head to body about 1:2.3 (chibi), 1:4.3 (standard, the original drawing) and 1:6 (long, the editorial look).
+  private static readonly BODY_TO_SCALE: Record<BodyName, AgeScale> = {
+    chibi: { bx: 1.12, by: 0.62, hs: 1.5 },
+    standard: { bx: 1, by: 1, hs: 1 },
+    long: { bx: 0.86, by: 1.4, hs: 0.86 },
+  };
+
   private static readonly ADULT_SCALE: AgeScale = { bx: 1, by: 1, hs: 1 };
 
   private static readonly BUILD_TO_WIDTH: Record<BuildName, number> = {
@@ -96,6 +104,8 @@ export class PersonUtil {
     drinking: (hand, facing, theme) => PersonUtil.cup(hand, facing, theme),
   };
 
+  private static readonly FOLD_DETAIL = 2;
+
   private static readonly SEATED_HEAD_TILT = 7;
 
   private static readonly STANDING_HEAD_TILT = 6;
@@ -109,7 +119,8 @@ export class PersonUtil {
     const requested = Number(params.height) || 1;
     const heightFactor = Math.max(PersonUtil.MIN_HEIGHT, Math.min(PersonUtil.MAX_HEIGHT, requested));
     const width = IdUtil.lookup(PersonUtil.BUILD_TO_WIDTH, params.build) ?? 1;
-    return { bx: age.bx * width, by: age.by * heightFactor, hs: age.hs };
+    const body = IdUtil.lookup(PersonUtil.BODY_TO_SCALE, params.body) ?? PersonUtil.ADULT_SCALE;
+    return { bx: age.bx * width * body.bx, by: age.by * heightFactor * body.by, hs: age.hs * body.hs };
   }
 
   private static gazeOf(params: PersonParams, pose: string, facing = 1): Point {
@@ -163,9 +174,10 @@ export class PersonUtil {
     const frontArm = PersonArmUtil.ik(shoulder, [target[0] * facing, target[1]], facing, "down");
     const backSkin = ColorUtil.sh(skin, -0.15);
     const backColors = { sleeve: ColorUtil.sh(sleeve, -0.18), skin: backSkin };
-    const armsBack = PersonArmUtil.armPath(shoulder, backArm, backColors, isShortSleeve)
+    const armOptions = { isShortSleeve, hasFold: look.detail >= PersonUtil.FOLD_DETAIL };
+    const armsBack = PersonArmUtil.armPath(shoulder, backArm, backColors, armOptions)
       + PersonArmUtil.hand(backArm.hand, backSkin, false, backArm.elbow);
-    const armsFront = PersonArmUtil.armPath(shoulder, frontArm, { sleeve, skin }, isShortSleeve)
+    const armsFront = PersonArmUtil.armPath(shoulder, frontArm, { sleeve, skin }, armOptions)
       + PersonArmUtil.hand(frontArm.hand, skin, false, frontArm.elbow);
     const gaze = PersonUtil.gazeOf(params, pose, facing);
     const head = PersonHeadUtil.head(params, theme, { side: facing, isBack: false, gaze });
@@ -214,9 +226,10 @@ export class PersonUtil {
     const colors = { sleeve, skin };
     const isLeftOpen = Boolean(targets.isLeftOpen);
     const isRightOpen = Boolean(targets.isRightOpen);
-    const arms = PersonArmUtil.armPath(leftShoulder, left, colors, isShortSleeve)
+    const armOptions = { isShortSleeve, hasFold: look.detail >= PersonUtil.FOLD_DETAIL };
+    const arms = PersonArmUtil.armPath(leftShoulder, left, colors, armOptions)
       + PersonArmUtil.hand(left.hand, skin, isLeftOpen, left.elbow)
-      + PersonArmUtil.armPath(rightShoulder, right, colors, isShortSleeve)
+      + PersonArmUtil.armPath(rightShoulder, right, colors, armOptions)
       + PersonArmUtil.hand(right.hand, skin, isRightOpen, right.elbow);
     if (isBack) {
       const head = PersonHeadUtil.head(params, theme, { side: 0, isBack: true, gaze: [0, 0] });

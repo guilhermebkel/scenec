@@ -91,7 +91,7 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'arvore' blends into the background in the middle part (51% of this outline has no contrast): the color #2D3447 is too close; change the color of one of the two",
+    "art: 'arvore' blends into the background in the top part (49% of this outline has no contrast): the color #2E5260 is too close; change the color of one of the two",
     "art: 'pinho' blends into the background in the bottom part (80% of this outline has no contrast): the color #213642 is too close; change the color of one of the two",
     "art: 'arvore' and 'cerca' almost touch (tangency); move them apart a little or overlap them on purpose",
     "art: 'pinho' and 'joao' almost touch (tangency); move them apart a little or overlap them on purpose"

@@ -16,6 +16,20 @@ export class PersonArmUtil {
 
   private static readonly SHORT_SLEEVE_SPLIT = 0.6;
 
+  private static readonly SLEEVE_WIDTHS = [8.4, 6.8, 5.4];
+
+  private static readonly SKIN_WIDTHS = [7, 5.8, 4.8];
+
+  private static readonly SHORT_SLEEVE_WIDTHS = [8.6, 7.8];
+
+  private static readonly MAX_MITER = 1.6;
+
+  private static readonly MIN_MITER_DOT = 0.5;
+
+  private static readonly FOLD_HALF_WIDTH = 3;
+
+  private static readonly FOLD_SHADE = 0.22;
+
   private static readonly HALF_TURN_DEGREES = 180;
 
   private static readonly BODY_CENTER_Y = -60;
@@ -73,7 +87,7 @@ export class PersonArmUtil {
     if (!isOpen) {
       return wrap(`<ellipse cx="1.2" cy="${0.9 * thumbSide}" rx="1.9" ry="1.3" fill="${shade}" `
         + `transform="rotate(${-30 * thumbSide} 1.2 ${0.9 * thumbSide})"/>`
-        + `<rect x="-1.2" y="-3.1" width="6.4" height="6.2" rx="3" fill="${skin}"/>`
+        + `<path d="M-1.2 -2.9 L3 -3.2 Q6.6 -3.1 6.6 0 Q6.6 3.1 3 3.2 L-1.2 2.9 Z" fill="${skin}"/>`
         + `<ellipse cx="2.4" cy="${2.6 * thumbSide}" rx="2.2" ry="1.25" fill="${skin}" `
         + `transform="rotate(${-20 * thumbSide} 2.4 ${2.6 * thumbSide})"/>`
         + `<path d="M4.2 -1.6 L4.2 1.6" stroke="${shade}" stroke-width="0.6" stroke-linecap="round"/>`);
@@ -88,24 +102,71 @@ export class PersonArmUtil {
       + `<path d="M0.6 ${2.2 * thumbSide} L1.8 ${5 * thumbSide}" stroke="${skin}" stroke-width="2.3" stroke-linecap="round"/>`);
   }
 
-  static armPath(
-    shoulder: Point, arm: Arm, colors: { sleeve: string; skin: string }, isShortSleeve: boolean,
-  ): string {
+  static taper(points: Point[], widths: number[], color: string): string {
     const round = (value: number): number => PersonArmUtil.round(value);
+    const last = points.length - 1;
+    const sides = points.map((point, index) => {
+      const before = points[Math.max(0, index - 1)] ?? point;
+      const after = points[Math.min(last, index + 1)] ?? point;
+      const length = Math.hypot(after[0] - before[0], after[1] - before[1]) || 1;
+      const normal: Point = [-(after[1] - before[1]) / length, (after[0] - before[0]) / length];
+      const segmentFrom = index === last ? points[index - 1] ?? point : point;
+      const segmentTo = index === last ? point : points[index + 1] ?? point;
+      const segmentLength = Math.hypot(segmentTo[0] - segmentFrom[0], segmentTo[1] - segmentFrom[1]) || 1;
+      const segmentNormal: Point = [
+        -(segmentTo[1] - segmentFrom[1]) / segmentLength, (segmentTo[0] - segmentFrom[0]) / segmentLength,
+      ];
+      // Why: at a bend the offset grows by 1 / cos(half-angle) so the limb keeps its width through the elbow.
+      const dot = normal[0] * segmentNormal[0] + normal[1] * segmentNormal[1];
+      const miter = Math.min(PersonArmUtil.MAX_MITER, 1 / Math.max(PersonArmUtil.MIN_MITER_DOT, dot));
+      const half = ((widths[index] ?? widths.at(-1) ?? 1) / 2) * miter;
+      return {
+        left: [point[0] + normal[0] * half, point[1] + normal[1] * half] as Point,
+        right: [point[0] - normal[0] * half, point[1] - normal[1] * half] as Point,
+        radius: (widths[index] ?? widths.at(-1) ?? 1) / 2,
+      };
+    });
+    const first = sides[0];
+    const end = sides[last];
+    if (!first || !end) {
+      return "";
+    }
+    const along = sides.map((side) => `L${round(side.left[0])} ${round(side.left[1])}`).join("");
+    const back = sides.map((side) => `L${round(side.right[0])} ${round(side.right[1])}`).reverse().join("");
+    const cap = (radius: number, to: Point): string => `A${round(radius)} ${round(radius)} 0 0 0 ${round(to[0])} ${round(to[1])}`;
+    return `<path d="M${round(first.left[0])} ${round(first.left[1])}${along}${cap(end.radius, end.right)}${back}`
+      + `${cap(first.radius, first.left)}Z" fill="${color}"/>`;
+  }
+
+  private static foldOf(from: Point, to: Point, color: string): string {
+    const round = (value: number): number => PersonArmUtil.round(value);
+    const length = Math.hypot(to[0] - from[0], to[1] - from[1]) || 1;
+    const normal: Point = [-(to[1] - from[1]) / length, (to[0] - from[0]) / length];
+    const half = PersonArmUtil.FOLD_HALF_WIDTH;
+    return `<path d="M${round(to[0] + normal[0] * half)} ${round(to[1] + normal[1] * half)} `
+      + `Q${round(to[0] + (to[0] - from[0]) / length)} ${round(to[1] + (to[1] - from[1]) / length)} `
+      + `${round(to[0] - normal[0] * half)} ${round(to[1] - normal[1] * half)}" stroke="${color}" `
+      + `stroke-width="0.8" fill="none" stroke-linecap="round"/>`;
+  }
+
+  static armPath(
+    shoulder: Point,
+    arm: Arm,
+    colors: { sleeve: string; skin: string },
+    options: { isShortSleeve: boolean; hasFold: boolean },
+  ): string {
     const { elbow, hand } = arm;
-    const stroke = "fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\"";
+    const { isShortSleeve, hasFold } = options;
+    const fold = hasFold ? PersonArmUtil.foldOf(shoulder, elbow, ColorUtil.sh(colors.sleeve, -PersonArmUtil.FOLD_SHADE)) : "";
     if (!isShortSleeve) {
-      return `<path d="M${round(shoulder[0])} ${round(shoulder[1])} L${round(elbow[0])} ${round(elbow[1])} `
-        + `L${round(hand[0])} ${round(hand[1])}" stroke="${colors.sleeve}" ${stroke} stroke-width="7"/>`;
+      return PersonArmUtil.taper([shoulder, elbow, hand], PersonArmUtil.SLEEVE_WIDTHS, colors.sleeve) + fold;
     }
     const split = PersonArmUtil.SHORT_SLEEVE_SPLIT;
     const middle: Point = [
       shoulder[0] + (elbow[0] - shoulder[0]) * split,
       shoulder[1] + (elbow[1] - shoulder[1]) * split,
     ];
-    return `<path d="M${round(middle[0])} ${round(middle[1])} L${round(elbow[0])} ${round(elbow[1])} `
-      + `L${round(hand[0])} ${round(hand[1])}" stroke="${colors.skin}" ${stroke} stroke-width="6"/>`
-      + `<path d="M${round(shoulder[0])} ${round(shoulder[1])} L${round(middle[0])} ${round(middle[1])}" `
-      + `stroke="${colors.sleeve}" ${stroke} stroke-width="8"/>`;
+    return PersonArmUtil.taper([middle, elbow, hand], PersonArmUtil.SKIN_WIDTHS, colors.skin)
+      + PersonArmUtil.taper([shoulder, middle], PersonArmUtil.SHORT_SLEEVE_WIDTHS, colors.sleeve);
   }
 }

@@ -5,6 +5,7 @@ import { DEPTH_NAMES } from "@/Protocols/SceneProtocol.ts";
 import type { ObjectLayer, SceneObject, SettingName, SizeName, SlotName } from "@/Protocols/SceneProtocol.ts";
 import { AssetService } from "@/Services/AssetService.ts";
 import { DependencyOrderService, type ResolutionOrder } from "@/Services/DependencyOrderService.ts";
+import { DetailService } from "@/Services/DetailService.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
 import { RequireUtil } from "@/Utils/RequireUtil.ts";
 import { PersonUtil } from "@/Utils/PersonUtil.ts";
@@ -181,7 +182,7 @@ export class PlacementService {
     if (!position) {
       return null;
     }
-    const drawn = asset.draw({ ...object }, theme);
+    const drawn = asset.draw({ ...object, detail: DetailService.resolve(id, object, context) }, theme);
     const drawnSize = typeof drawn === "string" ? size : drawn.box;
     const width = drawnSize.w * position.scale;
     const height = drawnSize.h * position.scale;

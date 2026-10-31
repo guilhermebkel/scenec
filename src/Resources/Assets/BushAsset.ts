@@ -16,10 +16,13 @@ export class BushAsset extends BaseAsset {
 
   draw(params: AssetParams, theme: Theme) {
     const [first, second, color] = theme.foliage;
-    return ShapeUtil.shadow(theme, 36, 3) + ShapeUtil.circle(-20, -14, 15, color)
-      + ShapeUtil.circle(20, -14, 15, ColorUtil.sh(color, -0.1)) + ShapeUtil.circle(0, -24, 21, first)
-      + `<path d="M0 -3 A21 21 0 0 0 21 -24 A21 21 0 0 1 6 -5 Z" fill="${ColorUtil.sh(first, -0.12)}"/>`
-      + ShapeUtil.circle(-9, -12, 12, second) + ShapeUtil.circle(10, -11, 12, ColorUtil.sh(second, -0.08))
-      + ShapeUtil.circle(-6, -34, 6, ColorUtil.sh(first, 0.2), "opacity=\"0.6\"");
+    return ShapeUtil.shadow(theme, 36, 3)
+      + ShapeUtil.blob(-20, -14, 15, { seed: 21, lobes: 4, fill: color })
+      + ShapeUtil.blob(20, -14, 15, { seed: 22, lobes: 4, fill: ColorUtil.sh(color, -0.1) })
+      + ShapeUtil.blob(0, -24, 21, { seed: 23, lobes: 5, fill: ColorUtil.sh(first, -0.12) })
+      + ShapeUtil.blob(-1.5, -25.5, 19.5, { seed: 23, lobes: 5, fill: first })
+      + ShapeUtil.blob(-9, -12, 12, { seed: 24, lobes: 4, fill: second })
+      + ShapeUtil.blob(10, -11, 12, { seed: 25, lobes: 4, fill: ColorUtil.sh(second, -0.08) })
+      + ShapeUtil.blob(-6, -34, 6, { seed: 26, lobes: 3, fill: ColorUtil.sh(first, 0.2), extra: "opacity=\"0.6\"" });
   }
 }

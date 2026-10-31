@@ -28,9 +28,9 @@ export class SanitizeUtil {
   private static readonly ALLOWED_ELEMENTS = new Set([
     "svg", "g", "defs", "title", "desc", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "text", "tspan",
     "linearGradient", "radialGradient", "stop", "clipPath", "mask", "pattern", "symbol", "use", "image", "filter",
-    "feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDropShadow", "feFlood",
-    "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feMerge", "feMergeNode", "feMorphology", "feOffset",
-    "feTurbulence",
+    "feBlend", "feColorMatrix", "feComponentTransfer", "feComposite", "feConvolveMatrix", "feDisplacementMap", "feDropShadow",
+    "feFlood", "feFuncA", "feFuncB", "feFuncG", "feFuncR", "feGaussianBlur", "feMerge", "feMergeNode", "feMorphology",
+    "feOffset", "feTurbulence",
   ]);
 
   static isAllowedElement(name: string): boolean {

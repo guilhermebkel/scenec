@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { DETAIL_NAMES } from "@/Protocols/AssetProtocol.ts";
+import { BODY_NAMES } from "@/Protocols/PersonProtocol.ts";
 
 export const SLOT_NAMES = ["far-left", "left", "center-left", "center", "center-right", "right", "far-right"] as const;
 export const SIZE_NAMES = ["tiny", "small", "medium", "large", "huge"] as const;
@@ -140,6 +142,10 @@ export const objectSchema = z.looseObject({
   pose: z.string().optional().describe("Person pose. See `scenec catalog poses`."),
   expr: z.string().optional().describe("Person expression."),
   look: z.string().optional().describe("Where a person looks: another object id, or left, right, up, down, camera."),
+  body: z.enum(BODY_NAMES).optional().describe("Person proportions: chibi, standard or long."),
+  detail: z.enum(DETAIL_NAMES).optional().describe(
+    "How much is drawn: low drops small parts, high adds highlights and texture. Defaults: focus high, far low, else mid.",
+  ),
   haze: z.boolean().optional(),
   light: z.boolean().optional(),
   kit: z.boolean().optional(),
