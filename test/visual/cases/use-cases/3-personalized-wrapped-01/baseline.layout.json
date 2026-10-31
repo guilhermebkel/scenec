@@ -35,6 +35,7 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'canto_abajur' blends into the background in the bottom part (41% of this outline has no contrast): the color #0E122A is too close; change the color of one of the two"
+    "art: 'canto_prateleira' blends into the background in the bottom part (70% of this outline has no contrast): the color #3C324F is too close; change the color of one of the two",
+    "art: 'canto_abajur' blends into the background in the bottom part (44% of this outline has no contrast): the color #0D1129 is too close; change the color of one of the two"
   ]
 }

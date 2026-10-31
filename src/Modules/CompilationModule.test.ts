@@ -83,4 +83,32 @@ describe("CompilationModule.compile()", () => {
       expect(CompilationModule.compile(scene).svg).not.toContain("<script");
     });
   });
+
+  describe("when canvas has generated theme or time of day", () => {
+    it("compiles with a generated palette object deterministically", () => {
+      const scene = {
+        canvas: { ...FRAME, theme: { from: "#2F6BFF", harmony: "analogous", mood: "day" } },
+        objects: { person: { asset: "person" } },
+      };
+      const result = CompilationModule.compile(scene);
+
+      expect(result.warnings).toHaveLength(0);
+      expect(result.svg).toContain("#2F6BFF");
+    });
+
+    it("applies time grade filter to artwork while leaving text untouched", () => {
+      const scene = {
+        canvas: { ...FRAME, time: "golden" },
+        objects: { tree: { asset: "tree" } },
+        text: [{ content: "Title" }],
+      };
+      const result = CompilationModule.compile(scene);
+
+      expect(result.svg).toContain("filter=\"url(#timeGrade)\"");
+      expect(result.svg).toContain("Title");
+      const textIndex = result.svg.indexOf("Title");
+      const filterGroupEnd = result.svg.indexOf("</g>", result.svg.indexOf("filter=\"url(#timeGrade)\""));
+      expect(textIndex).toBeGreaterThan(filterGroupEnd);
+    });
+  });
 });

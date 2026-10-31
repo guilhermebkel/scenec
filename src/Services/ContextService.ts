@@ -1,12 +1,13 @@
 import type { CompilationContext, LayoutLines } from "@/Protocols/CompilationProtocol.ts";
 import type { CompileOptions } from "@/Protocols/OptionsProtocol.ts";
-import { SETTING_NAMES, type ModeName, type Scene, type SettingName } from "@/Protocols/SceneProtocol.ts";
+import { SETTING_NAMES, type GeneratedTheme, type ModeName, type Scene, type SettingName } from "@/Protocols/SceneProtocol.ts";
 import { KIT_IDS, type KitId } from "@/Protocols/KitProtocol.ts";
 import { THEME_IDS, type Theme, type ThemeId } from "@/Protocols/ThemeProtocol.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
 import { AssetService } from "@/Services/AssetService.ts";
 import { CustomAssetService } from "@/Services/CustomAssetService.ts";
 import { KitService } from "@/Services/KitService.ts";
+import { PaletteService } from "@/Services/PaletteService.ts";
 import { ThemeService } from "@/Services/ThemeService.ts";
 
 export class ContextService {
@@ -54,14 +55,17 @@ export class ContextService {
     return { canvas, kit, idToObject: {}, library, failedAssets, theme, warnings, width, height, setting, lines, unit };
   }
 
-  private static themeOf(name: string | undefined, warnings: string[]): Theme {
-    if (name === undefined) {
+  private static themeOf(themeOrName: string | GeneratedTheme | undefined, warnings: string[]): Theme {
+    if (themeOrName === undefined) {
       return ThemeService.THEME_ID_TO_THEME[ContextService.DEFAULT_THEME];
     }
-    if (IdUtil.isOneOf(THEME_IDS, name)) {
-      return ThemeService.THEME_ID_TO_THEME[name];
+    if (typeof themeOrName === "object") {
+      return PaletteService.generate(themeOrName);
     }
-    warnings.push(`theme '${name}' does not exist; using '${ContextService.DEFAULT_THEME}'. Available: ${THEME_IDS.join(", ")}`);
+    if (IdUtil.isOneOf(THEME_IDS, themeOrName)) {
+      return ThemeService.THEME_ID_TO_THEME[themeOrName];
+    }
+    warnings.push(`theme '${themeOrName}' does not exist; using '${ContextService.DEFAULT_THEME}'. Available: ${THEME_IDS.join(", ")}`);
     return ThemeService.THEME_ID_TO_THEME[ContextService.DEFAULT_THEME];
   }
 

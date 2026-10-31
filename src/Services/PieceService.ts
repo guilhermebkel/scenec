@@ -92,7 +92,7 @@ export class PieceService {
     const settingAmbient = IdUtil.lookup(PieceService.SETTING_TO_AMBIENT, setting) ?? 1;
     const ambient = light.isNight ? PieceService.NIGHT_CAST : settingAmbient;
     const opacity = (ambient * PieceService.CAST_OPACITY * light.strength).toFixed(PieceService.DIGITS);
-    return `<g clip-path="url(#groundClip)" opacity="${opacity}"><g filter="url(#castF)">${casts.join("")}</g></g>`;
+    return `<g clip-path="url(#groundClip)" opacity="${opacity}" style="mix-blend-mode: multiply;"><g filter="url(#castF)">${casts.join("")}</g></g>`;
   }
 
   private static isDecorated(placement: Placement, object: SceneObject): boolean {
@@ -126,8 +126,11 @@ export class PieceService {
       }
     }
     const inner = `<g id="${placement.id}" transform="${transform}"${hazeAttribute}><g id="b_${placement.id}">${artwork}</g></g>`;
+    const body = (filterId ? `${defs}<g filter="url(#${filterId})">${inner}</g>` : inner) + shade;
+    // Why: isolation keeps multiply and screen blending within the piece and stops it from bleeding to background.
+    const isolated = `<g style="isolation: isolate;">${body}</g>`;
     // Why: the contact shadow stays outside the outline filter, otherwise it becomes a ring around the ellipse.
-    return cord + contact + (filterId ? `${defs}<g filter="url(#${filterId})">${inner}</g>` : inner) + shade;
+    return cord + contact + isolated;
   }
 
   private static cordOf(placement: Placement, ink: string): string {
@@ -223,8 +226,11 @@ export class PieceService {
 
   private static softShade(placement: Placement, box: Box, shade: { opacity: number; isGrounded: boolean }): string {
     const occlusion = shade.isGrounded
-      ? `<rect x="${placement.boxLeft.toFixed(1)}" y="${placement.boxTop.toFixed(1)}" width="${placement.width.toFixed(1)}" height="${placement.height.toFixed(1)}" fill="url(#lgAO)"/>`
+      ? `<rect x="${placement.boxLeft.toFixed(1)}" y="${placement.boxTop.toFixed(1)}" width="${placement.width.toFixed(1)}" height="${placement.height.toFixed(1)}" fill="url(#lgAO)" style="mix-blend-mode: multiply;"/>`
       : "";
-    return `<g mask="url(#mk_${placement.id})" opacity="${shade.opacity}"><rect x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${box.width.toFixed(1)}" height="${box.height.toFixed(1)}" fill="url(#lgShade)"/>${occlusion}</g>`;
+    return `<g mask="url(#mk_${placement.id})" opacity="${shade.opacity}">`
+      + `<rect x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${box.width.toFixed(1)}" height="${box.height.toFixed(1)}" fill="url(#lgLight)" style="mix-blend-mode: screen;"/>`
+      + `<rect x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${box.width.toFixed(1)}" height="${box.height.toFixed(1)}" fill="url(#lgShade)" style="mix-blend-mode: multiply;"/>`
+      + `${occlusion}</g>`;
   }
 }

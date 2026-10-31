@@ -1,16 +1,49 @@
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
+import { OklabUtil } from "@/Utils/OklabUtil.ts";
 import { describe, expect, it } from "vitest";
+
 describe("ColorUtil.sh()", () => {
-  it("darkens halfway to black", () => {
-    expect(ColorUtil.sh("#FF8040", -0.5)).toBe("#804020");
+  it("rotates hue toward cool for negative amounts", () => {
+    const original = "#4E9E5C";
+    const shaded = ColorUtil.sh(original, -0.4);
+    const [, , originalHue] = OklabUtil.labToLch(OklabUtil.fromRgb(...OklabUtil.rgbOfHex(original)));
+    const [, , shadedHue] = OklabUtil.labToLch(OklabUtil.fromRgb(...OklabUtil.rgbOfHex(shaded)));
+    // Why: shadow hue pulls toward cool blue-violet (~4.6 rad), so green (~2.4 rad) increases toward 4.6.
+    expect(shadedHue).toBeGreaterThan(originalHue);
   });
 
-  it("lightens halfway to white", () => {
-    expect(ColorUtil.sh("#000000", 0.5)).toBe("#808080");
+  it("rotates hue toward warm for positive amounts", () => {
+    const original = "#4E9E5C";
+    const lighted = ColorUtil.sh(original, 0.4);
+    const [, , originalHue] = OklabUtil.labToLch(OklabUtil.fromRgb(...OklabUtil.rgbOfHex(original)));
+    const [, , lightedHue] = OklabUtil.labToLch(OklabUtil.fromRgb(...OklabUtil.rgbOfHex(lighted)));
+    // Why: light hue pulls toward warm yellow (~1.4 rad), so green (~2.4 rad) decreases toward 1.4.
+    expect(lightedHue).toBeLessThan(originalHue);
+  });
+
+  it("keeps neutral greys strictly neutral without hue cast", () => {
+    const grey = "#808080";
+    const darkGrey = ColorUtil.sh(grey, -0.4);
+    const lightGrey = ColorUtil.sh(grey, 0.4);
+    const [darkR, darkG, darkB] = OklabUtil.rgbOfHex(darkGrey);
+    const [lightR, lightG, lightB] = OklabUtil.rgbOfHex(lightGrey);
+    expect(darkR).toBe(darkG);
+    expect(darkG).toBe(darkB);
+    expect(lightR).toBe(lightG);
+    expect(lightG).toBe(lightB);
+  });
+
+  it("always returns a valid 6-digit hex", () => {
+    expect(ColorUtil.sh("#FF8040", -0.5)).toMatch(/^#[0-9A-F]{6}$/);
+    expect(ColorUtil.sh("#FF8040", 0.5)).toMatch(/^#[0-9A-F]{6}$/);
   });
 
   it("expands a three-digit color", () => {
-    expect(ColorUtil.sh("#FFF", -0.5)).toBe("#808080");
+    const shaded = ColorUtil.sh("#FFF", -0.5);
+    expect(shaded).toMatch(/^#[0-9A-F]{6}$/);
+    const [red, green, blue] = OklabUtil.rgbOfHex(shaded);
+    expect(red).toBe(green);
+    expect(green).toBe(blue);
   });
 
   it("returns a value that is not a hex color unchanged", () => {

@@ -11,6 +11,9 @@
 | focus | The object the composition leans toward. | center |
 | kit | A rendering style (`flat`, `hatch`, `outline`, `paper`, `riso`, `sketch`). | filter, skin |
 | theme | The color palette and mood. | style |
+| harmony | The color harmony used to generate a palette from seed colors (analogous, complementary, split, triad, mono). | color scheme |
+| mood | Lightness and contrast bands for a generated theme (day, dusk, night). | brightness |
+| time | Time of day setting light color and color grade (golden, noon, overcast, dusk, night). | hour |
 | warning | A problem the compiler found in the scene. | error (an error stops compile) |
 | critique | An art-director remark produced by `check` (`art` in the report). | lint |
 | baseline | The SVG and layout stored for one regression case. | snapshot |

@@ -8,8 +8,23 @@ export const MODE_NAMES = ["classic", "2.5d", "board", "map"] as const;
 export type ModeName = (typeof MODE_NAMES)[number];
 export const SETTING_NAMES = ["outdoor", "indoor", "beach", "city"] as const;
 export const SHOT_NAMES = ["wide", "full", "medium", "close"] as const;
+export const HARMONY_NAMES = ["analogous", "complementary", "split", "triad", "mono"] as const;
+export type HarmonyName = (typeof HARMONY_NAMES)[number];
+export const MOOD_NAMES = ["day", "dusk", "night"] as const;
+export type MoodName = (typeof MOOD_NAMES)[number];
+export const TIME_NAMES = ["golden", "noon", "overcast", "dusk", "night"] as const;
+export type TimeName = (typeof TIME_NAMES)[number];
 export const MAX_OBJECTS = 200;
 export const MAX_CANVAS_PX = 4096;
+
+export const MAX_SEED_COLORS = 3;
+
+export const generatedThemeSchema = z.looseObject({
+  from: z.union([z.string(), z.array(z.string()).min(1).max(MAX_SEED_COLORS)]).describe("One to three seed colors."),
+  harmony: z.enum(HARMONY_NAMES).optional().describe("analogous (default), complementary, split, triad or mono."),
+  mood: z.enum(MOOD_NAMES).optional().describe("day (default), dusk or night."),
+});
+export type GeneratedTheme = z.infer<typeof generatedThemeSchema>;
 
 const slot = z.union([
   z.number(),
@@ -41,7 +56,9 @@ export const canvasSchema = z.looseObject({
   width: pixels.optional().describe("Frame width in px. Default 1200."),
   height: pixels.optional().describe("Frame height in px. Default 630 (classic) or 900 (2.5d, map)."),
   mode: z.enum(MODE_NAMES).optional().describe("classic (default), 2.5d, board or map."),
-  theme: z.string().optional().describe("Palette name. See `scenec catalog themes`."),
+  theme: z.union([z.string(), generatedThemeSchema]).optional()
+    .describe("Palette name or { from, harmony, mood }. See `scenec catalog themes`."),
+  time: z.enum(TIME_NAMES).optional().describe("Time of day: golden, noon, overcast, dusk or night."),
   kit: z.string().optional().describe("Style kit name. See `scenec catalog kits`."),
   colors: z.record(z.string(), z.string()).optional().describe("Overrides theme colors, for example wall or floor."),
   setting: z.enum(SETTING_NAMES).optional().describe("Where the scene happens. Default outdoor."),

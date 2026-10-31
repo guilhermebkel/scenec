@@ -68,4 +68,10 @@ describe("SanitizeUtil.sanitizeSvg()", () => {
 
     expect(SanitizeUtil.sanitizeSvg(svg)).toBe("<svg><g/></svg>");
   });
+
+  it("keeps mix-blend-mode and isolation attributes and styles", () => {
+    const svg = "<svg><g style=\"mix-blend-mode: multiply; isolation: isolate\"><rect style=\"mix-blend-mode: screen\"/></g></svg>";
+
+    expect(SanitizeUtil.sanitizeSvg(svg)).toBe("<svg><g style=\"mix-blend-mode: multiply; isolation: isolate\"><rect style=\"mix-blend-mode: screen\"/></g></svg>");
+  });
 });

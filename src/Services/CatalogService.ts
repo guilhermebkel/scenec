@@ -4,7 +4,7 @@ import type { AssetKind } from "@/Protocols/AssetProtocol.ts";
 import { PersonUtil } from "@/Utils/PersonUtil.ts";
 import { KitService } from "@/Services/KitService.ts";
 import { AssetService } from "@/Services/AssetService.ts";
-import { DEPTH_NAMES, SETTING_NAMES, SHOT_NAMES, SIZE_NAMES, SLOT_NAMES } from "@/Protocols/SceneProtocol.ts";
+import { DEPTH_NAMES, HARMONY_NAMES, MOOD_NAMES, SETTING_NAMES, SHOT_NAMES, SIZE_NAMES, SLOT_NAMES } from "@/Protocols/SceneProtocol.ts";
 export type CatalogKind = typeof CatalogService.CATALOG_KINDS[number];
 
 export interface AssetEntry {
@@ -51,7 +51,11 @@ export class CatalogService {
     assets: () => CatalogService.listAssets(),
     groups: () => CatalogService.listGroups(),
     kits: () => CatalogService.listKits(),
-    themes: () => CatalogService.listThemes(),
+    themes: () => ({
+      presets: CatalogService.listThemes(),
+      harmonies: HARMONY_NAMES,
+      moods: MOOD_NAMES,
+    }),
     poses: () => ({ ...PersonUtil.POSE_NAMES, expressions: PersonUtil.EXPRESSION_NAMES }),
     layout: () => ({
       slots: SLOT_NAMES, sizes: SIZE_NAMES, depths: DEPTH_NAMES, settings: SETTING_NAMES, shots: SHOT_NAMES,

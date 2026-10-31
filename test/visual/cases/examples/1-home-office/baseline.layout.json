@@ -115,7 +115,7 @@
   ],
   "warnings": [],
   "art": [
-    "art: 'janela' blends into the background in the top part (90% of this outline has no contrast): the color #F8F8F8 is too close; change the color of one of the two",
+    "art: 'janela' blends into the background in the top part (88% of this outline has no contrast): the color #F9F9FA is too close; change the color of one of the two",
     "art: 'cadeira' and 'note' almost touch (tangency); move them apart a little or overlap them on purpose"
   ]
 }

@@ -86,13 +86,15 @@ export class CompilationModule {
     const pieces = PieceService.assemble(ordered, { context, light, haze: background.haze, heldToHolder });
     const castLayer = PieceService.castLayer(pieces.casts, light, context);
     const { width, height } = context;
-    const vignette = light && !light.isHatch ? `<rect width="${width}" height="${height}" fill="url(#vignette)"/>` : "";
+    const vignette = light && !light.isHatch ? `<rect width="${width}" height="${height}" fill="url(#vignette)" style="mix-blend-mode: multiply;"/>` : "";
     const head = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" `
       + `width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
     const artwork = `${backgroundSvg}\n${castLayer}\n${pieces.body}\n${vignette}`;
+    const timeFilter = context.canvas.time ? LightingService.timeGradeFilter(context.canvas.time) : "";
+    const graded = context.canvas.time ? `<defs>${timeFilter}</defs><g filter="url(#timeGrade)">${artwork}</g>` : artwork;
     // Why: the scene filter wraps background and objects; the texture goes on top, below the text.
     const sceneFilter = context.kit.scene ? KitService.sceneFilter(context.kit.scene) : "";
-    const sceneArt = context.kit.scene ? `<defs>${sceneFilter}</defs><g filter="url(#kitScene)">${artwork}</g>` : artwork;
+    const sceneArt = context.kit.scene ? `<defs>${sceneFilter}</defs><g filter="url(#kitScene)">${graded}</g>` : graded;
     const grain = CompilationModule.grain(context);
     const texture = KitService.texture(context.kit.texture, context.width, context.height);
     const svg = SvgUtil.flattenOpacity(`${head}\n${sceneArt}\n${texture}\n${grain}\n${text.svg}\n</svg>`);

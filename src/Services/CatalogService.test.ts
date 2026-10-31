@@ -13,8 +13,12 @@ describe("CatalogService.catalog()", () => {
     ]);
   });
 
-  it("lists the themes", () => {
-    expect(CatalogService.catalog("themes")).toStrictEqual(["flat-autumn", "flat-cool", "night", "warm-cafe", "beach"]);
+  it("lists the themes with presets, harmonies and moods", () => {
+    expect(CatalogService.catalog("themes")).toStrictEqual({
+      presets: ["flat-autumn", "flat-cool", "night", "warm-cafe", "beach"],
+      harmonies: ["analogous", "complementary", "split", "triad", "mono"],
+      moods: ["day", "dusk", "night"],
+    });
   });
 
   it("lists standing and seated poses and the expressions", () => {
