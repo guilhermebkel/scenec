@@ -1,6 +1,6 @@
 import type { AssetId, AssetKind } from "@/Protocols/AssetProtocol.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
-import type { Depth, CompilationContext, HazeLevels, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
+import type { Depth, CompilationContext, HazeLevels, LightShaft, LightState, Placement } from "@/Protocols/CompilationProtocol.ts";
 import type { SceneObject, SettingName } from "@/Protocols/SceneProtocol.ts";
 import { KitService } from "@/Services/KitService.ts";
 
@@ -201,7 +201,7 @@ export class PieceService {
     }
     const layer = light.isHatch
       ? PieceService.hatchShade(placement, light, box, opacity)
-      : PieceService.softShade(placement, box, { opacity, isGrounded });
+      : PieceService.softShade(placement, box, { opacity, isGrounded, light });
     return `${mask}${layer}`;
   }
 
@@ -224,13 +224,32 @@ export class PieceService {
     return `<g mask="url(#mk_${placement.id})" opacity="${opacity}"><rect x="${left.toFixed(1)}" y="${top.toFixed(1)}" width="${Math.max(0, right - left).toFixed(1)}" height="${Math.max(0, bottom - top).toFixed(1)}" fill="url(#hatchP)"/></g>`;
   }
 
-  private static softShade(placement: Placement, box: Box, shade: { opacity: number; isGrounded: boolean }): string {
+  private static readonly SHAFT_HIGHLIGHT_OPACITY = 0.3;
+
+  private static softShade(
+    placement: Placement,
+    box: Box,
+    shade: { opacity: number; isGrounded: boolean; light: LightState },
+  ): string {
     const occlusion = shade.isGrounded
       ? `<rect x="${placement.boxLeft.toFixed(1)}" y="${placement.boxTop.toFixed(1)}" width="${placement.width.toFixed(1)}" height="${placement.height.toFixed(1)}" fill="url(#lgAO)" style="mix-blend-mode: multiply;"/>`
       : "";
+    const extraLight = PieceService.isInsideShaft(placement, shade.light.shaft)
+      ? `<rect x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${box.width.toFixed(1)}" height="${box.height.toFixed(1)}" fill="url(#lgLight)" opacity="${PieceService.SHAFT_HIGHLIGHT_OPACITY}" style="mix-blend-mode: screen;"/>`
+      : "";
     return `<g mask="url(#mk_${placement.id})" opacity="${shade.opacity}">`
       + `<rect x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${box.width.toFixed(1)}" height="${box.height.toFixed(1)}" fill="url(#lgLight)" style="mix-blend-mode: screen;"/>`
+      + extraLight
       + `<rect x="${box.x.toFixed(1)}" y="${box.y.toFixed(1)}" width="${box.width.toFixed(1)}" height="${box.height.toFixed(1)}" fill="url(#lgShade)" style="mix-blend-mode: multiply;"/>`
       + `${occlusion}</g>`;
+  }
+
+  private static isInsideShaft(placement: Placement, shaft?: LightShaft | null): boolean {
+    if (!shaft) {
+      return false;
+    }
+    const shaftMinX = Math.min(shaft.windowX - shaft.windowWidth / 2, shaft.floorLeft);
+    const shaftMaxX = Math.max(shaft.windowX + shaft.windowWidth / 2, shaft.floorRight);
+    return placement.x >= shaftMinX && placement.x <= shaftMaxX && placement.y >= shaft.windowY;
   }
 }

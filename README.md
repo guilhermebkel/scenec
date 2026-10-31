@@ -208,7 +208,7 @@ Yes. Under `assets:` a scene can bring an SVG (inline or a file next to the scen
 
 ## Roadmap
 
-- [x] **Core:** 86 assets, groups, map mode, 6 kits, warnings, critiques, CLI, skill, 108 visual baselines.
+- [x] **Core:** 86 assets, groups, map mode, 6 kits, warnings, critiques, CLI, skill, 111 visual baselines.
 - [ ] **More recipes and assets** driven by real use of the skill.
 
 ## Contributing

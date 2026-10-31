@@ -87,6 +87,28 @@ export class ColorUtil {
     return (current + diff * weight + ColorUtil.FULL_TURN) % ColorUtil.FULL_TURN;
   }
 
+  private static toHexChannel(value: number): string {
+    const clamped = Math.min(ColorUtil.CHANNEL_MAX, Math.max(0, value));
+    const raw = clamped.toString(ColorUtil.HEX_RADIX);
+    return raw.padStart(2, "0");
+  }
+
+  static mix(first: string, second: string, weight: number): string {
+    const firstDigits = ColorUtil.expand(first.replace("#", ""));
+    const secondDigits = ColorUtil.expand(second.replace("#", ""));
+    if (!/^[0-9a-f]{6}$/i.test(firstDigits) || !/^[0-9a-f]{6}$/i.test(secondDigits)) {
+      return first;
+    }
+    const factor = Math.min(1, Math.max(0, weight));
+    const inverse = 1 - factor;
+    const [r1 = 0, g1 = 0, b1 = 0] = ColorUtil.channelsOf(firstDigits);
+    const [r2 = 0, g2 = 0, b2 = 0] = ColorUtil.channelsOf(secondDigits);
+    const red = Math.round(r1 * inverse + r2 * factor);
+    const green = Math.round(g1 * inverse + g2 * factor);
+    const blue = Math.round(b1 * inverse + b2 * factor);
+    return `#${ColorUtil.toHexChannel(red)}${ColorUtil.toHexChannel(green)}${ColorUtil.toHexChannel(blue)}`;
+  }
+
   private static expand(digits: string): string {
     return digits.length === 3 ? Array.from(digits, (char) => char + char).join("") : digits;
   }

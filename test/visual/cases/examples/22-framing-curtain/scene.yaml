@@ -1,0 +1,19 @@
+canvas:
+  width: 1200
+  height: 630
+  setting: indoor
+  theme: cool
+  framing: curtain
+  critique: false
+objects:
+  janela:
+    asset: window
+    at: 0.35
+  poltrona:
+    asset: armchair
+    at: 0.72
+  leitor:
+    asset: person
+    pose: reading
+    on: poltrona
+    shirt: secondary

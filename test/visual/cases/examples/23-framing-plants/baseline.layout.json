@@ -1,0 +1,32 @@
+{
+  "layout": [
+    {
+      "id": "trabalhador",
+      "asset": "person",
+      "x": 68.1,
+      "base": 84,
+      "w": 5.7,
+      "h": 29.4
+    },
+    {
+      "id": "mesa",
+      "asset": "desk",
+      "x": 60,
+      "base": 93,
+      "w": 23.2,
+      "h": 15.6
+    },
+    {
+      "id": "laptop",
+      "asset": "laptop",
+      "x": 53,
+      "base": 77.4,
+      "w": 6.1,
+      "h": 8.2
+    }
+  ],
+  "warnings": [
+    "theme 'warm' does not exist; using 'flat-cool'. Available: flat-autumn, flat-cool, night, warm-cafe, beach"
+  ],
+  "art": []
+}

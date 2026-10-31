@@ -14,6 +14,14 @@ export const MOOD_NAMES = ["day", "dusk", "night"] as const;
 export type MoodName = (typeof MOOD_NAMES)[number];
 export const TIME_NAMES = ["golden", "noon", "overcast", "dusk", "night"] as const;
 export type TimeName = (typeof TIME_NAMES)[number];
+export const RIDGES_MIN = 0;
+export const RIDGES_MAX = 4;
+export const CLOUD_DENSITIES = ["none", "few", "many"] as const;
+export type CloudDensity = (typeof CLOUD_DENSITIES)[number];
+export const GROUND_DETAILS = ["none", "low", "high"] as const;
+export type GroundDetail = (typeof GROUND_DETAILS)[number];
+export const FRAMING_ELEMENTS = ["foliage", "curtain", "plants", "none"] as const;
+export type FramingElement = (typeof FRAMING_ELEMENTS)[number];
 export const MAX_OBJECTS = 200;
 export const MAX_CANVAS_PX = 4096;
 
@@ -71,9 +79,21 @@ export const canvasSchema = z.looseObject({
   grain: z.boolean().optional(),
   light: z.union([
     z.literal(false),
-    z.looseObject({ from: z.union([z.number(), z.string()]).optional(), strength: fraction.optional() }),
+    z.looseObject({
+      from: z.union([z.number(), z.string()]).optional(),
+      strength: fraction.optional(),
+      shafts: z.boolean().optional().describe("false turns off indoor window light shafts."),
+    }),
   ]).optional()
-    .describe("false, or { from: left|right|front|0..1, strength: 0..1 }."),
+    .describe("false, or { from: left|right|front|0..1, strength: 0..1, shafts: boolean }."),
+  seed: z.number().optional().describe("Seed for procedural background details."),
+  ridges: z.number().int().min(RIDGES_MIN).max(RIDGES_MAX).optional()
+    .describe("Number of procedural ridge layers (0..4). Default 2 for outdoor, 0 for city/beach."),
+  clouds: z.enum(CLOUD_DENSITIES).optional().describe("Ambient sky clouds: none, few or many."),
+  ground_detail: z.enum(GROUND_DETAILS).optional().describe("Ground texture and tufts: none, low or high."),
+  framing: z.enum(FRAMING_ELEMENTS).optional()
+    .describe("Foreground framing elements: foliage, curtain, plants or none."),
+  frame_elements: z.enum(FRAMING_ELEMENTS).optional().describe("Alias for canvas.framing."),
   critique: z.boolean().optional().describe("false turns the art director off."),
   shot: z.enum(SHOT_NAMES).optional().describe("Framing: wide (default), full, medium or close."),
   focus: z.union([z.string(), z.array(z.string())]).optional().describe("Object or group ids the shot frames."),

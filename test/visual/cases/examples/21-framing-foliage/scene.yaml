@@ -1,0 +1,20 @@
+canvas:
+  width: 1200
+  height: 630
+  setting: outdoor
+  theme: warm
+  framing: foliage
+  critique: false
+objects:
+  sol:
+    asset: sun
+    at: top-right
+  banco:
+    asset: bench
+    at: 0.65
+  ana:
+    asset: person
+    pose: sitting
+    on: banco
+    hair: bun
+    shirt: primary

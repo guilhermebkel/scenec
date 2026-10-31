@@ -1,6 +1,9 @@
 import type { PlaneCamera, PlaneWorld, ScreenPoint } from "@/Protocols/PlaneProtocol.ts";
 import type { FloorOptions, WallsOptions } from "@/Protocols/SceneProtocol.ts";
+import { GroundDetailService } from "@/Services/GroundDetailService.ts";
 import { PlaneBoxService } from "@/Services/PlaneBoxService.ts";
+import { RidgeService } from "@/Services/RidgeService.ts";
+import { SkyDetailService } from "@/Services/SkyDetailService.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import { FormatUtil } from "@/Utils/FormatUtil.ts";
 import { SvgUtil } from "@/Utils/SvgUtil.ts";
@@ -52,6 +55,12 @@ export class PlaneBackgroundService {
 
   private static readonly JOINT_SPACING = 0.55;
 
+  private static readonly DEFAULT_RIDGES = 2;
+
+  private static readonly DEFAULT_SEED = 1;
+
+  private static readonly PATH_TUFT_MARGIN = 30;
+
   static draw(world: PlaneWorld): Background {
     const { camera, scene } = world;
     const horizonZ = scene.canvas?.horizon_z ?? PlaneBackgroundService.DEFAULT_HORIZON_Z;
@@ -66,7 +75,7 @@ export class PlaneBackgroundService {
     const shadowChannels = theme.shadow.match(PlaneBackgroundService.NUMBER) ?? PlaneBackgroundService.DEFAULT_SHADOW;
     const [red = 0, green = 0, blue = 0, alpha = 0.15] = shadowChannels.map(Number);
     const shadow = `rgb(${red},${green},${blue})`;
-    let defs = `<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${theme.skyTop}"/><stop offset="1" stop-color="${theme.skyBottom}"/></linearGradient>`
+    let defs = `<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">${SkyDetailService.skyGradientStops(theme)}</linearGradient>`
       + `<linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ColorUtil.sh(theme.ground, 0.18)}"/><stop offset="1" stop-color="${theme.ground}"/></linearGradient>`;
     defs += `<radialGradient id="cshadow"><stop offset="0" stop-color="${shadow}" stop-opacity="${alpha * 1.5}"/><stop offset="0.55" stop-color="${shadow}" stop-opacity="${alpha * 1.1}"/><stop offset="1" stop-color="${shadow}" stop-opacity="0"/></radialGradient>`;
     const [airRed = 0, airGreen = 0, airBlue = 0] = [1, 3, 5].map((start) => {
@@ -84,13 +93,48 @@ export class PlaneBackgroundService {
   }
 
   private static outdoors(world: PlaneWorld, horizonY: number): string {
-    const { theme, camera } = world;
+    const { theme, camera, scene } = world;
     const { width, height } = camera;
     const num = FormatUtil.oneDecimal;
     const hill = ColorUtil.sh(theme.groundDark || theme.ground, 0.25);
+    const ridges = RidgeService.draw({
+      count: scene.canvas?.ridges ?? PlaneBackgroundService.DEFAULT_RIDGES,
+      seed: scene.canvas?.seed ?? PlaneBackgroundService.DEFAULT_SEED,
+      width,
+      horizonY,
+      groundColor: hill,
+      airColor: theme.skyBottom,
+      bottomY: height,
+    });
+    const groundDetail = GroundDetailService.draw({
+      detail: scene.canvas?.ground_detail ?? "low",
+      seed: scene.canvas?.seed ?? PlaneBackgroundService.DEFAULT_SEED,
+      width,
+      height,
+      horizonY,
+      theme,
+      isPathBlocked: (posX, posY) => PlaneBackgroundService.isNearPath(world, posX, posY),
+    });
     return `<rect width="${width}" height="${height}" fill="url(#sky)"/>`
-      + `<path d="M0 ${num(horizonY)} Q${width * 0.12} ${num(horizonY - height * 0.07)} ${width * 0.28} ${num(horizonY - height * 0.02)} T${width * 0.6} ${num(horizonY - height * 0.04)} T${width} ${num(horizonY - height * 0.05)} L${width} ${num(horizonY + 4)} L0 ${num(horizonY + 4)} Z" fill="${hill}" opacity="0.7"/>`
-      + `<path d="M0 ${num(horizonY + 2)} Q${width * 0.25} ${num(horizonY - height * 0.035)} ${width * 0.5} ${num(horizonY)} T${width} ${num(horizonY - height * 0.02)} L${width} ${height} L0 ${height} Z" fill="url(#ground)"/>`;
+      + ridges
+      + `<path d="M0 ${num(horizonY + 2)} Q${width * 0.25} ${num(horizonY - height * 0.035)} ${width * 0.5} ${num(horizonY)} T${width} ${num(horizonY - height * 0.02)} L${width} ${height} L0 ${height} Z" fill="url(#ground)"/>`
+      + groundDetail;
+  }
+
+  private static isNearPath(world: PlaneWorld, posX: number, posY: number): boolean {
+    const points = world.scene.path?.points;
+    if (!points || points.length === 0) {
+      return false;
+    }
+    return points.some((point) => {
+      const at = point.at;
+      if (!at) {
+        return false;
+      }
+      const [screenX, screenY] = world.camera.project(at[0], at[1]);
+      const distance = Math.hypot(posX - screenX, posY - screenY);
+      return distance < PlaneBackgroundService.PATH_TUFT_MARGIN;
+    });
   }
 
   private static room(world: PlaneWorld): string {

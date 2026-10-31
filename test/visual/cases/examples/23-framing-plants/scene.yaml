@@ -1,0 +1,20 @@
+canvas:
+  width: 1200
+  height: 630
+  setting: indoor
+  theme: warm
+  framing: plants
+  critique: false
+objects:
+  mesa:
+    asset: desk
+    at: 0.6
+  laptop:
+    asset: laptop
+    on: mesa
+    align: left
+  trabalhador:
+    asset: person
+    pose: typing
+    behind: mesa
+    shirt: primary

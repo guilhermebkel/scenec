@@ -1,0 +1,18 @@
+{
+  "layout": [
+    {
+      "id": "janela",
+      "asset": "window",
+      "x": 35,
+      "base": 46.3,
+      "w": 13.7,
+      "h": 28.9
+    }
+  ],
+  "warnings": [
+    "theme 'cool' does not exist; using 'flat-cool'. Available: flat-autumn, flat-cool, night, warm-cafe, beach",
+    "asset 'armchair' (in 'poltrona') does not exist; did you mean: chair, cabinet, office_chair?",
+    "'leitor' has 'on: poltrona', but 'poltrona' was not positioned"
+  ],
+  "art": []
+}
