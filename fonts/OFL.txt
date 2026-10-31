@@ -1,4 +1,6 @@
 Copyright 2020 The Poppins Project Authors (https://github.com/itfoundry/Poppins)
+Copyright 2014-2018 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'. Copyright 2019 Google LLC (DM Serif Display)
+Copyright (c) 2010-2012 Patrick Wagesreiter (mail@patrickwagesreiter.at) (Patrick Hand)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

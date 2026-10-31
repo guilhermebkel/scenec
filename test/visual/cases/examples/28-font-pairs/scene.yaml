@@ -1,0 +1,35 @@
+canvas:
+  width: 1200
+  height: 630
+  setting: indoor
+  theme: warm
+  critique: false
+text:
+  - content: Designing Great Products with Balanced Typography
+    at: top-left
+    role: title
+    font: serif
+    balance: true
+    color: primary
+  - content: Sans and hand font pairings
+    at: top-left
+    role: subtitle
+    font: sans
+    y: 0.35
+    color: muted
+  - content: A handwritten personal note
+    at: top-left
+    role: body
+    font: hand
+    y: 0.45
+    color: text
+objects:
+  desk:
+    asset: desk
+    at: center-right
+  chair:
+    asset: chair
+    behind: desk
+  lamp:
+    asset: lamp
+    on: desk

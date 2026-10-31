@@ -7,5 +7,5 @@
 <rect width="720" height="1280" fill="url(#vignette)" style="mix-blend-mode: multiply;"/>
 
 
-<text x="360.0" y="153.6" font-family="Poppins" font-size="64.0" font-weight="700" fill="#1F2A3D" text-anchor="middle"><tspan x="360.0">Por que seu dinheiro</tspan><tspan x="360.0" dy="76.8">cresce sozinho?</tspan></text><rect x="51.3" y="1206.8" width="617.3" height="64.2" rx="11.648" fill="#25344F"/><text x="360.0" y="1249.8" font-family="Poppins" font-size="33.3" font-weight="500" fill="#FFFFFF" text-anchor="middle"><tspan x="360.0">Juros compostos em 30 segundos</tspan></text>
+<text x="360.0" y="153.6" font-family="Poppins" font-size="64.0" font-weight="700" fill="#1F2A3D" text-anchor="middle" letter-spacing="-0.015em"><tspan x="360.0">Por que seu dinheiro</tspan><tspan x="360.0" dy="76.8">cresce sozinho?</tspan></text><rect x="51.3" y="1206.8" width="617.3" height="64.2" rx="11.6" fill="#25344F"/><text x="360.0" y="1249.8" font-family="Poppins" font-size="33.3" font-weight="500" fill="#FFFFFF" text-anchor="middle"><tspan x="360.0">Juros compostos em 30 segundos</tspan></text>
 </svg>

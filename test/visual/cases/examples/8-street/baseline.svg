@@ -19,5 +19,5 @@
 <rect width="1200" height="630" fill="url(#vignette)" style="mix-blend-mode: multiply;"/>
 
 
-<text x="72.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#1F2A3D" text-anchor="start"><tspan x="72.0">Cidade para pessoas</tspan></text>
+<text x="72.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#1F2A3D" text-anchor="start" letter-spacing="-0.015em"><tspan x="72.0">Cidade para pessoas</tspan></text>
 </svg>

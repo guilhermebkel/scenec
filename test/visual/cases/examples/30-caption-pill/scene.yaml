@@ -1,0 +1,20 @@
+canvas:
+  width: 1200
+  height: 630
+  setting: indoor
+  theme: warm
+  critique: false
+text:
+  - content: FEATURED BADGE
+    at: top-left
+    role: label
+    box_style: pill
+    box: primary
+    color: paper
+objects:
+  plant:
+    asset: plant
+    at: 0.3
+  bookshelf:
+    asset: bookshelf
+    at: 0.7

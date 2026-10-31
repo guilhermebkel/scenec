@@ -1,4 +1,4 @@
-import type { KitLight } from "@/Protocols/KitProtocol.ts";
+import type { FontName, KitLight } from "@/Protocols/KitProtocol.ts";
 import { BaseKit } from "@/Resources/Kits/BaseKit.ts";
 
 export class SketchKit extends BaseKit {
@@ -8,4 +8,5 @@ export class SketchKit extends BaseKit {
   readonly light: KitLight = { mode: "none" };
   readonly scene = "sketch";
   readonly texture = "paper";
+  readonly font: FontName = "hand";
 }

@@ -1,0 +1,25 @@
+{
+  "layout": [
+    {
+      "id": "sofa",
+      "asset": "sofa",
+      "x": 65,
+      "base": 93,
+      "w": 30.3,
+      "h": 24.5
+    },
+    {
+      "id": "coffee",
+      "asset": "cup",
+      "x": 35,
+      "base": 93,
+      "w": 2.9,
+      "h": 7.5
+    }
+  ],
+  "warnings": [
+    "theme 'warm' does not exist; using 'flat-cool'. Available: flat-autumn, flat-cool, night, warm-cafe, beach",
+    "'coffee' (cup) usually sits on a surface; add 'on: <table>'"
+  ],
+  "art": []
+}

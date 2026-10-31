@@ -1,5 +1,5 @@
 import type { ThemeColorName } from "@/Protocols/ThemeProtocol.ts";
-import type { KitId, KitLight, KitOutline, KitSceneName, KitStyle, KitTextureName } from "@/Protocols/KitProtocol.ts";
+import type { KitId, KitLight, KitOutline, KitSceneName, KitStyle, KitTextureName, FontName } from "@/Protocols/KitProtocol.ts";
 
 export abstract class BaseKit implements KitStyle {
   abstract readonly id: KitId;
@@ -17,4 +17,6 @@ export abstract class BaseKit implements KitStyle {
   readonly scene?: KitSceneName;
 
   readonly hasDrop?: boolean;
+
+  readonly font?: FontName;
 }
