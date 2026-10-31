@@ -1,10 +1,18 @@
-import type { Background, CompilationContext, HazeLevels, Rgba } from "@/Protocols/CompilationProtocol.ts";
-import type { SettingName } from "@/Protocols/SceneProtocol.ts";
+import type { Background, CompilationContext, HazeLevels, Placement, Rgba, TextRect } from "@/Protocols/CompilationProtocol.ts";
+import type { GroundDetail, SettingName } from "@/Protocols/SceneProtocol.ts";
 import type { Theme } from "@/Protocols/ThemeProtocol.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
+import { GroundDetailService } from "@/Services/GroundDetailService.ts";
+import { RidgeService } from "@/Services/RidgeService.ts";
+import { SkyDetailService } from "@/Services/SkyDetailService.ts";
 
-type ContextDrawer = (context: CompilationContext) => string;
+export interface BackgroundBuildOptions {
+  textRects?: readonly TextRect[];
+  placements?: readonly Placement[];
+}
+
+type ContextDrawer = (context: CompilationContext, options?: BackgroundBuildOptions) => string;
 
 export class BackgroundService {
   private static readonly OUTDOOR_HAZE: HazeLevels = { far: 0.32, mid: 0.13 };
@@ -31,8 +39,20 @@ export class BackgroundService {
 
   private static readonly WAVE_COUNT = 6;
 
+  private static readonly DEFAULT_RIDGES = 2;
+
+  private static readonly DEFAULT_SEED = 1;
+
   private static readonly SETTING_TO_HAZE: Partial<Record<SettingName, HazeLevels>> = {
     indoor: BackgroundService.INDOOR_HAZE,
+  };
+
+  private static readonly SETTING_TO_DEFAULT_RIDGES: Partial<Record<SettingName, number>> = {
+    outdoor: BackgroundService.DEFAULT_RIDGES,
+  };
+
+  private static readonly SETTING_TO_DEFAULT_GROUND_DETAIL: Partial<Record<SettingName, GroundDetail>> = {
+    outdoor: "low",
   };
 
   private static readonly SETTING_TO_AIR: Partial<Record<SettingName, "wall">> = { indoor: "wall" };
@@ -53,7 +73,7 @@ export class BackgroundService {
     planks: (context) => BackgroundService.planks(context),
   };
 
-  static build(context: CompilationContext): Background {
+  static build(context: CompilationContext, options?: BackgroundBuildOptions): Background {
     const { theme, setting } = context;
     const haze = BackgroundService.hazeLevels(context);
     const shadowRgba = BackgroundService.shadowRgba(theme);
@@ -62,7 +82,7 @@ export class BackgroundService {
       return { svg: defs + BackgroundService.indoor(context), haze, shadowRgba, textBackdrop: theme.wall };
     }
     const drawOutdoor = IdUtil.lookup(BackgroundService.SETTING_TO_OUTDOOR_DRAWER, setting);
-    const outdoor = drawOutdoor ? drawOutdoor(context) : BackgroundService.open(context);
+    const outdoor = drawOutdoor ? drawOutdoor(context, options) : BackgroundService.open(context, options);
     return { svg: defs + outdoor, haze, shadowRgba, textBackdrop: theme.skyTop };
   }
 
@@ -97,8 +117,9 @@ export class BackgroundService {
     const shadowColor = `rgb(${red},${green},${blue})`;
     const hazeFar = BackgroundService.hazeFilter("hazeFar", haze.far, air);
     const hazeMid = BackgroundService.hazeFilter("hazeMid", haze.mid, air);
-    return `<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${theme.skyTop}"/>`
-      + `<stop offset="1" stop-color="${theme.skyBottom}"/></linearGradient>`
+    const groundDef = GroundDetailService.groundGradientDef(theme);
+    return `<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">${SkyDetailService.skyGradientStops(theme)}</linearGradient>`
+      + groundDef
       + `<radialGradient id="cshadow"><stop offset="0" stop-color="${shadowColor}" stop-opacity="${alpha * 1.5}"/>`
       + `<stop offset="0.55" stop-color="${shadowColor}" stop-opacity="${alpha * 1.1}"/>`
       + `<stop offset="1" stop-color="${shadowColor}" stop-opacity="0"/></radialGradient>`
@@ -168,22 +189,51 @@ export class BackgroundService {
   }
 
   private static hills(context: CompilationContext): string {
-    const { theme, width, height, lines } = context;
+    const { theme, width, height, lines, canvas, setting } = context;
     const horizonY = height * lines.horizon;
-    return `<path d="M0 ${horizonY} Q${width * 0.2} ${horizonY - 50} ${width * 0.45} ${horizonY - 10} `
-      + `T${width} ${horizonY - 30} L${width} ${height} L0 ${height} Z" fill="${theme.groundDark}" opacity="0.55"/>`;
+    const defaultRidges = IdUtil.lookup(BackgroundService.SETTING_TO_DEFAULT_RIDGES, setting) ?? 0;
+    const count = canvas.ridges ?? defaultRidges;
+    return RidgeService.draw({
+      count,
+      seed: canvas.seed ?? BackgroundService.DEFAULT_SEED,
+      width,
+      horizonY,
+      groundColor: theme.groundDark || theme.ground,
+      airColor: theme.skyBottom,
+      bottomY: height,
+    });
   }
 
-  private static open(context: CompilationContext): string {
-    const { theme, width, height, lines, setting } = context;
+  private static open(context: CompilationContext, options?: BackgroundBuildOptions): string {
+    const { theme, width, height, lines, setting, canvas } = context;
     const horizonY = height * lines.horizon;
     const drawHills = IdUtil.lookup(BackgroundService.SETTING_TO_HILLS, setting);
     const drawForeground = IdUtil.lookup(BackgroundService.SETTING_TO_FOREGROUND, setting);
+    const clouds = SkyDetailService.ambientClouds({
+      density: canvas.clouds,
+      seed: canvas.seed ?? BackgroundService.DEFAULT_SEED,
+      width,
+      horizonY,
+      paperColor: theme.paper,
+      textRects: options?.textRects,
+    });
+    const defaultGroundDetail = IdUtil.lookup(BackgroundService.SETTING_TO_DEFAULT_GROUND_DETAIL, setting) ?? "none";
+    const groundDetail = GroundDetailService.draw({
+      detail: canvas.ground_detail ?? defaultGroundDetail,
+      seed: canvas.seed ?? BackgroundService.DEFAULT_SEED,
+      width,
+      height,
+      horizonY,
+      theme,
+      placements: options?.placements,
+    });
     const svg = `<rect width="${width}" height="${height}" fill="url(#sky)"/>`
-      + (drawHills ? drawHills(context) : "")
+      + clouds
+      + (drawHills ? drawHills(context, options) : "")
       + `<path d="M0 ${horizonY + 12} Q${width * 0.3} ${horizonY - 6} ${width * 0.6} ${horizonY + 10} `
-      + `T${width} ${horizonY + 4} L${width} ${height} L0 ${height} Z" fill="${theme.ground}"/>`;
-    return drawForeground ? svg + drawForeground(context) : svg;
+      + `T${width} ${horizonY + 4} L${width} ${height} L0 ${height} Z" fill="url(#ground)"/>`
+      + groundDetail;
+    return drawForeground ? svg + drawForeground(context, options) : svg;
   }
 
   private static street(context: CompilationContext): string {

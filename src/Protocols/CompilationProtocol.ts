@@ -71,6 +71,20 @@ export interface CompilationContext {
   unit: number;
 }
 
+export interface LightShaft {
+  windowX: number;
+  windowY: number;
+  windowWidth: number;
+  windowHeight: number;
+  floorLeft: number;
+  floorRight: number;
+}
+
+export interface CelestialGlow {
+  cx: number;
+  cy: number;
+}
+
 export interface LightState {
   source: number;
   strength: number;
@@ -80,6 +94,8 @@ export interface LightState {
   isNight: boolean;
   isHatch: boolean;
   time?: TimeName;
+  shaft?: LightShaft | null;
+  celestialGlow?: CelestialGlow | null;
 }
 
 export interface HazeLevels {

@@ -6,13 +6,14 @@ import type { CritiqueName } from "@/Protocols/CritiqueProtocol.ts";
 import type { KitSceneName } from "@/Protocols/KitProtocol.ts";
 import type { CompileOptions } from "@/Protocols/OptionsProtocol.ts";
 import type { CompileResult } from "@/Protocols/ResultProtocol.ts";
-import type { ModeName, Scene } from "@/Protocols/SceneProtocol.ts";
+import type { ModeName, Scene, SettingName } from "@/Protocols/SceneProtocol.ts";
 import { BackgroundService } from "@/Services/BackgroundService.ts";
 import { CameraService } from "@/Services/CameraService.ts";
 import { ContextService } from "@/Services/ContextService.ts";
 import { DependencyOrderService } from "@/Services/DependencyOrderService.ts";
 import { DescriptionService } from "@/Services/DescriptionService.ts";
 import { FramingCheckService } from "@/Services/FramingCheckService.ts";
+import { FramingService } from "@/Services/FramingService.ts";
 import { GazeService } from "@/Services/GazeService.ts";
 import { GroupService } from "@/Services/GroupService.ts";
 import { KitService } from "@/Services/KitService.ts";
@@ -29,6 +30,10 @@ export class CompilationModule {
   private static readonly PLANE_HEIGHT = 900;
 
   private static readonly ZOOM_DIGITS = 4;
+
+  private static readonly SETTING_TO_TEXT_BACKDROP: Partial<Record<SettingName, "wall">> = {
+    indoor: "wall",
+  };
 
   private static readonly SCENE_TO_SKIPPED_CRITIQUES: Partial<Record<KitSceneName, CritiqueName[]>> = {
     sketch: ["silhouette"],
@@ -76,8 +81,10 @@ export class CompilationModule {
     const camera = CameraService.frame(placed, context);
     const list = Object.values(placed);
     FramingCheckService.check(list, context, camera, resolution.heldToHolder);
-    const background = BackgroundService.build(context);
-    const text = TextService.render(scene.text ?? [], context, list, background.textBackdrop);
+    const backdropKey = IdUtil.lookup(CompilationModule.SETTING_TO_TEXT_BACKDROP, context.setting) ?? "skyTop";
+    const textBackdrop = context.theme[backdropKey];
+    const text = TextService.render(scene.text ?? [], context, list, textBackdrop);
+    const background = BackgroundService.build(context, { textRects: text.rects, placements: list });
     const light = LightingService.resolve(context, list, background);
     const backgroundSvg = CompilationModule.finishBackground(background, light, context, camera);
     // Why: drawing order is by depth value; the description and layout follow the same order.
@@ -87,9 +94,11 @@ export class CompilationModule {
     const castLayer = PieceService.castLayer(pieces.casts, light, context);
     const { width, height } = context;
     const vignette = light && !light.isHatch ? `<rect width="${width}" height="${height}" fill="url(#vignette)" style="mix-blend-mode: multiply;"/>` : "";
+    const framing = FramingService.render(context, ordered, text.rects);
+    const framingSvg = framing.svg ? `\n${framing.svg}` : "";
     const head = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" `
       + `width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`;
-    const artwork = `${backgroundSvg}\n${castLayer}\n${pieces.body}\n${vignette}`;
+    const artwork = `${backgroundSvg}\n${castLayer}\n${pieces.body}\n${vignette}${framingSvg}`;
     const timeFilter = context.canvas.time ? LightingService.timeGradeFilter(context.canvas.time) : "";
     const graded = context.canvas.time ? `<defs>${timeFilter}</defs><g filter="url(#timeGrade)">${artwork}</g>` : artwork;
     // Why: the scene filter wraps background and objects; the texture goes on top, below the text.
@@ -101,10 +110,12 @@ export class CompilationModule {
     const result: CompileResult = {
       svg,
       warnings: [...new Set(context.warnings)],
-      description: DescriptionService.describe(ordered, context),
+      description: DescriptionService.describe(ordered, context, framing.corner),
       layout: DescriptionService.layout(ordered, context),
     };
-    const parts = { context, head, background: backgroundSvg, sceneArt, textRects: text.rects, ordered };
+    const parts = {
+      context, head, background: backgroundSvg, sceneArt, textRects: text.rects, ordered, framing: framing.svg,
+    };
     const critique = context.canvas.critique === false ? null : CompilationModule.critiqueInput(parts);
     return { result, critique };
   }
@@ -127,6 +138,8 @@ export class CompilationModule {
     return `<filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/></filter><rect width="${context.width}" height="${context.height}" filter="url(#grain)" opacity="0.10"/>`;
   }
 
+  private static readonly FRAMING_CRITIQUE_Z = 999;
+
   private static critiqueInput(parts: {
     context: CompilationContext;
     head: string;
@@ -134,8 +147,29 @@ export class CompilationModule {
     sceneArt: string;
     textRects: CritiqueInput["textRects"];
     ordered: Placement[];
+    framing?: string;
   }): CritiqueInput {
-    const { context, head, background, sceneArt, textRects, ordered } = parts;
+    const { context, head, background, sceneArt, textRects, ordered, framing } = parts;
+    const objects = ordered.filter((placement) => !placement.isOffView).map((placement) => ({
+      id: placement.id,
+      asset: placement.asset,
+      kind: placement.kind,
+      z: placement.z,
+      body: SvgUtil.flattenOpacity(placement.bodySvg),
+      related: placement.related,
+      isIgnored: placement.isBackdrop || context.idToObject[placement.id]?.critique === false,
+    }));
+    if (framing) {
+      objects.push({
+        id: "framing",
+        asset: "framing",
+        kind: "any",
+        z: CompilationModule.FRAMING_CRITIQUE_Z,
+        body: SvgUtil.flattenOpacity(framing),
+        related: [],
+        isIgnored: false,
+      });
+    }
     // Why: the art-director critique runs in the render entry, which has resvg; the compiler only hands it the inputs.
     return {
       width: context.width,
@@ -147,15 +181,7 @@ export class CompilationModule {
       scale: context.canvas.scale ?? 1,
       textRects,
       skip: IdUtil.lookup(CompilationModule.SCENE_TO_SKIPPED_CRITIQUES, context.kit.scene) ?? [],
-      objects: ordered.filter((placement) => !placement.isOffView).map((placement) => ({
-        id: placement.id,
-        asset: placement.asset,
-        kind: placement.kind,
-        z: placement.z,
-        body: SvgUtil.flattenOpacity(placement.bodySvg),
-        related: placement.related,
-        isIgnored: placement.isBackdrop || context.idToObject[placement.id]?.critique === false,
-      })),
+      objects,
     };
   }
 }

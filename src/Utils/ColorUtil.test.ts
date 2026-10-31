@@ -78,3 +78,15 @@ describe("ColorUtil.contrast()", () => {
     expect(ColorUtil.contrast("#126E86", "#FFF")).toBeCloseTo(5.8, 1);
   });
 });
+
+describe("ColorUtil.mix()", () => {
+  it("interpolates evenly between black and white", () => {
+    expect(ColorUtil.mix("#000000", "#FFFFFF", 0)).toBe("#000000");
+    expect(ColorUtil.mix("#000000", "#FFFFFF", 1)).toBe("#ffffff");
+    expect(ColorUtil.mix("#000000", "#FFFFFF", 0.5)).toBe("#808080");
+  });
+
+  it("handles non-hex gracefully", () => {
+    expect(ColorUtil.mix("transparent", "#FFFFFF", 0.5)).toBe("transparent");
+  });
+});

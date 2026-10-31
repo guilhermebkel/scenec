@@ -117,7 +117,6 @@
   "art": [
     "art: visual weight leans right (center of mass at 66% of the width); move 'estante' toward the center or put something on the left side",
     "art: 'janela' blends into the background in the top part (84% of this outline has no contrast): the color #F9F1E6 is too close; change the color of one of the two",
-    "art: 'pizza' blends into the background in the top part (47% of this outline has no contrast): the color #DF9D62 is too close; change the color of one of the two",
     "art: 'c1' and 'burger' almost touch (tangency); move them apart a little or overlap them on purpose"
   ]
 }

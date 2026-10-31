@@ -1,0 +1,32 @@
+{
+  "layout": [
+    {
+      "id": "sol",
+      "asset": "sun",
+      "x": 80,
+      "base": 27.8,
+      "w": 14.5,
+      "h": 27.5
+    },
+    {
+      "id": "banco",
+      "asset": "bench",
+      "x": 65,
+      "base": 92,
+      "w": 19.6,
+      "h": 20.4
+    },
+    {
+      "id": "ana",
+      "asset": "person",
+      "x": 64.3,
+      "base": 95.1,
+      "w": 7.1,
+      "h": 36.7
+    }
+  ],
+  "warnings": [
+    "theme 'warm' does not exist; using 'flat-cool'. Available: flat-autumn, flat-cool, night, warm-cafe, beach"
+  ],
+  "art": []
+}

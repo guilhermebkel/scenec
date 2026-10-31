@@ -42,5 +42,7 @@
     }
   ],
   "warnings": [],
-  "art": []
+  "art": [
+    "art: 'rex' blends into the background in the bottom part (44% of this outline has no contrast): the color #382E42 is too close; change the color of one of the two"
+  ]
 }
