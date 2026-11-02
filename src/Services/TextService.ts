@@ -191,12 +191,6 @@ export class TextService {
 
   private static readonly UNDERLINE_Y_OFFSET = 0.16;
 
-  private static readonly UNDERLINE_WAVE = 0.08;
-
-  private static readonly UNDERLINE_STROKE_FRACTION = 0.07;
-
-  private static readonly UNDERLINE_MIN_STROKE = 2;
-
   private static readonly HALF_CIRCLE_DEG = 180;
 
   private static readonly DEG_TO_RAD = Math.PI / TextService.HALF_CIRCLE_DEG;
@@ -500,33 +494,46 @@ export class TextService {
   }
 
   private static renderUnderline(layout: TextLayout, context: CompilationContext): string {
-    const { fontSize, x, y, lines, lineHeight, anchor, charWidth, tracking, boxFill, emphasis } = layout;
+    // Why: the underline is a text-decoration on the emphasized words inside an invisible copy of the text,
+    // so the line sits under the real glyphs; a width estimate drifts on proportional fonts.
+    const { fontSize, x, y, lines, lineHeight, anchor, weight, fontFamily, tracking, boxFill, emphasis } = layout;
     const stroke = boxFill ?? context.theme.accent;
-    const strokeWidth = Math.max(TextService.UNDERLINE_MIN_STROKE, fontSize * TextService.UNDERLINE_STROKE_FRACTION);
-    const wave = fontSize * TextService.UNDERLINE_WAVE;
-    const charStep = fontSize * (charWidth + tracking);
-    let svg = "";
-    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-      const line = lines[lineIndex];
-      if (!line) {
-        continue;
-      }
-      const lineY = y + lineIndex * lineHeight;
-      const lineWidth = line.length * charStep;
-      const lineLeft = TextService.ANCHOR_TO_LEFT_OF[anchor](x, lineWidth);
-      const ranges = TypesettingUtil.emphasisRanges(line, emphasis);
-      for (const range of ranges) {
-        const startX = lineLeft + range.start * charStep;
-        const endX = startX + range.length * charStep;
-        const underlineY = lineY + fontSize * TextService.UNDERLINE_Y_OFFSET;
-        const midX = startX + (endX - startX) * TextService.HALF;
-        const path = `M ${startX.toFixed(1)} ${underlineY.toFixed(1)} `
-          + `Q ${midX.toFixed(1)} ${(underlineY + wave).toFixed(1)} ${endX.toFixed(1)} ${(underlineY - 1).toFixed(1)}`;
-        svg += `<path d="${path}" fill="none" stroke="${stroke}" stroke-width="${strokeWidth.toFixed(1)}" `
-          + `stroke-linecap="round"/>`;
+    const spans = lines.map((line, lineIndex) => {
+      const dy = lineIndex === 0 ? "" : ` dy="${lineHeight.toFixed(1)}"`;
+      const pieces = TextService.underlinedPieces(line, emphasis, stroke);
+      return `<tspan x="${x.toFixed(1)}"${dy}>${pieces}</tspan>`;
+    });
+    const trackingAttr = tracking !== 0 ? ` letter-spacing="${tracking.toFixed(TextService.TRACKING_DECIMALS)}em"` : "";
+    return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" font-family="${fontFamily}" `
+      + `font-size="${fontSize.toFixed(1)}" font-weight="${weight}" fill="${stroke}" fill-opacity="0" `
+      + `text-anchor="${anchor}"${trackingAttr}>${spans.join("")}</text>`;
+  }
+
+  private static underlinedPieces(line: string, emphasis: readonly string[] | undefined, stroke: string): string {
+    const ranges = TypesettingUtil.emphasisRanges(line, emphasis);
+    const merged: { start: number; end: number }[] = [];
+    for (const range of ranges) {
+      const end = range.start + range.length;
+      const last = merged.at(-1);
+      if (last && range.start <= last.end) {
+        last.end = Math.max(last.end, end);
+      } else {
+        merged.push({ start: range.start, end });
       }
     }
-    return svg;
+    let cursor = 0;
+    let html = "";
+    for (const { start, end } of merged) {
+      html += TextService.escapeText(line.slice(cursor, start));
+      html += `<tspan fill="${stroke}" fill-opacity="1" text-decoration="underline">`
+        + `${TextService.escapeText(line.slice(start, end))}</tspan>`;
+      cursor = end;
+    }
+    return html + TextService.escapeText(line.slice(cursor));
+  }
+
+  private static escapeText(value: string): string {
+    return value.replace(/&/g, "&amp;").replace(/</g, "&lt;");
   }
 
   private static warnCovered(layout: TextLayout, list: Placement[], context: CompilationContext): void {

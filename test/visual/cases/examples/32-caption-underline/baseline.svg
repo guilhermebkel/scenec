@@ -5,5 +5,5 @@
 <rect width="1200" height="630" fill="url(#vignette)" style="mix-blend-mode: multiply;"/>
 
 
-<path d="M 569.5 122.1 Q 638.6 125.9 707.7 121.1" fill="none" stroke="#F5A524" stroke-width="3.3" stroke-linecap="round"/><text x="72.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#1F2A3D" text-anchor="start" letter-spacing="-0.015em"><tspan x="72.0">Learn quickly and build today</tspan></text>
+<text x="72.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#F5A524" fill-opacity="0" text-anchor="start" letter-spacing="-0.015em"><tspan x="72.0">Learn quickly and <tspan fill="#F5A524" fill-opacity="1" text-decoration="underline">build</tspan> today</tspan></text><text x="72.0" y="114.5" font-family="Poppins" font-size="47.3" font-weight="700" fill="#1F2A3D" text-anchor="start" letter-spacing="-0.015em"><tspan x="72.0">Learn quickly and build today</tspan></text>
 </svg>

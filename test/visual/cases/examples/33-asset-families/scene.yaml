@@ -33,6 +33,6 @@ text:
   - content: Novos Assets do Catalogo
     at: top-center
     role: title
-    size: 0.045
+    size: 0.06
     'y': 0.15
     color: secondary

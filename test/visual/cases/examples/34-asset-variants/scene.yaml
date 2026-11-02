@@ -33,6 +33,6 @@ text:
   - content: Variantes de Assets
     at: top-center
     role: title
-    size: 0.045
+    size: 0.06
     'y': 0.15
     color: secondary
