@@ -34,7 +34,5 @@
     }
   ],
   "warnings": [],
-  "art": [
-    "art: 'canto_pessoa' is lost at thumbnail size; increase its contrast against the background"
-  ]
+  "art": []
 }

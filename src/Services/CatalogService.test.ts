@@ -13,7 +13,7 @@ describe("CatalogService.catalog()", () => {
       { id: "clay", description: "clay: soft 3D rounded shapes, rim light and ambient occlusion" },
       { id: "duotone", description: "duotone: two inks mapped across luminance with halftone" },
       { id: "poster", description: "vintage poster: limited 4–5 colors, coarse halftone shadows, sun-faded grade" },
-      { id: "isometric", description: "isometric: 30° axonometric projection with crisp outline and directional light" },
+      { id: "isometric", description: "isometric: 30° axonometric projection with flat faces, hatched shadow planes and a drop shadow" },
     ]);
   });
 
@@ -41,6 +41,12 @@ describe("CatalogService.listAssets()", () => {
     expect(person).toStrictEqual({
       id: "person", kind: "ground", width: 40, height: 108, synonyms: ["pessoa", "human", "character", "man", "woman", "personagem"],
     });
+  });
+
+  it("lists the variant names a scene can use", () => {
+    const tree = CatalogService.listAssets().find((asset) => asset.id === "tree");
+
+    expect(tree?.variants).toStrictEqual(["2", "tall", "3", "wide"]);
   });
 });
 
