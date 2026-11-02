@@ -2,6 +2,7 @@ import type { CompilationContext, Placement, TextRect } from "@/Protocols/Compil
 import type { BoxStyle, FontName, SceneText, TextRole } from "@/Protocols/SceneProtocol.ts";
 import { KitService } from "@/Services/KitService.ts";
 import { ColorUtil } from "@/Utils/ColorUtil.ts";
+import { FontMetricsUtil } from "@/Utils/FontMetricsUtil.ts";
 import { IdUtil } from "@/Utils/IdUtil.ts";
 import { TypesettingUtil } from "@/Utils/TypesettingUtil.ts";
 
@@ -31,6 +32,8 @@ interface TextLayout {
   left: number;
   blockHeight: number;
   fontFamily: string;
+  fontName: FontName;
+  isBold: boolean;
   tracking: number;
   charWidth: number;
   boxStyle?: BoxStyle;
@@ -270,7 +273,7 @@ export class TextService {
       y: TextService.baseline(text, texts, metrics, context),
       color: text.color ? TextService.themeColor(context, text.color) : theme.text,
       blockHeight: fontSize + (lines.length - 1) * lineHeight,
-      fontFamily, tracking, charWidth,
+      fontFamily, fontName, isBold, tracking, charWidth,
       boxStyle: text.box_style ?? (text.box ? "rect" : undefined),
       rotation: text.rotation,
       emphasis: text.emphasis,
@@ -467,7 +470,7 @@ export class TextService {
   }
 
   private static renderHighlightBox(layout: TextLayout, context: CompilationContext): string {
-    const { fontSize, x, y, lines, lineHeight, anchor, charWidth, tracking, boxFill } = layout;
+    const { fontSize, x, y, lines, lineHeight, anchor, fontName, isBold, tracking, boxFill } = layout;
     const fill = boxFill ?? context.theme.accent;
     const pad = fontSize * TextService.HIGHLIGHT_PAD;
     const skew = fontSize * TextService.HIGHLIGHT_SKEW;
@@ -478,7 +481,7 @@ export class TextService {
         continue;
       }
       const lineY = y + lineIndex * lineHeight;
-      const lineWidth = line.length * fontSize * (charWidth + tracking);
+      const lineWidth = fontSize * (FontMetricsUtil.lineEm(line, fontName, isBold) + tracking * line.length);
       const lineLeft = TextService.ANCHOR_TO_LEFT_OF[anchor](x, lineWidth);
       const top = lineY - fontSize * TextService.HIGHLIGHT_TOP;
       const bottom = lineY + fontSize * TextService.HIGHLIGHT_BOTTOM;
