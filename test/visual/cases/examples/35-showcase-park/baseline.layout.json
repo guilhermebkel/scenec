@@ -1,0 +1,56 @@
+{
+  "layout": [
+    {
+      "id": "sol",
+      "asset": "sun",
+      "x": 20,
+      "base": 45.8,
+      "w": 14.5,
+      "h": 27.5
+    },
+    {
+      "id": "arvore",
+      "asset": "tree",
+      "x": 90,
+      "base": 68.4,
+      "w": 12.3,
+      "h": 41.8
+    },
+    {
+      "id": "banco",
+      "asset": "bench",
+      "x": 52,
+      "base": 90,
+      "w": 19.6,
+      "h": 20.4
+    },
+    {
+      "id": "cachorro",
+      "asset": "dog",
+      "x": 70,
+      "base": 90,
+      "w": 8.9,
+      "h": 12.2
+    },
+    {
+      "id": "crianca",
+      "asset": "person",
+      "x": 30,
+      "base": 90,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "pessoa",
+      "asset": "person",
+      "x": 51.3,
+      "base": 93.1,
+      "w": 7.1,
+      "h": 36.7
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "art: the picture has no darks; darken 'arvore' or the ground"
+  ]
+}
