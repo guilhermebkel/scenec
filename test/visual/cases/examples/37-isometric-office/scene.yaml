@@ -1,0 +1,22 @@
+canvas:
+  width: 1200
+  height: 630
+  kit: isometric
+  theme: flat-cool
+  setting: indoor
+  time: noon
+  horizon: 0.6
+  seed: 5
+text:
+  - content: Escritório em isométrico
+    at: top-left
+    role: title
+    size: 0.1
+    'y': 0.06
+objects:
+  trabalho:
+    group: workspace
+    at: 0.35
+  reuniao:
+    group: meeting
+    at: 0.78

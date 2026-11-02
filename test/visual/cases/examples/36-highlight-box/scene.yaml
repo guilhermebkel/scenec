@@ -1,0 +1,28 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: flat-cool
+  setting: indoor
+  time: noon
+  horizon: 0.7
+  seed: 8
+text:
+  - content: Mmmmm, Iiiii and WWWW
+    at: top-left
+    role: title
+    size: 0.12
+    'y': 0.1
+    box_style: highlight
+    box: '#FFD23F'
+  - content: Proportional glyphs fit the box
+    at: top-left
+    role: body
+    size: 0.06
+    'y': 0.45
+    font: serif
+    box_style: highlight
+    box: '#8FD3A9'
+objects:
+  mesa:
+    asset: table
+    at: 0.5

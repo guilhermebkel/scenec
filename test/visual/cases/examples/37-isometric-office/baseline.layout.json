@@ -1,0 +1,129 @@
+{
+  "layout": [
+    {
+      "id": "reuniao_quadro",
+      "asset": "board",
+      "x": 80.3,
+      "base": 39.8,
+      "w": 25.8,
+      "h": 28.9
+    },
+    {
+      "id": "reuniao_pessoa2",
+      "asset": "person",
+      "x": 79.2,
+      "base": 84,
+      "w": 5.7,
+      "h": 29.4
+    },
+    {
+      "id": "trabalho_mesa",
+      "asset": "desk",
+      "x": 35,
+      "base": 93,
+      "w": 23.2,
+      "h": 15.6
+    },
+    {
+      "id": "trabalho_cadeira",
+      "asset": "chair",
+      "x": 23.5,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "trabalho_planta",
+      "asset": "big_plant",
+      "x": 52.1,
+      "base": 93,
+      "w": 8,
+      "h": 28.1
+    },
+    {
+      "id": "reuniao_mesa",
+      "asset": "desk",
+      "x": 78,
+      "base": 93,
+      "w": 23.2,
+      "h": 15.6
+    },
+    {
+      "id": "reuniao_cadeira1",
+      "asset": "chair",
+      "x": 65.5,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "reuniao_cadeira2",
+      "asset": "chair",
+      "x": 90.5,
+      "base": 93,
+      "w": 7.9,
+      "h": 29.9
+    },
+    {
+      "id": "trabalho_pessoa",
+      "asset": "person",
+      "x": 22.8,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "trabalho_tela",
+      "asset": "laptop",
+      "x": 28,
+      "base": 77.4,
+      "w": 6.1,
+      "h": 8.2
+    },
+    {
+      "id": "trabalho_luminaria",
+      "asset": "lamp",
+      "x": 42,
+      "base": 77.4,
+      "w": 5.4,
+      "h": 14.3
+    },
+    {
+      "id": "trabalho_caneca",
+      "asset": "cup",
+      "x": 37.8,
+      "base": 77.4,
+      "w": 2.9,
+      "h": 7.5
+    },
+    {
+      "id": "reuniao_pessoa1",
+      "asset": "person",
+      "x": 64.8,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "reuniao_pessoa3",
+      "asset": "person",
+      "x": 91.2,
+      "base": 93,
+      "w": 7.1,
+      "h": 36.7
+    },
+    {
+      "id": "reuniao_notebook",
+      "asset": "laptop",
+      "x": 71,
+      "base": 77.4,
+      "w": 6.1,
+      "h": 8.2
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "art: 'reuniao_quadro' draws more attention than the focus 'trabalho_pessoa' (contrast 0.46 vs 0.20); make 'reuniao_quadro' less saturated or the focus brighter",
+    "art: title is too small to read at thumbnail size (cap height 3.5 px, needs 3.8 px at 96 px wide); use a title size of about 5.7% of the scene width or more"
+  ]
+}
