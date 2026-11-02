@@ -30,8 +30,9 @@
 | tracking | Letter-spacing adjustment in em (automatically tighter for large titles). | kerning |
 | balance | Balanced line break distribution across multi-line titles. | text-wrap |
 | warning | A problem the compiler found in the scene. | error (an error stops compile) |
-| critique | An art-director remark produced by `check` (`art` in the report). | lint |
+| critique | An art-director remark produced by `check` (`art` in the report). Critiques never change the `render` exit code. | lint |
+| thumbnail title rule | The title's cap height (0.70 of its font size) must be at least 3.8 px at a 96 px wide thumbnail: a font size of about 5.7% of the scene width or more. The critique states the share it needs. | title size guess |
 | baseline | The SVG and layout stored for one regression case. | snapshot |
-| best-of-N | Renders N variants of free parameters and keeps the one with the best critique score (`best`). | search, genetic |
+| best-of-N | Renders N variants of free parameters and keeps the one with the best critique score (`best`), written as `<name>.yaml` next to the SVG. | search, genetic |
 | plane mode | The 2.5D layout with slots and depth. | scene mode |
 | map mode | The layout that draws a route over the map of Europe. | geo |

@@ -20,9 +20,9 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/origin.png" alt="A path with five checkpoints in 2.5D, from an idea to the scenec repository" width="720" />
+  <img src="docs/assets/showcase.png" alt="A sunny park scene: a sun, a tree, a bench with a seated woman, a child and a dog" width="720" />
   <br />
-  <sub>How scenec was born, from an idea to this repo. Drawn by scenec itself from <a href="docs/assets/origin.yaml">a short YAML scene</a>.</sub>
+  <sub>Drawn by scenec itself from <a href="docs/assets/showcase.yaml">a short YAML scene</a>.</sub>
 </p>
 
 ---
@@ -171,9 +171,9 @@ import { sceneJsonSchema, catalog } from "@guilhermebkel/scenec/schema";
 
 | Command | What it does |
 | --- | --- |
-| `scenec render <scene.yaml> [-o name] [--png] [--width 1200]` | Writes the SVG (and PNG) and prints the JSON report. |
-| `scenec check <scene.yaml>` | Compiles and critiques without writing files. Exit code 1 on a warning or critique, 2 when the scene is invalid. |
-| `scenec best <scene.yaml> [-n 8] [-o name] [--png] [--width 1200]` | Renders N variants of free parameters and writes the one with the best critique score. |
+| `scenec render <scene.yaml> [-o name] [--png] [--width 1200]` | Writes the SVG (and PNG) and prints the JSON report. Exit code 0; 2 when the scene is invalid or the file is missing. Critiques do not change the exit code. |
+| `scenec check <scene.yaml>` | Compiles and critiques without writing files. Exit code 1 on a warning or critique (use it in CI), 2 when the scene is invalid or the file is missing. |
+| `scenec best <scene.yaml> [-n 8] [-o name] [--png] [--width 1200]` | Renders N variants of free parameters and writes the one with the best critique score as `name.svg` and `name.yaml`. The input scene is not changed. |
 | `scenec catalog [assets\|groups\|kits\|themes\|poses\|layout]` | Lists the vocabulary a scene can use. |
 | `scenec schema` | Prints the JSON Schema of the scene. |
 
@@ -214,7 +214,7 @@ Yes. Under `assets:` a scene can bring an SVG (inline or a file next to the scen
 
 ## Roadmap
 
-- [x] **Core:** 100 assets, groups, map mode, 10 kits, warnings, critiques, CLI, skill, 154 visual baselines.
+- [x] **Core:** 100 assets, groups, map mode, 10 kits, warnings, critiques, CLI, skill, 155 visual baselines.
 - [x] **More recipes and assets** driven by real use of the skill.
 
 ## Contributing

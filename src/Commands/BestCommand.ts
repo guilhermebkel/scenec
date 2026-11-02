@@ -44,11 +44,12 @@ export class BestCommand extends BaseCommand {
     const base = args.output ?? path.join("out", path.basename(file).replace(/\.ya?ml$/, ""));
     fs.mkdirSync(path.dirname(base), { recursive: true });
     fs.writeFileSync(`${base}.svg`, result.svg);
-    fs.writeFileSync(file, result.updatedSceneYaml);
+    // Why: the input scene is the author's file; the winning variant is written next to the SVG instead.
+    fs.writeFileSync(`${base}.yaml`, result.updatedSceneYaml);
 
     const kindToPath: Partial<Record<"svg" | "png" | "scene", string>> = {
       svg: `${base}.svg`,
-      scene: file,
+      scene: `${base}.yaml`,
     };
 
     let pngKb: number | null = null;

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import fs from "node:fs";
 import { parseArgs } from "node:util";
 import { CATALOG_KINDS } from "@/schema.ts";
 import { BestCommand } from "@/Commands/BestCommand.ts";
@@ -57,6 +58,11 @@ function main(argv: string[]): number {
   const command = COMMANDS.find((candidate) => candidate.name === name);
   if (!command || (command.isFileRequired && !positionals[0])) {
     process.stderr.write(HELP);
+    return EXIT_INVALID;
+  }
+  const file = positionals[0];
+  if (command.isFileRequired && file !== undefined && !fs.existsSync(file)) {
+    process.stderr.write(`scenec: cannot read "${file}": no such file\n`);
     return EXIT_INVALID;
   }
   const rawCount = values.best !== undefined ? Number(values.best) : Number(values.count);
