@@ -74,6 +74,6 @@
     "art: 'xicara' touches the horizon; move it above or below",
     "art: 'logo' draws more attention than the focus 'barista' (contrast 0.45 vs 0.11); make 'logo' less saturated or the focus brighter",
     "art: 'maquina' draws more attention than the focus 'barista' (contrast 0.33 vs 0.11); make 'maquina' less saturated or the focus brighter",
-    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
+    "art: title is too small to read at thumbnail size (cap height 2.6 px, needs 3.8 px at 96 px wide); use a title size of about 5.7% of the scene width or more"
   ]
 }

@@ -36,6 +36,6 @@
   "warnings": [],
   "art": [
     "art: 'planta' draws more attention than the focus 'eu' (contrast 0.29 vs 0.05); make 'planta' less saturated or the focus brighter",
-    "art: title is too small to read at thumbnail size (cap height 2.5 px); increase title size"
+    "art: title is too small to read at thumbnail size (cap height 2.5 px, needs 3.8 px at 96 px wide); use a title size of about 5.7% of the scene width or more"
   ]
 }

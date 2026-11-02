@@ -131,6 +131,6 @@
     "art: 'bolo' touches the horizon; move it above or below",
     "art: 'prat' draws more attention than the focus 'lia' (contrast 0.31 vs 0.13); make 'prat' less saturated or the focus brighter",
     "art: 'maquina' draws more attention than the focus 'lia' (contrast 0.36 vs 0.13); make 'maquina' less saturated or the focus brighter",
-    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
+    "art: title is too small to read at thumbnail size (cap height 2.6 px, needs 3.8 px at 96 px wide); use a title size of about 5.7% of the scene width or more"
   ]
 }

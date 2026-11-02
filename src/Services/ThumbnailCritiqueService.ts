@@ -59,7 +59,14 @@ export class ThumbnailCritiqueService {
     const factor = thumbnailWidth / sceneWidth;
     const capHeight = title.fontSize * factor * ThumbnailCritiqueService.CAP_HEIGHT_RATIO;
     if (capHeight < ThumbnailCritiqueService.MIN_CAP_HEIGHT_PX) {
-      return [`title is too small to read at thumbnail size (cap height ${capHeight.toFixed(1)} px); increase title size`];
+      // Why: the rule is about the thumbnail width, so the message gives the title size as a share of the scene width.
+      const minSharePct = (100 * ThumbnailCritiqueService.MIN_CAP_HEIGHT_PX)
+        / (ThumbnailCritiqueService.CAP_HEIGHT_RATIO * thumbnailWidth);
+      return [
+        `title is too small to read at thumbnail size (cap height ${capHeight.toFixed(1)} px, `
+        + `needs ${ThumbnailCritiqueService.MIN_CAP_HEIGHT_PX} px at ${thumbnailWidth} px wide); `
+        + `use a title size of about ${minSharePct.toFixed(1)}% of the scene width or more`,
+      ];
     }
     return [];
   }
