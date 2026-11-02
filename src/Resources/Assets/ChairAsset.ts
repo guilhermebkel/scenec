@@ -19,6 +19,8 @@ export class ChairAsset extends BaseAsset {
 
   readonly tags = ["cadeira", "seat"];
 
+  readonly variants = ["2", "stool", "3", "armchair"];
+
   private static readonly VARIANT_TO_DRAWER: Record<
     ChairVariantKey,
     (asset: ChairAsset, params: AssetParams, theme: Theme) => string
