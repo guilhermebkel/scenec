@@ -41,5 +41,5 @@ objects:
     hair: curly
     hair_color: brown
 text:
-  - {content: "Sábado no parque", at: top-right, role: title, size: 0.11, 'y': 0.12}
-  - {content: "o melhor lugar é o que tem sombra", at: top-right, role: body, size: 0.045, 'y': 0.22, box_style: underline, box: '#D9572B', emphasis: ["sombra"]}
+  - {content: "Saturday in the park", at: top-right, role: title, size: 0.11, 'y': 0.12}
+  - {content: "the best spot is the one in the shade", at: top-right, role: body, size: 0.045, 'y': 0.22, box_style: underline, box: '#D9572B', emphasis: ["shade"]}
