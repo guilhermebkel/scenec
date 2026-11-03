@@ -87,7 +87,7 @@ objects:
     expect(code).toBe(0);
     expect(fs.existsSync(`${outBase}.svg`)).toBe(true);
 
-    const updatedYaml = fs.readFileSync(sceneFile, "utf8");
+    const updatedYaml = fs.readFileSync(`${outBase}.yaml`, "utf8");
     expect(updatedYaml).toContain("seed:");
 
     const output = JSON.parse(capturedOutput) as {
@@ -96,7 +96,8 @@ objects:
     };
     expect(output.winner.variant).toBeGreaterThanOrEqual(0);
     expect(output.written.svg).toBe(`${outBase}.svg`);
-    expect(output.written.scene).toBe(sceneFile);
+    expect(output.written.scene).toBe(`${outBase}.yaml`);
+    expect(fs.readFileSync(sceneFile, "utf8")).toBe(initialYaml);
   });
 
   it("writes PNG when shouldWritePng is enabled", () => {

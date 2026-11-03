@@ -13,6 +13,7 @@ export interface AssetEntry {
   width: number;
   height: number;
   synonyms: string[];
+  variants?: string[];
 }
 type PartIdToAsset = Record<string, string>;
 
@@ -28,6 +29,7 @@ export class CatalogService {
   static listAssets(): AssetEntry[] {
     return Object.entries(AssetService.ASSET_ID_TO_ASSET).map(([id, asset]) => ({
       id, kind: asset.kind, width: asset.width, height: asset.height, synonyms: [...asset.tags],
+      ...(asset.variants ? { variants: [...asset.variants] } : {}),
     }));
   }
 

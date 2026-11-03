@@ -75,7 +75,7 @@ export class KitService {
       + `<feComposite in="spk" in2="ink" operator="in" result="spk2"/>`
       + `<feBlend in="reg" in2="spk2" mode="multiply" result="final"/></filter>`,
 
-    // Why: pencil edge lines, saturated watercolor wash with uneven turbulence, darker edge band pooling and offset color wash.
+    // Why: pencil edge lines, saturated watercolor wash with grayscale turbulence (colored noise reads as speckle), darker edge band pooling and offset color wash.
     sketch: `<filter id="kitScene" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">`
       + `<feColorMatrix in="SourceGraphic" type="matrix" `
       + `values="0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0 0 0 1 0" result="g"/>`
@@ -91,7 +91,9 @@ export class KitService {
       + `<feFuncR type="linear" slope="0.75" intercept="0.22"/>`
       + `<feFuncG type="linear" slope="0.75" intercept="0.22"/>`
       + `<feFuncB type="linear" slope="0.75" intercept="0.20"/></feComponentTransfer>`
-      + `<feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="4" result="washNoise"/>`
+      + `<feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="4" result="washNoiseColor"/>`
+      + `<feColorMatrix in="washNoiseColor" type="matrix" `
+      + `values="0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0.3 0.59 0.11 0 0  0 0 0 0 1" result="washNoise"/>`
       + `<feBlend in="washBase" in2="washNoise" mode="soft-light" result="washUneven"/>`
       + `<feMorphology in="SourceAlpha" operator="erode" radius="1.4" result="eroded"/>`
       + `<feComposite in="SourceAlpha" in2="eroded" operator="out" result="edgeBand"/>`

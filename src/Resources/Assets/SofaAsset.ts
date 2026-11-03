@@ -20,6 +20,8 @@ export class SofaAsset extends BaseAsset {
 
   readonly tags = ["sofá", "sofa", "couch"];
 
+  readonly variants = ["2", "curved", "3", "minimal"];
+
   private static readonly VARIANT_TO_DRAWER: Record<
     SofaVariantKey,
     (asset: SofaAsset, params: AssetParams, theme: Theme) => string

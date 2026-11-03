@@ -18,6 +18,8 @@ export class TreeAsset extends BaseAsset {
 
   readonly tags = ["árvore", "arvore", "tree_round", "oak"];
 
+  readonly variants = ["2", "tall", "3", "wide"];
+
   private static readonly VARIANT_TO_DRAWER: Record<
     TreeVariantKey,
     (asset: TreeAsset, params: AssetParams, theme: Theme) => string

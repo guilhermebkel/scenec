@@ -115,7 +115,7 @@ describe("TextService.render()", () => {
     expect(result.rects[0]?.hasBox).toBe(true);
   });
 
-  it("renders underline box style with wavy path under emphasized words", () => {
+  it("renders underline box style as text-decoration on emphasized words only", () => {
     const context = createContext();
     const result = TextService.render(
       [{ content: "Grow your business today", box_style: "underline", emphasis: ["business"] }],
@@ -123,8 +123,9 @@ describe("TextService.render()", () => {
       [],
       "#F4F1EA",
     );
-    expect(result.svg).toContain("<path d=");
-    expect(result.svg).toContain("stroke-linecap=\"round\"");
+    expect(result.svg).toContain("text-decoration=\"underline\"");
+    expect(result.svg).toContain(">business</tspan>");
+    expect(result.svg).not.toContain("<path d=");
     expect(result.rects[0]?.hasBox).toBe(true);
   });
 

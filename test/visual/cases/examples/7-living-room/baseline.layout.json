@@ -109,6 +109,6 @@
     "art: 'prat' draws more attention than the focus 'ana' (contrast 0.33 vs 0.02); make 'prat' less saturated or the focus brighter",
     "art: 'gato' draws more attention than the focus 'ana' (contrast 0.26 vs 0.02); make 'gato' less saturated or the focus brighter",
     "art: 'ana' is lost at thumbnail size; increase its contrast against the background",
-    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
+    "art: title is too small to read at thumbnail size (cap height 2.6 px, needs 3.8 px at 96 px wide); use a title size of about 5.7% of the scene width or more"
   ]
 }

@@ -4,6 +4,22 @@ import { CompilationModule } from "@/Modules/CompilationModule.ts";
 const FRAME = { width: 1000, height: 500 };
 
 describe("CompilationModule.compile()", () => {
+  it("warns with the valid variants when an asset variant does not exist", () => {
+    const result = CompilationModule.compile({
+      canvas: FRAME, objects: { arvore: { asset: "tree", variant: "huge" } },
+    });
+
+    expect(result.warnings).toContain("'arvore' has no variant 'huge' for 'tree'; use one of: 2, tall, 3, wide");
+  });
+
+  it("does not warn for a known asset variant", () => {
+    const result = CompilationModule.compile({
+      canvas: FRAME, objects: { arvore: { asset: "tree", variant: "tall" } },
+    });
+
+    expect(result.warnings.some((warning) => warning.includes("has no variant"))).toBe(false);
+  });
+
   it("gives the same SVG for the same scene, byte for byte", () => {
     const scene = { canvas: FRAME, objects: { tree: { asset: "tree" }, dog: { asset: "dog", left_of: "tree" } } };
 

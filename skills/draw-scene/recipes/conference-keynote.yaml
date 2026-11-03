@@ -33,7 +33,7 @@ text:
   - content: "O Futuro da Criacao"
     at: top-center
     role: title
-    size: 0.052
+    size: 0.06
     'y': 0.22
   - content: "Conheca as novidades e lancamentos para agentes autonomos."
     at: top-center

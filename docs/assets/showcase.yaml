@@ -1,0 +1,45 @@
+canvas:
+  width: 1200
+  height: 630
+  theme: beach
+  setting: outdoor
+  time: golden
+  horizon: 0.58
+  base: 0.9
+  kit: paper
+  font: serif
+  grain: 0.04
+  colors: {floor: '#D9A24E'}
+  seed: 21
+objects:
+  sol:
+    asset: sun
+    at: 0.2
+    altitude: 0.32
+  arvore:
+    asset: tree
+    at: 0.9
+    depth: far
+  banco:
+    asset: bench
+    at: 0.52
+  pessoa:
+    asset: person
+    pose: sitting
+    on: banco
+    hair: bun
+    hair_color: black
+    shirt: accent
+  cachorro:
+    asset: dog
+    at: 0.7
+  crianca:
+    asset: person
+    at: 0.3
+    pose: standing
+    shirt: primary
+    hair: curly
+    hair_color: brown
+text:
+  - {content: "Saturday in the park", at: top-right, role: title, size: 0.11, 'y': 0.12}
+  - {content: "the best spot is the one in the shade", at: top-right, role: body, size: 0.045, 'y': 0.22, box_style: underline, box: '#D9572B', emphasis: ["shade"]}

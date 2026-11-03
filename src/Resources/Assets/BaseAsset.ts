@@ -11,6 +11,8 @@ export abstract class BaseAsset implements LibraryAsset {
 
   abstract readonly tags: readonly string[];
 
+  readonly variants?: readonly string[];
+
   readonly isBackdrop?: boolean;
 
   readonly seat?: number;

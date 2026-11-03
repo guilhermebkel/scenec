@@ -116,6 +116,6 @@
   "warnings": [],
   "art": [
     "art: 'sol' just touches 'monte' (tangent); overlap them clearly or leave a gap of at least 8 px",
-    "art: title is too small to read at thumbnail size (cap height 2.6 px); increase title size"
+    "art: title is too small to read at thumbnail size (cap height 2.6 px, needs 3.8 px at 96 px wide); use a title size of about 5.7% of the scene width or more"
   ]
 }

@@ -172,6 +172,11 @@ export class PlacementService {
       return null;
     }
     const asset = RequireUtil.defined(library[resolved.id], `library asset ${resolved.id}`);
+    if (object.variant !== undefined && asset.variants && !asset.variants.includes(String(object.variant))) {
+      warnings.push(
+        `'${id}' has no variant '${object.variant}' for '${resolved.id}'; use one of: ${asset.variants.join(", ")}`,
+      );
+    }
     const size = asset.size ? asset.size(object) : { w: asset.width, h: asset.height };
     const sizeFactor = PlacementService.sizeFactor(id, object, warnings);
     const request: PlacementRequest = {

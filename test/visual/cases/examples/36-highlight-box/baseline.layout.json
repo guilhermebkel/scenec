@@ -1,0 +1,16 @@
+{
+  "layout": [
+    {
+      "id": "mesa",
+      "asset": "table",
+      "x": 50,
+      "base": 93,
+      "w": 14.3,
+      "h": 15.6
+    }
+  ],
+  "warnings": [],
+  "art": [
+    "art: empty scene: objects cover only 1% of the frame; move the camera closer (canvas.scale ≈ 2.50) or use larger objects"
+  ]
+}

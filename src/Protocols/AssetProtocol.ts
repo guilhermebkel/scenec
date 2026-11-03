@@ -167,6 +167,7 @@ export interface LibraryAsset {
   readonly width: number;
   readonly height: number;
   readonly tags?: readonly string[];
+  readonly variants?: readonly string[];
   readonly top?: number;
   readonly seat?: number;
   readonly elevation?: number;
