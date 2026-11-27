@@ -14,6 +14,7 @@
 <p align="center">
   <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_start-d4a574" alt="Quick start" /></a>
   <a href="https://www.npmjs.com/package/@guilhermebkel/scenec"><img src="https://img.shields.io/npm/v/@guilhermebkel/scenec?color=d4a574&label=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@guilhermebkel/scenec"><img src="https://img.shields.io/npm/dm/@guilhermebkel/scenec.svg?style=flat-square" alt="npm downloads per month" /></a>
   <a href="https://github.com/guilhermebkel/scenec/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/guilhermebkel/scenec/ci.yml?branch=main&label=CI" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow" alt="License: MIT" /></a>
   <img src="https://img.shields.io/badge/Telemetry-none-2ea44f" alt="No telemetry" />
